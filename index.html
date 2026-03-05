@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axis Traders — Gestão de Equipamentos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #0a0c10; --surface: #111318; --surface2: #181c24;
+    --border: #1e2330; --border2: #252d3d;
+    --accent: #00d4ff; --green: #00e599; --yellow: #ffc857;
+    --red: #ff5757; --orange: #ff8c42; --purple: #9b5de5;
+    --text: #e8ecf4; --text2: #8892a4; --text3: #4d5668;
+    --font-head: 'Syne', sans-serif; --font-mono: 'DM Mono', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font-mono); font-size:13px; min-height:100vh; }
+
+  /* LOGIN */
+  #login-screen {
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0,212,255,.08) 0%, transparent 60%);
+  }
+  .login-box {
+    background:var(--surface); border:1px solid var(--border2);
+    border-radius:12px; padding:40px; width:380px;
+  }
+  .login-logo { font-family:var(--font-head); font-size:24px; font-weight:800; color:var(--accent); margin-bottom:4px; }
+  .login-sub { font-size:12px; color:var(--text3); margin-bottom:32px; }
+  .login-label { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; display:block; }
+  .login-input {
+    width:100%; background:var(--surface2); border:1px solid var(--border2);
+    color:var(--text); font-family:var(--font-mono); font-size:13px;
+    padding:10px 14px; border-radius:6px; outline:none; margin-bottom:16px;
+  }
+  .login-input:focus { border-color:var(--accent); }
+  .login-btn {
+    width:100%; background:var(--accent); color:#000; font-family:var(--font-head);
+    font-weight:700; font-size:14px; padding:12px; border-radius:6px;
+    border:none; cursor:pointer; transition:opacity .15s;
+  }
+  .login-btn:hover { opacity:.85; }
+  .login-btn:disabled { opacity:.5; cursor:default; }
+  .login-error { font-size:12px; color:var(--red); margin-top:12px; text-align:center; }
+
+  /* APP */
+  #app-screen { display:none; flex-direction:column; min-height:100vh; }
+
+  /* HEADER */
+  .header {
+    background:var(--surface); border-bottom:1px solid var(--border);
+    padding:0 24px; display:flex; align-items:center; gap:24px;
+    height:56px; position:sticky; top:0; z-index:100;
+  }
+  .logo { font-family:var(--font-head); font-weight:800; font-size:16px; letter-spacing:-.5px; color:var(--accent); white-space:nowrap; }
+  .logo span { color:var(--text2); font-weight:400; }
+  .header-tabs { display:flex; gap:2px; flex:1; }
+  .tab-btn { padding:6px 14px; border-radius:6px; border:none; background:transparent; color:var(--text2); font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .tab-btn:hover { background:var(--surface2); color:var(--text); }
+  .tab-btn.active { background:var(--border2); color:var(--accent); }
+  .user-info { font-size:11px; color:var(--text3); display:flex; align-items:center; gap:10px; white-space:nowrap; }
+  .logout-btn { padding:4px 10px; border-radius:4px; border:1px solid var(--border2); background:transparent; color:var(--text3); font-family:var(--font-mono); font-size:11px; cursor:pointer; }
+  .logout-btn:hover { color:var(--red); border-color:var(--red); }
+
+  /* MAIN */
+  .main { display:flex; height:calc(100vh - 56px); }
+
+  /* SIDEBAR */
+  .sidebar { width:260px; min-width:260px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+  .search-wrap { padding:12px 16px; border-bottom:1px solid var(--border); }
+  .search-input { width:100%; background:var(--surface2); border:1px solid var(--border2); color:var(--text); font-family:var(--font-mono); font-size:12px; padding:8px 12px; border-radius:6px; outline:none; }
+  .search-input::placeholder { color:var(--text3); }
+  .search-input:focus { border-color:var(--accent); }
+  .sidebar-section { padding:16px; border-bottom:1px solid var(--border); }
+  .sidebar-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; }
+  .filter-group { display:flex; flex-direction:column; gap:3px; }
+  .filter-btn { display:flex; align-items:center; justify-content:space-between; padding:6px 10px; border-radius:5px; border:none; background:transparent; color:var(--text2); font-family:var(--font-mono); font-size:12px; cursor:pointer; transition:all .12s; text-align:left; }
+  .filter-btn:hover { background:var(--surface2); color:var(--text); }
+  .filter-btn.active { background:var(--border2); color:var(--text); }
+  .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .cnt { font-size:10px; color:var(--text3); background:var(--surface2); padding:1px 6px; border-radius:10px; }
+  .filter-btn.active .cnt { background:var(--border); color:var(--text2); }
+
+  /* LIST */
+  .list-container { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .list-header { display:grid; grid-template-columns:1fr 1fr 1fr 1fr 110px; padding:8px 16px; border-bottom:1px solid var(--border); font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; background:var(--bg); }
+  .list-body { flex:1; overflow-y:auto; }
+  .list-item { display:grid; grid-template-columns:1fr 1fr 1fr 1fr 110px; padding:10px 16px; border-bottom:1px solid rgba(30,35,48,.6); cursor:pointer; transition:background .1s; align-items:center; }
+  .list-item:hover { background:var(--surface2); }
+  .list-item.selected { background:var(--surface2); border-left:2px solid var(--accent); }
+  .list-item.has-alert { border-left:2px solid var(--red); }
+  .cell { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:12px; }
+  .cell-serial { font-family:var(--font-mono); color:var(--accent); font-size:12px; }
+  .cell-modelo { color:var(--text); font-size:12px; }
+  .cell-tipo, .cell-cliente { color:var(--text2); font-size:11px; }
+  .status-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:4px; font-size:10px; white-space:nowrap; }
+  .s-outro { background:rgba(77,86,104,.3); color:var(--text2); }
+  .s-locado { background:rgba(0,212,255,.12); color:var(--accent); }
+  .s-vendido { background:rgba(0,229,153,.1); color:var(--green); }
+  .s-estoque { background:rgba(74,222,128,.1); color:#4ade80; }
+  .s-reservado { background:rgba(155,93,229,.15); color:var(--purple); }
+  .s-sucata { background:rgba(255,87,87,.12); color:var(--red); }
+  .s-rma { background:rgba(255,140,66,.12); color:var(--orange); }
+  .alert-dot { width:6px; height:6px; background:var(--red); border-radius:50%; display:inline-block; margin-left:4px; }
+
+  /* DETAIL */
+  .detail-panel { width:380px; min-width:380px; background:var(--surface); border-left:1px solid var(--border); overflow-y:auto; display:flex; flex-direction:column; }
+  .detail-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text3); gap:10px; }
+  .detail-empty-icon { font-size:40px; opacity:.3; }
+  .detail-header { padding:20px; border-bottom:1px solid var(--border); }
+  .detail-serial { font-size:18px; color:var(--accent); font-family:var(--font-head); font-weight:700; letter-spacing:1px; }
+  .detail-modelo { font-size:13px; color:var(--text); margin-top:4px; }
+  .detail-body { padding:16px 20px; flex:1; }
+  .detail-section { margin-bottom:20px; }
+  .detail-section-title { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px; }
+  .detail-row { display:flex; gap:8px; margin-bottom:8px; align-items:flex-start; }
+  .detail-key { font-size:11px; color:var(--text3); min-width:110px; flex-shrink:0; }
+  .detail-val { font-size:11px; color:var(--text); word-break:break-all; }
+  .edit-btn { width:100%; padding:10px; border-radius:6px; border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:var(--font-mono); font-size:12px; cursor:pointer; margin-top:8px; }
+  .edit-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* MODAL */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center; z-index:1000; }
+  .modal { background:var(--surface); border:1px solid var(--border2); border-radius:10px; padding:28px; width:480px; max-height:80vh; overflow-y:auto; }
+  .modal-title { font-family:var(--font-head); font-size:16px; font-weight:700; color:var(--text); margin-bottom:20px; }
+  .form-group { margin-bottom:14px; }
+  .form-label { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; display:block; }
+  .form-input, .form-select { width:100%; background:var(--surface2); border:1px solid var(--border2); color:var(--text); font-family:var(--font-mono); font-size:12px; padding:8px 12px; border-radius:6px; outline:none; }
+  .form-input:focus, .form-select:focus { border-color:var(--accent); }
+  .form-select option { background:var(--surface2); }
+  .modal-actions { display:flex; gap:10px; margin-top:20px; }
+  .btn-primary { flex:1; padding:10px; border-radius:6px; border:none; background:var(--accent); color:#000; font-family:var(--font-head); font-weight:700; font-size:13px; cursor:pointer; }
+  .btn-primary:hover { opacity:.85; }
+  .btn-secondary { flex:1; padding:10px; border-radius:6px; border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:var(--font-mono); font-size:12px; cursor:pointer; }
+  .btn-secondary:hover { border-color:var(--text2); color:var(--text); }
+
+  /* DASHBOARD */
+  .dashboard { padding:24px; overflow-y:auto; flex:1; }
+  .dash-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  .kpi-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:18px; }
+  .kpi-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; }
+  .kpi-value { font-family:var(--font-head); font-size:32px; font-weight:800; }
+  .kpi-sub { font-size:11px; color:var(--text3); margin-top:4px; }
+  .dash-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+  .chart-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px; }
+  .chart-title { font-family:var(--font-head); font-size:13px; font-weight:600; color:var(--text); margin-bottom:16px; }
+  .bar-item { margin-bottom:12px; }
+  .bar-label { display:flex; justify-content:space-between; margin-bottom:5px; font-size:11px; color:var(--text2); }
+  .bar-track { background:var(--surface2); border-radius:3px; height:6px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:3px; }
+  .client-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
+  .client-row:last-child { border-bottom:none; }
+  .client-name { font-size:12px; color:var(--text); }
+  .client-count { font-size:11px; color:var(--accent); background:rgba(0,212,255,.1); padding:2px 8px; border-radius:4px; }
+
+  /* ALERTS */
+  .alerts-page { flex:1; overflow-y:auto; padding:24px; }
+  .alert-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-bottom:12px; cursor:pointer; }
+  .alert-card:hover { border-color:rgba(255,87,87,.3); }
+  .alert-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .alert-card-serial { font-size:14px; color:var(--accent); font-family:var(--font-head); font-weight:700; }
+  .alert-tag { background:rgba(255,87,87,.12); color:var(--red); padding:2px 8px; border-radius:4px; font-size:10px; }
+
+  /* LOADING */
+  .loading { display:flex; align-items:center; justify-content:center; flex:1; gap:10px; color:var(--text3); font-size:12px; }
+  .spinner { width:16px; height:16px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* IMPORT SECTION */
+  .import-section { padding:12px 16px; border-bottom:1px solid var(--border); }
+  .import-btn { width:100%; padding:8px; border-radius:5px; border:1px dashed var(--border2); background:transparent; color:var(--text3); font-family:var(--font-mono); font-size:11px; cursor:pointer; }
+  .import-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* ADD BTN */
+  .add-btn { padding:6px 14px; border-radius:6px; border:none; background:var(--accent); color:#000; font-family:var(--font-head); font-weight:700; font-size:12px; cursor:pointer; white-space:nowrap; }
+  .add-btn:hover { opacity:.85; }
+
+  /* PAGINATION */
+  .pagination { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; border-top:1px solid var(--border); background:var(--surface); font-size:11px; color:var(--text2); }
+  .page-btns { display:flex; gap:4px; }
+  .page-btn { padding:4px 10px; border-radius:4px; border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:var(--font-mono); font-size:11px; cursor:pointer; }
+  .page-btn:hover { background:var(--surface2); color:var(--text); }
+  .page-btn:disabled { opacity:.3; cursor:default; }
+
+  /* VIEWS */
+  #view-inventory { display:flex; flex:1; overflow:hidden; }
+  #view-dashboard, #view-alerts { display:none; flex:1; overflow:hidden; }
+
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">AXIS Traders</div>
+    <div class="login-sub">Gestão de Equipamentos · Traders Service</div>
+    <label class="login-label">Email</label>
+    <input class="login-input" id="login-email" type="email" placeholder="seu@email.com" autocomplete="email">
+    <label class="login-label">Senha</label>
+    <input class="login-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+  <div class="header">
+    <div class="logo">AXIS<span> Traders</span></div>
+    <div class="header-tabs">
+      <button class="tab-btn active" onclick="switchView('inventory')">⬡ Inventário</button>
+      <button class="tab-btn" onclick="switchView('dashboard')">◈ Dashboard</button>
+      <button class="tab-btn" onclick="switchView('alerts')" id="alerts-tab-btn">△ Alertas</button>
+    </div>
+    <div class="user-info">
+      <span id="user-name-display"></span>
+      <button class="logout-btn" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- INVENTORY VIEW -->
+    <div id="view-inventory">
+      <div class="sidebar">
+        <div class="search-wrap">
+          <input class="search-input" id="search" placeholder="Serial, modelo, cliente..." oninput="applyFilters()">
+        </div>
+        <div class="import-section">
+          <button class="import-btn" onclick="showImportModal()">⊕ Importar dados da planilha Excel</button>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-label">Status</div>
+          <div class="filter-group" id="status-filters"></div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-label">Tipo</div>
+          <div class="filter-group" id="tipo-filters"></div>
+        </div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);background:var(--bg);">
+          <div class="list-header" style="flex:1;padding:0;border:none;background:transparent;">
+            <div>SERIAL</div><div>MODELO</div><div>TIPO</div><div>CLIENTE/FORNECEDOR</div><div>STATUS</div>
+          </div>
+          <button class="add-btn" onclick="showAddModal()">+ Novo</button>
+        </div>
+        <div class="list-body" id="list-body">
+          <div class="loading"><div class="spinner"></div>Carregando equipamentos...</div>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+      <div class="detail-panel" id="detail-panel">
+        <div class="detail-empty">
+          <div class="detail-empty-icon">◎</div>
+          <div style="font-size:12px;color:var(--text3);">Selecione um equipamento</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="view-dashboard">
+      <div class="dashboard" id="dashboard-content">
+        <div class="loading"><div class="spinner"></div>Carregando dashboard...</div>
+      </div>
+    </div>
+
+    <!-- ALERTS VIEW -->
+    <div id="view-alerts">
+      <div class="alerts-page" id="alerts-content">
+        <div class="loading"><div class="spinner"></div>Carregando alertas...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADD/EDIT -->
+<div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Novo Equipamento</div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://iwufrqmzcvaiyzynodkg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3dWZycW16Y3ZhaXl6eW5vZGtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzgwMDEsImV4cCI6MjA4ODMxNDAwMX0.y3W12qwkfhKcmGQQ0oSSwgidTJu0Pgl6JF4deE3G0y4';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let allData = [];
+let filtered = [];
+let activeStatus = 'all';
+let activeTipo = 'all';
+let page = 0;
+const PAGE_SIZE = 50;
+let selectedId = null;
+let currentUser = null;
+let currentProfile = null;
+
+// STATUS CONFIG
+const STATUS_CLS = {
+  'Locado':'locado','Vendido':'vendido','Estoque - Novo':'estoque',
+  'Estoque - Usado':'estoque','Reservado':'reservado','Sucata':'sucata',
+  'Garantia / Assis. Técnica':'rma','Saída Manutenção':'rma','Outro':'outro'
+};
+const STATUS_COLORS = {
+  'Locado':'var(--accent)','Vendido':'var(--green)','Estoque - Novo':'#4ade80',
+  'Estoque - Usado':'var(--yellow)','Reservado':'var(--purple)','Sucata':'var(--red)',
+  'Garantia / Assis. Técnica':'var(--orange)','Saída Manutenção':'var(--orange)','Outro':'var(--text3)'
+};
+
+function statusBadge(s) {
+  const cls = STATUS_CLS[s] || 'outro';
+  return `<span class="status-badge s-${cls}">${s||'—'}</span>`;
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const m = String(d).match(/(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : d;
+}
+
+// AUTH
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-password').value;
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-error');
+  err.textContent = '';
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
+  if (error) {
+    err.textContent = 'Email ou senha incorretos.';
+    btn.disabled = false; btn.textContent = 'Entrar';
+    return;
+  }
+  await initApp(data.user);
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  allData = []; filtered = []; currentUser = null; currentProfile = null;
+}
+
+async function initApp(user) {
+  currentUser = user;
+  const { data: profile } = await sb.from('usuarios').select('*').eq('id', user.id).single();
+  currentProfile = profile;
+  document.getElementById('user-name-display').textContent = profile?.nome || user.email;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'flex';
+  await loadData();
+}
+
+// DATA
+async function loadData() {
+  document.getElementById('list-body').innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const { data, error } = await sb.from('equipamentos_axis').select('*').order('created_at', { ascending: false });
+  if (error) { console.error(error); return; }
+  allData = (data || []).map(r => ({
+    ...r,
+    alertas: getAlertas(r)
+  }));
+  buildFilters();
+  applyFilters();
+  renderDashboard();
+  renderAlerts();
+}
+
+function getAlertas(r) {
+  const issues = [];
+  if (!r.cliente_fornecedor && r.status === 'Locado') issues.push('Cliente não informado');
+  if (!r.nota_fiscal && r.status === 'Vendido') issues.push('NF não informada');
+  return issues;
+}
+
+function buildFilters() {
+  const statusCounts = {};
+  const tipoCounts = {};
+  allData.forEach(r => {
+    statusCounts[r.status] = (statusCounts[r.status]||0)+1;
+    tipoCounts[r.tipo] = (tipoCounts[r.tipo]||0)+1;
+  });
+
+  const sf = document.getElementById('status-filters');
+  sf.innerHTML = `<button class="filter-btn active" onclick="setStatus('all',this)">
+    <span style="display:flex;align-items:center;gap:7px;"><span class="dot" style="background:linear-gradient(135deg,var(--accent),var(--green))"></span>Todos</span>
+    <span class="cnt">${allData.length}</span></button>`;
+  Object.entries(statusCounts).sort((a,b)=>b[1]-a[1]).forEach(([s,c]) => {
+    const color = STATUS_COLORS[s]||'var(--text3)';
+    sf.innerHTML += `<button class="filter-btn" onclick="setStatus('${s.replace(/'/g,"\\'")}',this)">
+      <span style="display:flex;align-items:center;gap:7px;"><span class="dot" style="background:${color}"></span>${s}</span>
+      <span class="cnt">${c}</span></button>`;
+  });
+
+  const tf = document.getElementById('tipo-filters');
+  tf.innerHTML = `<button class="filter-btn active" onclick="setTipo('all',this)">
+    <span>Todos</span><span class="cnt">${allData.length}</span></button>`;
+  Object.entries(tipoCounts).sort((a,b)=>b[1]-a[1]).forEach(([t,c]) => {
+    tf.innerHTML += `<button class="filter-btn" onclick="setTipo('${t.replace(/'/g,"\\'")}',this)">
+      <span>${t}</span><span class="cnt">${c}</span></button>`;
+  });
+}
+
+function setStatus(s, el) {
+  activeStatus = s;
+  document.querySelectorAll('#status-filters .filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); page=0; applyFilters();
+}
+function setTipo(t, el) {
+  activeTipo = t;
+  document.querySelectorAll('#tipo-filters .filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); page=0; applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  filtered = allData.filter(r => {
+    if (activeStatus !== 'all' && r.status !== activeStatus) return false;
+    if (activeTipo !== 'all' && r.tipo !== activeTipo) return false;
+    if (q) return (r.serial||'').toLowerCase().includes(q) ||
+                   (r.modelo||'').toLowerCase().includes(q) ||
+                   (r.cliente_fornecedor||'').toLowerCase().includes(q) ||
+                   (r.part_number||'').toLowerCase().includes(q);
+    return true;
+  });
+  renderList();
+}
+
+function renderList() {
+  const body = document.getElementById('list-body');
+  if (!filtered.length) {
+    body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text3);font-size:12px;">Nenhum equipamento encontrado</div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+  const start = page * PAGE_SIZE;
+  const slice = filtered.slice(start, start+PAGE_SIZE);
+  body.innerHTML = slice.map(r => {
+    const sel = r.id === selectedId ? 'selected' : '';
+    const alert = r.alertas?.length ? 'has-alert' : '';
+    return `<div class="list-item ${sel} ${alert}" onclick="selectItem('${r.id}')">
+      <div class="cell cell-serial">${r.serial||'—'}${r.alertas?.length?'<span class="alert-dot"></span>':''}</div>
+      <div class="cell cell-modelo">${r.modelo||'—'}</div>
+      <div class="cell cell-tipo">${r.tipo||'—'}</div>
+      <div class="cell cell-cliente">${r.cliente_fornecedor||'—'}</div>
+      <div class="cell">${statusBadge(r.status)}</div>
+    </div>`;
+  }).join('');
+
+  const total = filtered.length;
+  const totalPages = Math.ceil(total/PAGE_SIZE);
+  document.getElementById('pagination').innerHTML = `
+    <span>${start+1}–${Math.min(start+PAGE_SIZE,total)} de ${total}</span>
+    <div class="page-btns">
+      <button class="page-btn" onclick="goPage(${page-1})" ${page===0?'disabled':''}>‹</button>
+      <button class="page-btn" onclick="goPage(${page+1})" ${page>=totalPages-1?'disabled':''}>›</button>
+    </div>`;
+}
+
+function goPage(p) { page=p; renderList(); document.querySelector('.list-body').scrollTop=0; }
+
+function selectItem(id) {
+  selectedId = id;
+  const r = allData.find(d => d.id === id);
+  if (!r) return;
+  renderList();
+  const panel = document.getElementById('detail-panel');
+
+  let alertsHtml = '';
+  if (r.alertas?.length) {
+    alertsHtml = `<div style="background:rgba(255,87,87,.05);border:1px solid rgba(255,87,87,.15);border-radius:6px;padding:12px;margin-bottom:16px;">
+      ${r.alertas.map(a=>`<div style="font-size:11px;color:var(--red);display:flex;align-items:center;gap:6px;margin-bottom:4px;">⚠ ${a}</div>`).join('')}
+    </div>`;
+  }
+
+  const canEdit = currentProfile?.role === 'admin' || currentProfile?.role === 'gestor_axis';
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-serial">${r.serial}</div>
+      <div class="detail-modelo">${r.modelo}</div>
+      <div style="margin-top:10px;">${statusBadge(r.status)}</div>
+    </div>
+    <div class="detail-body">
+      ${alertsHtml}
+      <div class="detail-section">
+        <div class="detail-section-title">Informações</div>
+        <div class="detail-row"><span class="detail-key">Part Number</span><span class="detail-val">${r.part_number||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Tipo</span><span class="detail-val">${r.tipo||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Cliente/Forn.</span><span class="detail-val">${r.cliente_fornecedor||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Nota Fiscal</span><span class="detail-val">${r.nota_fiscal||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Data NF</span><span class="detail-val">${formatDate(r.data_nota)}</span></div>
+        <div class="detail-row"><span class="detail-key">Últ. Atualização</span><span class="detail-val">${formatDate(r.ultima_atualizacao)}</span></div>
+        ${r.observacao?`<div class="detail-row"><span class="detail-key">Observação</span><span class="detail-val">${r.observacao}</span></div>`:''}
+      </div>
+      ${canEdit ? `<button class="edit-btn" onclick="showEditModal('${r.id}')">✎ Editar equipamento</button>` : ''}
+    </div>`;
+}
+
+// MODAL ADD
+function showAddModal() {
+  document.getElementById('modal-title').textContent = 'Novo Equipamento';
+  document.getElementById('modal-body').innerHTML = modalForm({});
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function showEditModal(id) {
+  const r = allData.find(d => d.id === id);
+  document.getElementById('modal-title').textContent = 'Editar Equipamento';
+  document.getElementById('modal-body').innerHTML = modalForm(r);
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function modalForm(r) {
+  const statuses = ['Estoque - Novo','Estoque - Usado','Locado','Vendido','Reservado','Sucata','Garantia / Assis. Técnica','Saída Manutenção','Outro'];
+  const tipos = ['Câmera','Acessório','Áudio','Controle Acesso','Outro'];
+  return `
+    <div class="form-group"><label class="form-label">Serial *</label>
+      <input class="form-input" id="f-serial" value="${r.serial||''}" placeholder="B8A44F..."></div>
+    <div class="form-group"><label class="form-label">Modelo *</label>
+      <input class="form-input" id="f-modelo" value="${r.modelo||''}" placeholder="AXIS P1455-LE..."></div>
+    <div class="form-group"><label class="form-label">Part Number</label>
+      <input class="form-input" id="f-partnumber" value="${r.part_number||''}" placeholder="01997-001"></div>
+    <div class="form-group"><label class="form-label">Tipo</label>
+      <select class="form-select" id="f-tipo">${tipos.map(t=>`<option ${r.tipo===t?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="form-group"><label class="form-label">Status</label>
+      <select class="form-select" id="f-status">${statuses.map(s=>`<option ${r.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="form-group"><label class="form-label">Cliente / Fornecedor</label>
+      <input class="form-input" id="f-cliente" value="${r.cliente_fornecedor||''}" placeholder="Nome do cliente..."></div>
+    <div class="form-group"><label class="form-label">Nota Fiscal</label>
+      <input class="form-input" id="f-nf" value="${r.nota_fiscal||''}" placeholder="12345"></div>
+    <div class="form-group"><label class="form-label">Data da NF</label>
+      <input class="form-input" id="f-data" type="date" value="${r.data_nota||''}"></div>
+    <div class="form-group"><label class="form-label">Observação</label>
+      <input class="form-input" id="f-obs" value="${r.observacao||''}" placeholder="Notas adicionais..."></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveEquipamento('${r.id||''}')">Salvar</button>
+    </div>`;
+}
+
+async function saveEquipamento(id) {
+  const payload = {
+    serial: document.getElementById('f-serial').value.trim(),
+    modelo: document.getElementById('f-modelo').value.trim(),
+    part_number: document.getElementById('f-partnumber').value.trim(),
+    tipo: document.getElementById('f-tipo').value,
+    status: document.getElementById('f-status').value,
+    cliente_fornecedor: document.getElementById('f-cliente').value.trim(),
+    nota_fiscal: document.getElementById('f-nf').value.trim(),
+    data_nota: document.getElementById('f-data').value || null,
+    observacao: document.getElementById('f-obs').value.trim(),
+    ultima_atualizacao: new Date().toISOString()
+  };
+  if (!payload.serial || !payload.modelo) { alert('Serial e Modelo são obrigatórios.'); return; }
+
+  let error;
+  if (id) {
+    ({ error } = await sb.from('equipamentos_axis').update(payload).eq('id', id));
+  } else {
+    ({ error } = await sb.from('equipamentos_axis').insert(payload));
+  }
+  if (error) { alert('Erro ao salvar: ' + error.message); return; }
+  closeModal();
+  await loadData();
+}
+
+function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+// IMPORT MODAL
+function showImportModal() {
+  document.getElementById('modal-title').textContent = 'Importar dados da planilha';
+  document.getElementById('modal-body').innerHTML = `
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+      Para importar seus equipamentos da planilha Excel para o banco de dados, siga os passos:
+    </p>
+    <div style="background:var(--surface2);border-radius:6px;padding:14px;font-size:11px;color:var(--text2);line-height:1.8;margin-bottom:16px;">
+      <div>1. Abra a planilha <strong style="color:var(--text)">Inventário_Axis_Traders.xlsx</strong></div>
+      <div>2. Na aba <strong style="color:var(--text)">Inventário 2024</strong>, selecione todos os dados</div>
+      <div>3. Salve como <strong style="color:var(--text)">.CSV</strong> (File → Save As → CSV)</div>
+      <div>4. No Supabase → Table Editor → <strong style="color:var(--accent)">equipamentos_axis</strong></div>
+      <div>5. Clique em <strong style="color:var(--accent)">Insert → Import data from CSV</strong></div>
+      <div>6. Mapeie as colunas e importe</div>
+    </div>
+    <p style="font-size:11px;color:var(--text3);">Após a importação, recarregue esta página para ver os dados atualizados.</p>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="closeModal()">Entendido</button>
+    </div>`;
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+// DASHBOARD
+function renderDashboard() {
+  if (!allData.length) return;
+  const total = allData.length;
+  const locados = allData.filter(d=>d.status==='Locado').length;
+  const estoque = allData.filter(d=>d.status==='Estoque - Novo'||d.status==='Estoque - Usado').length;
+  const alertas = allData.filter(d=>d.alertas?.length).length;
+
+  const statusCounts = {};
+  const tipoCounts = {};
+  const clientMap = {};
+  allData.forEach(r => {
+    statusCounts[r.status] = (statusCounts[r.status]||0)+1;
+    tipoCounts[r.tipo] = (tipoCounts[r.tipo]||0)+1;
+    if (r.status==='Locado' && r.cliente_fornecedor?.trim()) {
+      clientMap[r.cliente_fornecedor.trim()] = (clientMap[r.cliente_fornecedor.trim()]||0)+1;
+    }
+  });
+  const topClientes = Object.entries(clientMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  document.getElementById('dashboard-content').innerHTML = `
+    <div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);margin-bottom:24px;">
+      Dashboard <span style="color:var(--text3);font-weight:400;font-size:14px;">— Visão geral</span>
+    </div>
+    <div class="dash-grid">
+      <div class="kpi-card"><div class="kpi-label">Total</div><div class="kpi-value" style="color:var(--accent)">${total.toLocaleString('pt-BR')}</div><div class="kpi-sub">equipamentos</div></div>
+      <div class="kpi-card"><div class="kpi-label">Em Locação</div><div class="kpi-value" style="color:var(--accent)">${locados}</div><div class="kpi-sub">${((locados/total)*100).toFixed(1)}% do total</div></div>
+      <div class="kpi-card"><div class="kpi-label">Em Estoque</div><div class="kpi-value" style="color:var(--green)">${estoque}</div><div class="kpi-sub">novo + usado</div></div>
+      <div class="kpi-card"><div class="kpi-label">Com Alertas</div><div class="kpi-value" style="color:var(--red)">${alertas}</div><div class="kpi-sub">requerem atenção</div></div>
+    </div>
+    <div class="dash-row">
+      <div class="chart-card">
+        <div class="chart-title">Por Status</div>
+        ${Object.entries(statusCounts).sort((a,b)=>b[1]-a[1]).map(([s,c])=>`
+          <div class="bar-item">
+            <div class="bar-label"><span>${s}</span><span>${c}</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(c/total*100).toFixed(1)}%;background:${STATUS_COLORS[s]||'var(--text3)'}"></div></div>
+          </div>`).join('')}
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Top Clientes em Locação</div>
+        ${topClientes.map(([c,n])=>`
+          <div class="client-row">
+            <span class="client-name">${c}</span>
+            <span class="client-count">${n} equip.</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="dash-row">
+      <div class="chart-card">
+        <div class="chart-title">Por Tipo</div>
+        ${Object.entries(tipoCounts).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`
+          <div class="bar-item">
+            <div class="bar-label"><span>${t}</span><span>${c} (${(c/total*100).toFixed(1)}%)</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(c/total*100).toFixed(1)}%;background:var(--accent)"></div></div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ALERTS
+function renderAlerts() {
+  const withAlerts = allData.filter(d=>d.alertas?.length);
+  document.getElementById('alerts-tab-btn').textContent = `△ Alertas (${withAlerts.length})`;
+  const byType = {};
+  withAlerts.forEach(r => r.alertas.forEach(a => { if(!byType[a]) byType[a]=[]; byType[a].push(r); }));
+
+  document.getElementById('alerts-content').innerHTML = `
+    <div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px;">Alertas</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:24px;">${withAlerts.length} equipamentos com pendências</div>
+    ${Object.entries(byType).map(([type, items])=>`
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="background:rgba(255,87,87,.12);color:var(--red);padding:4px 12px;border-radius:6px;font-size:12px;">${type}</span>
+          <span style="font-size:11px;color:var(--text3);">${items.length} equipamentos</span>
+        </div>
+        ${items.slice(0,20).map(r=>`
+          <div class="alert-card" onclick="switchView('inventory');setTimeout(()=>selectItem('${r.id}'),100)">
+            <div class="alert-card-header">
+              <span class="alert-card-serial">${r.serial}</span>
+              ${statusBadge(r.status)}
+            </div>
+            <div style="font-size:11px;color:var(--text2);">${r.modelo} · ${r.tipo} ${r.cliente_fornecedor?'· '+r.cliente_fornecedor:''}</div>
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+              ${r.alertas.map(a=>`<span class="alert-tag">⚠ ${a}</span>`).join('')}
+            </div>
+          </div>`).join('')}
+      </div>`).join('')}`;
+}
+
+function switchView(v) {
+  document.getElementById('view-inventory').style.display = v==='inventory'?'flex':'none';
+  document.getElementById('view-dashboard').style.display = v==='dashboard'?'flex':'none';
+  document.getElementById('view-alerts').style.display = v==='alerts'?'flex':'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['inventory','dashboard','alerts'][i]===v));
+}
+
+// CHECK SESSION ON LOAD
+window.addEventListener('load', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) {
+    await initApp(session.user);
+  }
+  document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+});
+</script>
+</body>
+</html>
