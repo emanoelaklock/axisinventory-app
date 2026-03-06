@@ -556,47 +556,88 @@ function modalForm(r) {
 
 let lookupTimeout = null;
 async function lookupPartNumber(val) {
-  const status = document.getElementById('pn-status');
+  const statusEl = document.getElementById('pn-status');
   const suggestions = document.getElementById('pn-suggestions');
-  if (!val || val.length < 3) { suggestions.style.display='none'; status.textContent=''; return; }
+  if (!val || val.length < 3) { suggestions.style.display='none'; statusEl.textContent=''; return; }
 
   clearTimeout(lookupTimeout);
+  statusEl.textContent = '...';
   lookupTimeout = setTimeout(async () => {
-    // Exact match first
-    const { data: exact } = await sb.from('catalogo_axis').select('*').eq('part_number', val.trim()).single();
-    if (exact) {
-      document.getElementById('f-modelo').value = exact.modelo;
-      const sel = document.getElementById('f-tipo');
-      for (let o of sel.options) { if (o.value === exact.tipo) { o.selected = true; break; } }
-      status.textContent = '✓ encontrado';
-      suggestions.style.display = 'none';
-      return;
+    try {
+      // Try partial match (works for both exact and partial)
+      const { data, error } = await sb
+        .from('catalogo_axis')
+        .select('part_number, modelo, tipo')
+        .ilike('part_number', `%${val.trim()}%`)
+        .limit(8);
+
+      if (error) { console.error('Lookup error:', error); statusEl.textContent=''; return; }
+
+      if (!data || data.length === 0) {
+        // Try searching by model name too
+        const { data: byModel } = await sb
+          .from('catalogo_axis')
+          .select('part_number, modelo, tipo')
+          .ilike('modelo', `%${val.trim()}%`)
+          .limit(6);
+
+        if (byModel?.length) {
+          showSuggestions(byModel);
+        } else {
+          suggestions.style.display = 'none';
+          statusEl.textContent = '';
+        }
+        return;
+      }
+
+      // Exact match?
+      const exact = data.find(d => d.part_number.toLowerCase() === val.trim().toLowerCase());
+      if (exact) {
+        applyLookup(exact);
+        suggestions.style.display = 'none';
+        statusEl.textContent = '✓';
+        return;
+      }
+
+      // Show suggestions
+      showSuggestions(data);
+      statusEl.textContent = '';
+    } catch(e) {
+      console.error('Lookup exception:', e);
+      statusEl.textContent = '';
     }
-    status.textContent = '';
-    // Partial match suggestions
-    const { data: partial } = await sb.from('catalogo_axis').select('*').ilike('part_number', `%${val}%`).limit(6);
-    if (partial?.length) {
-      suggestions.style.display = 'block';
-      suggestions.innerHTML = partial.map(p => `
-        <div onclick="selectSuggestion('${p.part_number}','${p.modelo.replace(/'/g,"\\'")}','${p.tipo}')"
-          style="padding:8px 12px;cursor:pointer;font-size:11px;color:var(--text);border-bottom:1px solid var(--border);"
-          onmouseover="this.style.background='var(--border2)'" onmouseout="this.style.background='transparent'">
-          <span style="color:var(--accent)">${p.part_number}</span>
-          <span style="color:var(--text2);margin-left:8px;">${p.modelo}</span>
-        </div>`).join('');
-    } else {
-      suggestions.style.display = 'none';
-    }
-  }, 300);
+  }, 400);
+}
+
+function showSuggestions(items) {
+  const suggestions = document.getElementById('pn-suggestions');
+  suggestions.style.display = 'block';
+  suggestions.innerHTML = items.map(p => {
+    const pnSafe = p.part_number.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const modeloSafe = p.modelo.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const tipoSafe = p.tipo.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div onclick="selectSuggestion('${pnSafe}','${modeloSafe}','${tipoSafe}')"
+      style="padding:8px 12px;cursor:pointer;font-size:11px;color:var(--text);border-bottom:1px solid var(--border);"
+      onmouseover="this.style.background='var(--border2)'" onmouseout="this.style.background='transparent'">
+      <span style="color:var(--accent)">${p.part_number}</span>
+      <span style="color:var(--text2);margin-left:8px;">${p.modelo}</span>
+    </div>`;
+  }).join('');
+}
+
+function applyLookup(item) {
+  document.getElementById('f-modelo').value = item.modelo;
+  const sel = document.getElementById('f-tipo');
+  for (let o of sel.options) {
+    if (o.value === item.tipo) { o.selected = true; break; }
+  }
 }
 
 function selectSuggestion(pn, modelo, tipo) {
   document.getElementById('f-partnumber').value = pn;
-  document.getElementById('f-modelo').value = modelo;
-  const sel = document.getElementById('f-tipo');
-  for (let o of sel.options) { if (o.value === tipo) { o.selected = true; break; } }
+  applyLookup({ modelo, tipo });
   document.getElementById('pn-suggestions').style.display = 'none';
-  document.getElementById('pn-status').textContent = '✓ encontrado';
+  document.getElementById('pn-status').textContent = '✓';
 }
 
 async function saveEquipamento(id) {
