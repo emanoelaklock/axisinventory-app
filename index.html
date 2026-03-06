@@ -526,10 +526,16 @@ function modalForm(r) {
   return `
     <div class="form-group"><label class="form-label">Serial *</label>
       <input class="form-input" id="f-serial" value="${r.serial||''}" placeholder="B8A44F..."></div>
+    <div class="form-group">
+      <label class="form-label">Part Number</label>
+      <div style="position:relative;">
+        <input class="form-input" id="f-partnumber" value="${r.part_number||''}" placeholder="01997-001" oninput="lookupPartNumber(this.value)" autocomplete="off">
+        <div id="pn-status" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--green);"></div>
+      </div>
+      <div id="pn-suggestions" style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;margin-top:4px;display:none;max-height:160px;overflow-y:auto;"></div>
+    </div>
     <div class="form-group"><label class="form-label">Modelo *</label>
-      <input class="form-input" id="f-modelo" value="${r.modelo||''}" placeholder="AXIS P1455-LE..."></div>
-    <div class="form-group"><label class="form-label">Part Number</label>
-      <input class="form-input" id="f-partnumber" value="${r.part_number||''}" placeholder="01997-001"></div>
+      <input class="form-input" id="f-modelo" value="${r.modelo||''}" placeholder="Preenchido automaticamente..."></div>
     <div class="form-group"><label class="form-label">Tipo</label>
       <select class="form-select" id="f-tipo">${tipos.map(t=>`<option ${r.tipo===t?'selected':''}>${t}</option>`).join('')}</select></div>
     <div class="form-group"><label class="form-label">Status</label>
@@ -546,6 +552,51 @@ function modalForm(r) {
       <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
       <button class="btn-primary" onclick="saveEquipamento('${r.id||''}')">Salvar</button>
     </div>`;
+}
+
+let lookupTimeout = null;
+async function lookupPartNumber(val) {
+  const status = document.getElementById('pn-status');
+  const suggestions = document.getElementById('pn-suggestions');
+  if (!val || val.length < 3) { suggestions.style.display='none'; status.textContent=''; return; }
+
+  clearTimeout(lookupTimeout);
+  lookupTimeout = setTimeout(async () => {
+    // Exact match first
+    const { data: exact } = await sb.from('catalogo_axis').select('*').eq('part_number', val.trim()).single();
+    if (exact) {
+      document.getElementById('f-modelo').value = exact.modelo;
+      const sel = document.getElementById('f-tipo');
+      for (let o of sel.options) { if (o.value === exact.tipo) { o.selected = true; break; } }
+      status.textContent = '✓ encontrado';
+      suggestions.style.display = 'none';
+      return;
+    }
+    status.textContent = '';
+    // Partial match suggestions
+    const { data: partial } = await sb.from('catalogo_axis').select('*').ilike('part_number', `%${val}%`).limit(6);
+    if (partial?.length) {
+      suggestions.style.display = 'block';
+      suggestions.innerHTML = partial.map(p => `
+        <div onclick="selectSuggestion('${p.part_number}','${p.modelo.replace(/'/g,"\\'")}','${p.tipo}')"
+          style="padding:8px 12px;cursor:pointer;font-size:11px;color:var(--text);border-bottom:1px solid var(--border);"
+          onmouseover="this.style.background='var(--border2)'" onmouseout="this.style.background='transparent'">
+          <span style="color:var(--accent)">${p.part_number}</span>
+          <span style="color:var(--text2);margin-left:8px;">${p.modelo}</span>
+        </div>`).join('');
+    } else {
+      suggestions.style.display = 'none';
+    }
+  }, 300);
+}
+
+function selectSuggestion(pn, modelo, tipo) {
+  document.getElementById('f-partnumber').value = pn;
+  document.getElementById('f-modelo').value = modelo;
+  const sel = document.getElementById('f-tipo');
+  for (let o of sel.options) { if (o.value === tipo) { o.selected = true; break; } }
+  document.getElementById('pn-suggestions').style.display = 'none';
+  document.getElementById('pn-status').textContent = '✓ encontrado';
 }
 
 async function saveEquipamento(id) {
