@@ -543,7 +543,7 @@ async function loadHistory(equipId){
   const el=document.getElementById('history-loading');
   if(!el)return;
   if(error||!data?.length){el.innerHTML='<div style="text-align:center;padding:30px;color:#9ca3af;">Nenhum histórico registrado ainda.</div>';return;}
-  const dotColor=a=>{'Locado':'green','Vendido':'green','Saída':'blue','Retorno':'purple','Excluído':'red'}[a]||'gray';
+  const dotColor=a=>({'Locado':'green','Vendido':'green','Saída':'blue','Retorno':'purple','Excluído':'red'}[a]||'gray');
   el.id='history-list';
   el.innerHTML=data.map(h=>{
     let dot='gray';
