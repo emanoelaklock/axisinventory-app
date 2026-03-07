@@ -1355,10 +1355,11 @@ function exportPdf(rows,label){
 }
 
 
+// INIT
+window.addEventListener('load',async()=>{
   const{data:{session}}=await sb.auth.getSession();
   if(session?.user)await initApp(session.user);
   document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-  // Handle QR scan via URL param (for mobile camera scan)
   const params=new URLSearchParams(window.location.search);
   const scanSerial=params.get('serial');
   if(scanSerial&&session?.user){
