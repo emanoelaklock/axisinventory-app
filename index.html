@@ -1108,6 +1108,7 @@ function showImportModal(){
     </div>`;
   document.getElementById('import-overlay').classList.add('open');
 }
+function closeImport(){document.getElementById('import-overlay').classList.remove('open');}
 function downloadTemplate(){
   const headers=[['serial','modelo','tipo','part_number','status','cliente_fornecedor','nota_fiscal','data_nota','observacao']];
   const examples=[
