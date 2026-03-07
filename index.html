@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Inter',sans-serif;font-size:14px;background:#f8f9fa;color:#111827;min-height:100vh;}
@@ -195,7 +196,33 @@
   .alert-serial{font-size:14px;font-weight:700;}
   .alert-tag{background:#fee2e2;color:#dc2626;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;}
 
-  /* PRINT STYLES */
+  /* IMPORT/EXPORT */
+  .imp-exp-bar{display:flex;gap:8px;margin-bottom:14px;margin-top:-4px;flex-wrap:wrap;align-items:center;}
+  .toolbar-btn{background:#fff;border:1.5px solid #e5e7eb;border-radius:9px;padding:7px 14px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;color:#374151;white-space:nowrap;}
+  .toolbar-btn:hover{border-color:#2563eb;color:#2563eb;}
+  .toolbar-btn.green{border-color:#bbf7d0;color:#16a34a;background:#f0fdf4;}
+  .toolbar-btn.green:hover{background:#dcfce7;}
+  .toolbar-btn.orange{border-color:#fed7aa;color:#c2410c;background:#fff7ed;}
+  .toolbar-btn.orange:hover{background:#ffedd5;}
+  .sel-count{font-size:12px;color:#6b7280;margin-left:4px;}
+  /* IMPORT MODAL */
+  .import-modal{background:#fff;border-radius:16px;width:620px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+  .drop-zone{border:2px dashed #d1d5db;border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;}
+  .drop-zone:hover,.drop-zone.drag-over{border-color:#2563eb;background:#f0f7ff;}
+  .drop-zone-icon{font-size:40px;margin-bottom:10px;}
+  .drop-zone-text{font-size:14px;font-weight:600;color:#374151;margin-bottom:4px;}
+  .drop-zone-sub{font-size:12px;color:#9ca3af;}
+  .import-preview{margin-top:16px;max-height:280px;overflow-y:auto;}
+  .import-row-ok{background:#f0fdf4;border-left:3px solid #16a34a;}
+  .import-row-dup{background:#fff7ed;border-left:3px solid #f59e0b;}
+  .import-row-err{background:#fef2f2;border-left:3px solid #ef4444;}
+  /* EXPORT MODAL */
+  .export-modal{background:#fff;border-radius:16px;width:500px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+  .export-opt{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;margin-bottom:10px;transition:all .15s;}
+  .export-opt:hover{border-color:#2563eb;background:#f8faff;}
+  .export-opt-icon{font-size:28px;flex-shrink:0;}
+  .export-opt-title{font-size:14px;font-weight:600;color:#111;}
+  .export-opt-sub{font-size:12px;color:#6b7280;margin-top:2px;}
   @media print{
     body *{visibility:hidden;}
     #print-area,#print-area *{visibility:visible;}
@@ -267,16 +294,20 @@
         </select>
         <button class="add-btn" id="add-btn" onclick="showNewModal()">+ Novo Equipamento</button>
       </div>
-      <div class="toolbar" style="margin-bottom:14px;margin-top:-4px;">
-        <button id="qr-pdf-btn" onclick="showQrPdfModal()" style="background:#fff;border:1.5px solid #e5e7eb;border-radius:9px;padding:7px 14px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;color:#374151;">🖨 Gerar etiquetas PDF</button>
+      <div class="imp-exp-bar">
+        <button id="qr-pdf-btn" onclick="showQrPdfModal()" class="toolbar-btn">🖨 Etiquetas PDF</button>
+        <button id="import-btn" onclick="showImportModal()" class="toolbar-btn green">⬆ Importar Excel</button>
+        <button onclick="showExportModal()" class="toolbar-btn orange">⬇ Exportar</button>
+        <span class="sel-count" id="sel-count"></span>
       </div>
       <div class="table-wrap">
         <table>
           <thead><tr>
+            <th style="width:36px;"><input type="checkbox" id="chk-all" onchange="toggleAllRows(this.checked)" style="cursor:pointer;"></th>
             <th>Tipo</th><th>Part Number</th><th>Modelo</th><th>Serial</th>
             <th>Status</th><th>Cliente/Fornecedor</th><th>NF</th><th style="width:110px;">Ações</th>
           </tr></thead>
-          <tbody id="table-body"><tr class="loading-row"><td colspan="8"><span class="spinner"></span>Carregando...</td></tr></tbody>
+          <tbody id="table-body"><tr class="loading-row"><td colspan="9"><span class="spinner"></span>Carregando...</td></tr></tbody>
         </table>
         <div class="pagination" id="pagination"></div>
       </div>
@@ -379,6 +410,16 @@
   <div class="edit-modal" id="cat-modal-content"></div>
 </div>
 
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="import-overlay" onclick="if(event.target===this)closeImport()">
+  <div class="import-modal" id="import-modal-content"></div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="export-overlay" onclick="if(event.target===this)closeExport()">
+  <div class="export-modal" id="export-modal-content"></div>
+</div>
+
 <!-- PRINT AREA (hidden) -->
 <div id="print-area" style="display:none;"></div>
 
@@ -468,11 +509,12 @@ function applyFilters(){
 }
 function renderTable(){
   const body=document.getElementById('table-body');
-  if(!filtered.length){body.innerHTML='<tr class="loading-row"><td colspan="8">Nenhum equipamento encontrado</td></tr>';document.getElementById('pagination').innerHTML='';return;}
+  if(!filtered.length){body.innerHTML='<tr class="loading-row"><td colspan="9">Nenhum equipamento encontrado</td></tr>';document.getElementById('pagination').innerHTML='';return;}
   const start=page*PAGE_SIZE,slice=filtered.slice(start,start+PAGE_SIZE);
   const canEdit=['admin','gestor_axis'].includes(currentProfile?.role);
   body.innerHTML=slice.map(r=>`
-    <tr onclick="showDetail('${r.id}')">
+    <tr onclick="showDetail('${r.id}')" id="row-${r.id}">
+      <td onclick="event.stopPropagation()"><input type="checkbox" class="row-chk" data-id="${r.id}" onchange="updateSelCount()" style="cursor:pointer;"></td>
       <td class="td-tipo">${r.tipo||'—'}</td>
       <td class="td-pn">${r.part_number||'—'}</td>
       <td class="td-modelo" title="${r.modelo||''}">${r.modelo||'—'}</td>
@@ -494,6 +536,7 @@ function renderTable(){
       <button class="page-btn" onclick="goPage(${page-1})" ${page===0?'disabled':''}>‹ Anterior</button>
       <button class="page-btn" onclick="goPage(${page+1})" ${page>=totalPages-1?'disabled':''}>Próxima ›</button>
     </div>`;
+  updateSelCount();
 }
 function goPage(p){page=p;renderTable();window.scrollTo(0,0);}
 
@@ -1014,8 +1057,304 @@ function switchView(v){
   if(v==='catalogue'&&!catData.length)loadCatalogue();
 }
 
-// INIT
-window.addEventListener('load',async()=>{
+
+// ─── CHECKBOX SELECTION ───────────────────────────────────────────
+function getSelectedIds(){
+  return [...document.querySelectorAll('.row-chk:checked')].map(c=>c.dataset.id);
+}
+function updateSelCount(){
+  const n=getSelectedIds().length;
+  const el=document.getElementById('sel-count');
+  if(el)el.textContent=n>0?`${n} selecionado${n>1?'s':''}`:' ';
+}
+function toggleAllRows(checked){
+  document.querySelectorAll('.row-chk').forEach(c=>c.checked=checked);
+  updateSelCount();
+}
+
+// ─── IMPORT EXCEL ─────────────────────────────────────────────────
+let importRows=[];
+function showImportModal(){
+  importRows=[];
+  document.getElementById('import-modal-content').innerHTML=`
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">⬆ Importar Equipamentos</div>
+        <div class="modal-sub">Importe em massa via planilha Excel (.xlsx)</div>
+      </div>
+      <button class="close-btn" onclick="closeImport()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:#1e40af;line-height:1.7;">
+        <strong>Colunas esperadas na planilha:</strong><br>
+        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">serial</code> (obrigatório) · 
+        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">modelo</code> (obrigatório) · 
+        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">tipo</code> · 
+        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">part_number</code> · 
+        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">status</code> · 
+        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">cliente_fornecedor</code> · 
+        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">nota_fiscal</code> · 
+        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">observacao</code>
+      </div>
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="event.preventDefault();this.classList.remove('drag-over');handleImportFile(event.dataTransfer.files[0])">
+        <div class="drop-zone-icon">📂</div>
+        <div class="drop-zone-text">Clique para selecionar ou arraste o arquivo aqui</div>
+        <div class="drop-zone-sub">Formatos suportados: .xlsx, .xls</div>
+      </div>
+      <input type="file" id="file-input" accept=".xlsx,.xls" style="display:none" onchange="handleImportFile(this.files[0])">
+      <div id="import-preview"></div>
+    </div>
+    <div class="modal-footer" id="import-footer">
+      <button class="btn-secondary" onclick="closeImport()">Cancelar</button>
+    </div>`;
+  document.getElementById('import-overlay').classList.add('open');
+}
+function closeImport(){document.getElementById('import-overlay').classList.remove('open');}
+
+async function handleImportFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async(e)=>{
+    const wb=XLSX.read(e.target.result,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+    if(!rows.length){alert('Planilha vazia ou formato inválido.');return;}
+
+    // Normalize column names (case insensitive, trim)
+    const norm=rows.map(r=>{
+      const out={};
+      Object.keys(r).forEach(k=>{out[k.toLowerCase().trim().replace(/\s+/g,'_')]=String(r[k]).trim();});
+      return out;
+    });
+
+    // Validate and classify rows
+    const existingSerials=new Set(allData.map(d=>(d.serial||'').toLowerCase()));
+    importRows=norm.map((r,i)=>{
+      const serial=(r.serial||r['número_de_série']||r['numero_serie']||r['nº_de_série']||'').trim();
+      const modelo=(r.modelo||r['model']||r['nome']||'').trim();
+      let status='';
+      if(!serial)return{...r,serial,modelo,_line:i+2,_err:'Serial obrigatório'};
+      if(!modelo)return{...r,serial,modelo,_line:i+2,_err:'Modelo obrigatório'};
+      if(existingSerials.has(serial.toLowerCase()))return{...r,serial,modelo,_line:i+2,_dup:true};
+      return{...r,serial,modelo,_line:i+2,_ok:true};
+    });
+
+    const ok=importRows.filter(r=>r._ok).length;
+    const dup=importRows.filter(r=>r._dup).length;
+    const err=importRows.filter(r=>r._err).length;
+
+    const preview=document.getElementById('import-preview');
+    preview.innerHTML=`
+      <div style="display:flex;gap:12px;margin:14px 0 10px;flex-wrap:wrap;">
+        <span style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;">✓ ${ok} novos</span>
+        <span style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;">⚠ ${dup} duplicados (serial já existe)</span>
+        ${err?`<span style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;">✕ ${err} com erro</span>`:''}
+      </div>
+      <div style="max-height:220px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:8px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="background:#f9fafb;">
+            <th style="padding:7px 10px;text-align:left;font-weight:600;color:#6b7280;">Linha</th>
+            <th style="padding:7px 10px;text-align:left;font-weight:600;color:#6b7280;">Serial</th>
+            <th style="padding:7px 10px;text-align:left;font-weight:600;color:#6b7280;">Modelo</th>
+            <th style="padding:7px 10px;text-align:left;font-weight:600;color:#6b7280;">Status</th>
+          </tr></thead>
+          <tbody>
+            ${importRows.slice(0,100).map(r=>`
+              <tr class="${r._ok?'import-row-ok':r._dup?'import-row-dup':'import-row-err'}">
+                <td style="padding:6px 10px;">${r._line}</td>
+                <td style="padding:6px 10px;font-family:monospace;font-weight:600;">${r.serial||'—'}</td>
+                <td style="padding:6px 10px;">${r.modelo||'—'}</td>
+                <td style="padding:6px 10px;">${r._ok?'<span style="color:#16a34a;">✓ Importar</span>':r._dup?'<span style="color:#c2410c;">Duplicado</span>':'<span style="color:#dc2626;">'+r._err+'</span>'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+
+    document.getElementById('import-footer').innerHTML=`
+      <button class="btn-secondary" onclick="closeImport()">Cancelar</button>
+      ${ok>0?`<button class="btn-primary" onclick="executeImport()">⬆ Importar ${ok} equipamento${ok>1?'s':''}</button>`:'<button class="btn-primary" disabled style="opacity:.4;cursor:default;">Nenhum item válido</button>'}`;
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function executeImport(){
+  const toInsert=importRows.filter(r=>r._ok).map(r=>({
+    serial:r.serial,
+    modelo:r.modelo,
+    tipo:r.tipo||'Câmera',
+    part_number:r.part_number||null,
+    status:r.status||'Estoque - Novo',
+    cliente_fornecedor:r.cliente_fornecedor||null,
+    nota_fiscal:r.nota_fiscal||null,
+    data_nota:r.data_nota||null,
+    observacao:r.observacao||null,
+    ultima_atualizacao:new Date().toISOString()
+  }));
+  if(!toInsert.length)return;
+
+  const btn=document.querySelector('#import-footer .btn-primary');
+  btn.disabled=true;btn.textContent='Importando...';
+
+  // Insert in batches of 100
+  let inserted=0,errors=0;
+  for(let i=0;i<toInsert.length;i+=100){
+    const batch=toInsert.slice(i,i+100);
+    const{error}=await sb.from('equipamentos_axis').insert(batch);
+    if(error){console.error(error);errors+=batch.length;}
+    else inserted+=batch.length;
+  }
+
+  closeImport();
+  await loadData();
+  alert(`✓ ${inserted} equipamentos importados com sucesso!${errors?'\n⚠ '+errors+' erros — verifique o console.':''}`);
+}
+
+// ─── EXPORT ───────────────────────────────────────────────────────
+function showExportModal(){
+  const selIds=getSelectedIds();
+  const selCount=selIds.length;
+  const visCount=filtered.length;
+  const locCount=allData.filter(d=>d.status==='Locado').length;
+  const alertCount=allData.filter(d=>d.alertas?.length).length;
+
+  document.getElementById('export-modal-content').innerHTML=`
+    <div class="modal-header">
+      <div class="modal-title">⬇ Exportar Equipamentos</div>
+      <button class="close-btn" onclick="closeExport()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="export-opt" onclick="doExport('selected','xlsx')" style="${selCount===0?'opacity:.4;cursor:default;pointer-events:none':''}">
+        <div class="export-opt-icon">☑️</div>
+        <div><div class="export-opt-title">Selecionados — Excel</div><div class="export-opt-sub">${selCount} equipamento${selCount!==1?'s':''} marcados na tabela${selCount===0?' (marque linhas primeiro)':''}</div></div>
+      </div>
+      <div class="export-opt" onclick="doExport('selected','pdf')" style="${selCount===0?'opacity:.4;cursor:default;pointer-events:none':''}">
+        <div class="export-opt-icon">☑️</div>
+        <div><div class="export-opt-title">Selecionados — PDF</div><div class="export-opt-sub">${selCount} equipamento${selCount!==1?'s':''} marcados${selCount===0?' (marque linhas primeiro)':''}</div></div>
+      </div>
+      <div style="height:1px;background:#f3f4f6;margin:10px 0;"></div>
+      <div class="export-opt" onclick="doExport('visible','xlsx')">
+        <div class="export-opt-icon">🔍</div>
+        <div><div class="export-opt-title">Visíveis (com filtros) — Excel</div><div class="export-opt-sub">${visCount} equipamentos atualmente exibidos</div></div>
+      </div>
+      <div class="export-opt" onclick="doExport('visible','pdf')">
+        <div class="export-opt-icon">🔍</div>
+        <div><div class="export-opt-title">Visíveis (com filtros) — PDF</div><div class="export-opt-sub">${visCount} equipamentos atualmente exibidos</div></div>
+      </div>
+      <div style="height:1px;background:#f3f4f6;margin:10px 0;"></div>
+      <div class="export-opt" onclick="doExport('locacoes','xlsx')">
+        <div class="export-opt-icon">📍</div>
+        <div><div class="export-opt-title">Locações Ativas — Excel</div><div class="export-opt-sub">${locCount} equipamentos com status Locado</div></div>
+      </div>
+      <div class="export-opt" onclick="doExport('locacoes','pdf')">
+        <div class="export-opt-icon">📍</div>
+        <div><div class="export-opt-title">Locações Ativas — PDF</div><div class="export-opt-sub">${locCount} equipamentos com status Locado</div></div>
+      </div>
+      <div style="height:1px;background:#f3f4f6;margin:10px 0;"></div>
+      <div class="export-opt" onclick="doExport('alertas','xlsx')">
+        <div class="export-opt-icon">⚠️</div>
+        <div><div class="export-opt-title">Alertas — Excel</div><div class="export-opt-sub">${alertCount} equipamentos com pendências</div></div>
+      </div>
+      <div class="export-opt" onclick="doExport('alertas','pdf')">
+        <div class="export-opt-icon">⚠️</div>
+        <div><div class="export-opt-title">Alertas — PDF</div><div class="export-opt-sub">${alertCount} equipamentos com pendências</div></div>
+      </div>
+    </div>`;
+  document.getElementById('export-overlay').classList.add('open');
+}
+function closeExport(){document.getElementById('export-overlay').classList.remove('open');}
+
+function getExportRows(type){
+  const selIds=new Set(getSelectedIds());
+  if(type==='selected')return allData.filter(r=>selIds.has(r.id));
+  if(type==='visible')return filtered;
+  if(type==='locacoes')return allData.filter(r=>r.status==='Locado');
+  if(type==='alertas')return allData.filter(r=>r.alertas?.length);
+  return [];
+}
+
+const EXPORT_LABELS={
+  selected:'Selecionados',visible:'Visíveis',locacoes:'Locações_Ativas',alertas:'Alertas'
+};
+
+function doExport(type,format){
+  closeExport();
+  const rows=getExportRows(type);
+  if(!rows.length){alert('Nenhum equipamento para exportar.');return;}
+  if(format==='xlsx')exportXlsx(rows,EXPORT_LABELS[type]);
+  else exportPdf(rows,EXPORT_LABELS[type]);
+}
+
+function rowsToSheetData(rows){
+  return rows.map(r=>({
+    'Tipo':r.tipo||'',
+    'Part Number':r.part_number||'',
+    'Modelo':r.modelo||'',
+    'Serial':r.serial||'',
+    'Status':r.status||'',
+    'Cliente/Fornecedor':r.cliente_fornecedor||'',
+    'Nota Fiscal':r.nota_fiscal||'',
+    'Data NF':r.data_nota?new Date(r.data_nota).toLocaleDateString('pt-BR'):'',
+    'Última Atualização':r.ultima_atualizacao?new Date(r.ultima_atualizacao).toLocaleDateString('pt-BR'):'',
+    'Observação':r.observacao||''
+  }));
+}
+
+function exportXlsx(rows,label){
+  const data=rowsToSheetData(rows);
+  const ws=XLSX.utils.json_to_sheet(data);
+  // Column widths
+  ws['!cols']=[{wch:14},{wch:14},{wch:35},{wch:20},{wch:20},{wch:28},{wch:14},{wch:12},{wch:18},{wch:30}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Inventário');
+  const date=new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+  XLSX.writeFile(wb,`Axis_Inventario_${label}_${date}.xlsx`);
+}
+
+function exportPdf(rows,label){
+  const date=new Date().toLocaleDateString('pt-BR');
+  const area=document.getElementById('print-area');
+  area.style.display='block';
+  area.innerHTML=`<style>
+    @media print{body *{visibility:hidden;}#print-area,#print-area *{visibility:visible;}#print-area{position:absolute;left:0;top:0;width:100%;}}
+    body{font-family:Arial,sans-serif;font-size:11px;}
+    .pdf-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #2563eb;}
+    .pdf-title{font-size:18px;font-weight:700;color:#111;}
+    .pdf-sub{font-size:12px;color:#6b7280;margin-top:3px;}
+    .pdf-meta{font-size:11px;color:#6b7280;text-align:right;}
+    table{width:100%;border-collapse:collapse;font-size:10px;}
+    th{background:#2563eb;color:#fff;padding:7px 8px;text-align:left;font-size:10px;}
+    td{padding:6px 8px;border-bottom:1px solid #e5e7eb;}
+    tr:nth-child(even) td{background:#f9fafb;}
+    .badge-pdf{display:inline-block;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;}
+  </style>
+  <div class="pdf-header">
+    <div>
+      <div class="pdf-title">Inventário Axis Traders</div>
+      <div class="pdf-sub">${label.replace(/_/g,' ')} · ${rows.length} equipamento${rows.length!==1?'s':''}</div>
+    </div>
+    <div class="pdf-meta">Gerado em ${date}<br>Axis Traders</div>
+  </div>
+  <table>
+    <thead><tr><th>Tipo</th><th>Part Number</th><th>Modelo</th><th>Serial</th><th>Status</th><th>Cliente/Fornecedor</th><th>NF</th></tr></thead>
+    <tbody>
+      ${rows.map(r=>`<tr>
+        <td>${r.tipo||'—'}</td>
+        <td style="font-family:monospace;">${r.part_number||'—'}</td>
+        <td>${r.modelo||'—'}</td>
+        <td style="font-family:monospace;font-weight:700;">${r.serial||'—'}</td>
+        <td>${r.status||'—'}</td>
+        <td>${r.cliente_fornecedor||'—'}</td>
+        <td>${r.nota_fiscal||'—'}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+  setTimeout(()=>{window.print();setTimeout(()=>{area.style.display='none';area.innerHTML='';},600);},400);
+}
+
+
   const{data:{session}}=await sb.auth.getSession();
   if(session?.user)await initApp(session.user);
   document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
