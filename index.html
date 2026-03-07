@@ -430,9 +430,15 @@ async function initApp(user){
 // DATA
 async function loadData(){
   document.getElementById('table-body').innerHTML='<tr class="loading-row"><td colspan="8"><span class="spinner"></span>Carregando...</td></tr>';
-  const{data,error}=await sb.from('equipamentos_axis').select('*').order('created_at',{ascending:false});
-  if(error){console.error(error);return;}
-  allData=(data||[]).map(r=>({...r,alertas:getAlertas(r)}));
+  let all=[], from=0, batchSize=1000, done=false;
+  while(!done){
+    const{data,error}=await sb.from('equipamentos_axis').select('*').order('created_at',{ascending:false}).range(from,from+batchSize-1);
+    if(error){console.error(error);break;}
+    if(!data||data.length===0){done=true;break;}
+    all=all.concat(data);
+    if(data.length<batchSize){done=true;}else{from+=batchSize;}
+  }
+  allData=all.map(r=>({...r,alertas:getAlertas(r)}));
   updateKPIs();applyFilters();renderDashboard();renderAlerts();
 }
 function getAlertas(r){
