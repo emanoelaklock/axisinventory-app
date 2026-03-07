@@ -502,7 +502,10 @@ function selectItem(id) {
         <div class="detail-row"><span class="detail-key">Últ. Atualização</span><span class="detail-val">${formatDate(r.ultima_atualizacao)}</span></div>
         ${r.observacao?`<div class="detail-row"><span class="detail-key">Observação</span><span class="detail-val">${r.observacao}</span></div>`:''}
       </div>
-      ${canEdit ? `<button class="edit-btn" onclick="showEditModal('${r.id}')">✎ Editar equipamento</button>` : ''}
+      ${canEdit ? `
+        <button class="edit-btn" onclick="showEditModal('${r.id}')">✎ Editar equipamento</button>
+        <button class="edit-btn" onclick="deleteEquipamento('${r.id}', '${r.serial}')" style="margin-top:6px;color:var(--red);border-color:rgba(255,87,87,.3);">✕ Excluir equipamento</button>
+      ` : ''}
     </div>`;
 }
 
@@ -638,6 +641,19 @@ function selectSuggestion(pn, modelo, tipo) {
   applyLookup({ modelo, tipo });
   document.getElementById('pn-suggestions').style.display = 'none';
   document.getElementById('pn-status').textContent = '✓';
+}
+
+async function deleteEquipamento(id, serial) {
+  if (!confirm(`Tem certeza que deseja excluir o equipamento ${serial}?\n\nEsta ação não pode ser desfeita.`)) return;
+  const { error } = await sb.from('equipamentos_axis').delete().eq('id', id);
+  if (error) { alert('Erro ao excluir: ' + error.message); return; }
+  selectedId = null;
+  document.getElementById('detail-panel').innerHTML = `
+    <div class="detail-empty">
+      <div class="detail-empty-icon">◎</div>
+      <div style="font-size:12px;color:var(--text3);">Selecione um equipamento</div>
+    </div>`;
+  await loadData();
 }
 
 async function saveEquipamento(id) {
