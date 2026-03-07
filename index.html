@@ -1085,16 +1085,12 @@ function showImportModal(){
       <button class="close-btn" onclick="closeImport()">✕</button>
     </div>
     <div class="modal-body">
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:#1e40af;line-height:1.7;">
-        <strong>Colunas esperadas na planilha:</strong><br>
-        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">serial</code> (obrigatório) · 
-        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">modelo</code> (obrigatório) · 
-        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">tipo</code> · 
-        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">part_number</code> · 
-        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">status</code> · 
-        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">cliente_fornecedor</code> · 
-        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">nota_fiscal</code> · 
-        <code style="background:#dbeafe;padding:1px 5px;border-radius:4px;">observacao</code>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;margin-bottom:16px;">
+        <div style="font-size:12px;color:#1e40af;line-height:1.7;">
+          <strong>Colunas esperadas:</strong>
+          serial · modelo · tipo · part_number · status · cliente_fornecedor · nota_fiscal · observacao
+        </div>
+        <button onclick="downloadTemplate()" style="flex-shrink:0;margin-left:14px;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">⬇ Baixar modelo</button>
       </div>
       <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()"
         ondragover="event.preventDefault();this.classList.add('drag-over')"
@@ -1112,7 +1108,20 @@ function showImportModal(){
     </div>`;
   document.getElementById('import-overlay').classList.add('open');
 }
-function closeImport(){document.getElementById('import-overlay').classList.remove('open');}
+function downloadTemplate(){
+  const headers=[['serial','modelo','tipo','part_number','status','cliente_fornecedor','nota_fiscal','data_nota','observacao']];
+  const examples=[
+    ['B8A44F1234AB','AXIS P1455-LE Network Camera','Câmera','01997-001','Estoque - Novo','','55515','2024-01-15',''],
+    ['B8A44F5678CD','AXIS P3715-PLVE Network Camera','Câmera','01970-001','Locado','Westrock - Araçatuba','Ebay','',''],
+    ['C2023456789A','AXIS T8134 60 W Midspan','Acessório','5900-334','Estoque - Novo','','26637','',''],
+  ];
+  const ws=XLSX.utils.aoa_to_sheet([...headers,...examples]);
+  ws['!cols']=[{wch:20},{wch:38},{wch:16},{wch:14},{wch:20},{wch:28},{wch:14},{wch:12},{wch:30}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Importação');
+  XLSX.writeFile(wb,'Modelo_Importacao_Axis.xlsx');
+}
+
 
 async function handleImportFile(file){
   if(!file)return;
