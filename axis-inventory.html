@@ -390,7 +390,7 @@ tr:hover td{background:var(--surface2);color:var(--text)}
         <span class="nav-icon">📋</span> Histórico geral
       </button>
       <div class="sidebar-section" style="margin-top:.5rem">Operacional</div>
-      <button class="nav-item" id="nav-checklist" onclick="window.open('checklist-axis.html','_blank')">
+      <button class="nav-item" id="nav-checklist" onclick="abrirChecklistExterno()">
         <span class="nav-icon">✅</span> Checklist Axis
       </button>
       <div class="sidebar-section" style="margin-top:.5rem">Cadastros</div>
@@ -1799,6 +1799,13 @@ document.addEventListener('click',e=>{
   }
 });
 
+// ── ABRIR CHECKLIST EXTERNO
+function abrirChecklistExterno(){
+  if(SESSION && SESSION.access_token){
+    sessionStorage.setItem('axis_token', SESSION.access_token);
+  }
+  window.open('https://axisinventory-app.vercel.app/checklist-axis.html','_blank');
+}
 // ── CHECKLIST AXIS (OLD - UNUSED) ───────────────────────────────────────────────────────
 let chkFotos={1:null,2:null,3:null};
 let todosChk=[];
