@@ -204,7 +204,7 @@ tr:hover .acts{opacity:1}
         <button class="btn btn-sm" onclick="carregarItens(true)" title="Atualizar">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
-        <button class="btn btn-p btn-sm" id="btn-novo" onclick="window.open('axis-inventory.html#cadastrar','_blank')">
+        <button class="btn btn-p btn-sm" id="btn-novo" onclick="location.href='cadastrar-item.html'">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           <span>Cadastrar item</span>
         </button>
@@ -347,11 +347,11 @@ const PODE = {
 
 // Tipos permitidos por perfil (espelho de tipos_movimentacao.perfis no banco)
 const TIPOS_PERFIL = {
-  Administrador:  null, // null = todos
-  Almoxarifado:   ['Entrada estoque','Reserva','Envio cliente','Retorno cliente','Envio técnico','Retorno técnico','Ajuste administrativo'],
-  Laboratório:    ['Envio inspeção','Resultado inspeção','Envio RMA','Retorno RMA','Substituição RMA'],
-  Técnico:        ['Envio técnico','Retorno técnico','Envio inspeção'],
-  Consulta:       [],
+  'Administrador':  null, // null = todos
+  'Almoxarifado':   ['Entrada estoque','Reserva','Envio cliente','Retorno cliente','Envio técnico','Retorno técnico','Ajuste administrativo'],
+  'Laboratório':    ['Envio inspeção','Resultado inspeção','Envio RMA','Retorno RMA','Substituição RMA'],
+  'Técnico':        ['Envio técnico','Retorno técnico','Envio inspeção'],
+  'Consulta':       [],
 }
 
 const hAuth = () => ({
@@ -690,7 +690,7 @@ window.irP = p => {
 // ═══════════════════════════════════════════════════════════════
 let itemMov = null
 
-window.openVer  = id => window.open(`axis-inventory.html#detalhe-${id}`, '_blank')
+window.openVer  = id => window.open(`detalhe-item.html#${id}`, '_blank')
 window.openChk  = id => window.open(`checklist-axis.html?item=${id}`, '_blank')
 
 window.openMov = id => {
