@@ -63,12 +63,13 @@ tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(37,99,235,.015)}
 .mono{font-family:var(--mono);font-size:12px}
 .cat-badge{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.cat-camera{background:rgba(37,99,235,.1);color:#2563EB}
-.cat-acessorio{background:rgba(245,158,11,.1);color:#D97706}
-.cat-radar{background:rgba(139,92,246,.1);color:#7C3AED}
+.cat-cameras{background:rgba(37,99,235,.1);color:#2563EB}
 .cat-intercom{background:rgba(8,145,178,.1);color:#0891B2}
 .cat-acesso{background:rgba(5,150,105,.1);color:#059669}
-.cat-outro{background:var(--sur2);color:var(--tx3)}
+.cat-audio{background:rgba(220,38,38,.1);color:#DC2626}
+.cat-wearables{background:rgba(139,92,246,.1);color:#7C3AED}
+.cat-acessorios{background:rgba(245,158,11,.1);color:#D97706}
+.cat-outros{background:var(--sur2);color:var(--tx3)}
 .acts{display:flex;gap:3px;opacity:0;transition:opacity .15s}
 tr:hover .acts{opacity:1}
 .ab{padding:4px 8px;border-radius:6px;border:1px solid transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
@@ -189,12 +190,13 @@ tr:hover .acts{opacity:1}
       </div>
       <select class="fsel" id="f-cat" onchange="onF()">
         <option value="">Categoria</option>
-        <option>Câmera</option>
-        <option>Acessório</option>
-        <option>Radar</option>
+        <option>Cameras</option>
         <option>Intercom</option>
         <option>Controle de Acesso</option>
-        <option>Outro</option>
+        <option>Audio</option>
+        <option>Wearables</option>
+        <option>Acessórios</option>
+        <option>Outros</option>
       </select>
       <select class="fsel" id="f-ativo" onchange="onF()">
         <option value="">Status</option>
@@ -247,12 +249,13 @@ tr:hover .acts{opacity:1}
           <label>Categoria *</label>
           <select id="f-cat-form">
             <option value="">Selecione...</option>
-            <option>Câmera</option>
-            <option>Acessório</option>
-            <option>Radar</option>
+            <option>Cameras</option>
             <option>Intercom</option>
             <option>Controle de Acesso</option>
-            <option>Outro</option>
+            <option>Audio</option>
+            <option>Wearables</option>
+            <option>Acessórios</option>
+            <option>Outros</option>
           </select>
         </div>
       </div>
@@ -426,8 +429,9 @@ const srt = col => { if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc; else{QS.sortCol
 
 // ── CATEGORIA BADGE ───────────────────────────────────────────
 const CAT_CLS = {
-  'Câmera':'cat-camera','Acessório':'cat-acessorio','Radar':'cat-radar',
-  'Intercom':'cat-intercom','Controle de Acesso':'cat-acesso',
+  'Cameras':'cat-cameras','Intercom':'cat-intercom',
+  'Controle de Acesso':'cat-acesso','Audio':'cat-audio',
+  'Wearables':'cat-wearables','Acessórios':'cat-acessorios',
 }
 const catBadge = c => `<span class="cat-badge ${CAT_CLS[c]||'cat-outro'}">${esc(c||'—')}</span>`
 
@@ -554,7 +558,7 @@ window.toggleAtivo = async (id, atual) => {
 
 // ── CSV DOWNLOAD (modelo) ─────────────────────────────────────
 const baixarModelo = () => {
-  const csv = 'categoria;part_number;modelo;descricao\nCâmera;02060-001;AXIS P3818-PVE Panoramic Camera;Câmera panorâmica 12MP\nAcessório;01179-001;AXIS Q35 Weathershield Kit A;Kit de proteção para câmeras série Q35\n'
+  const csv = 'categoria;part_number;modelo;descricao\nCameras;02060-001;AXIS P3818-PVE Panoramic Camera;Câmera panorâmica 12MP\nAcessórios;01179-001;AXIS Q35 Weathershield Kit A;Kit de proteção para câmeras série Q35\nIntercom;01995-001;AXIS I8016-LVE Network Video Intercom;Intercom IP externo\n'
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' })
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
