@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;--bd:#E2E6F0;--bd2:#C8CEDF;--tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;--ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;--gr:#059669;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace}
+:root{--bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;--bd:#E2E6F0;--bd2:#C8CEDF;--tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;--ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;--gr:#059669;--am:#D97706;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
 .page{display:flex;flex-direction:column;min-height:100vh}
 .topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
@@ -73,7 +73,12 @@ tr:hover .acts{opacity:1}
 .fg label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
 .fg input{padding:8px 11px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx);outline:none;transition:border .15s}
 .fg input:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acl)}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cnpj-row{display:flex;gap:6px;align-items:center}
+.cnpj-row input{flex:1}
+.btn-cnpj{padding:8px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur2);color:var(--tx2);font-family:inherit;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.btn-cnpj:hover{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn-cnpj:disabled{opacity:.5;cursor:default}
+.cnpj-hint{font-size:11px;margin-top:3px;display:none;line-height:1.4}
 .merr{padding:9px 12px;border-radius:7px;font-size:13px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;display:none}
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
@@ -81,7 +86,7 @@ tr:hover .acts{opacity:1}
 .toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
-@media(max-width:600px){.frow{grid-template-columns:1fr}.nav{display:none}}
+@media(max-width:600px){.nav{display:none}}
 </style>
 </head>
 <body>
@@ -93,21 +98,21 @@ tr:hover .acts{opacity:1}
   </div>
   <nav class="nav">
     <button class="nav-btn" onclick="location.href='lista-itens.html'">Equipamentos</button>
-    <button class="nav-btn" onclick="location.href='lista-itens.html'">Movimentações</button>
+    <button class="nav-btn" onclick="location.href='lista-itens.html'">Movimentacoes</button>
     <button class="nav-btn" onclick="location.href='lista-itens.html'">Checklists</button>
     <button class="nav-btn" onclick="location.href='modelos.html'">Modelos</button>
     <button class="nav-btn on">Clientes</button>
-    <button class="nav-btn" onclick="location.href='responsaveis.html'">Responsáveis</button>
+    <button class="nav-btn" onclick="location.href='responsaveis.html'">Responsaveis</button>
   </nav>
   <div class="topbar-r">
-    <span class="perfil-chip" id="perfil-chip">—</span>
-    <div class="avatar" id="avatar">—</div>
+    <span class="perfil-chip" id="perfil-chip">&#8212;</span>
+    <div class="avatar" id="avatar">&#8212;</div>
   </div>
 </header>
 <main class="content">
   <div id="login-screen" style="display:none;max-width:360px;margin:60px auto">
     <div style="text-align:center;margin-bottom:24px">
-      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">📡</div>
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">&#128225;</div>
       <div style="font-size:18px;font-weight:700">Axis Inventory</div>
       <div style="font-size:13px;color:var(--tx3);margin-top:4px">Entre para continuar</div>
     </div>
@@ -137,13 +142,13 @@ tr:hover .acts{opacity:1}
         <option value="true">Ativos</option>
         <option value="false">Inativos</option>
       </select>
-      <span class="cbadge" id="cbadge">—</span>
+      <span class="cbadge" id="cbadge">&#8212;</span>
     </div>
     <div class="tcard">
       <div class="twrap">
         <table>
           <thead><tr>
-            <th onclick="srt('nome')">Nome</th>
+            <th onclick="srt('nome')">Nome / Razao Social</th>
             <th onclick="srt('cnpj')">CNPJ</th>
             <th onclick="srt('ativo')">Status</th>
             <th onclick="srt('data_cadastro')">Cadastro</th>
@@ -153,7 +158,7 @@ tr:hover .acts{opacity:1}
         </table>
       </div>
       <div class="pag">
-        <span class="pag-info" id="pag-info">—</span>
+        <span class="pag-info" id="pag-info">&#8212;</span>
         <div class="pag-ctrl" id="pag-ctrl"></div>
       </div>
     </div>
@@ -161,16 +166,34 @@ tr:hover .acts{opacity:1}
 </main>
 </div>
 <div class="tc" id="tc"></div>
+
+<!-- MODAL NOVO/EDITAR -->
 <div class="mback" id="m-form" onclick="if(event.target===this)closeM('m-form')">
   <div class="modal">
     <div class="mh">
       <div class="mt" id="m-title">Novo cliente</div>
-      <button class="mx" onclick="closeM('m-form')">✕</button>
+      <button class="mx" onclick="closeM('m-form')">&#x2715;</button>
     </div>
     <div class="mb">
       <div class="merr" id="m-err"></div>
-      <div class="fg"><label>Nome *</label><input id="f-nome" placeholder="Ex: Empresa ABC Ltda"/></div>
-      <div class="fg"><label>CNPJ</label><input id="f-cnpj" placeholder="Ex: 00.000.000/0001-00" maxlength="18" oninput="mascararCNPJ(this)"/></div>
+      <!-- CNPJ com busca automatica -->
+      <div class="fg">
+        <label>CNPJ</label>
+        <div class="cnpj-row">
+          <input id="f-cnpj" placeholder="00.000.000/0001-00" maxlength="18"
+            oninput="mascararCNPJ(this)"
+            onblur="buscarCNPJ(this.value)"/>
+          <button type="button" class="btn-cnpj" id="btn-cnpj" onclick="buscarCNPJ(document.getElementById('f-cnpj').value)">
+            Buscar
+          </button>
+        </div>
+        <div class="cnpj-hint" id="cnpj-hint"></div>
+      </div>
+      <!-- Nome preenchido automaticamente ou manualmente -->
+      <div class="fg">
+        <label>Razao Social / Nome *</label>
+        <input id="f-nome" placeholder="Preenchido automaticamente pelo CNPJ"/>
+      </div>
     </div>
     <div class="mf">
       <button class="btn btn-sm" onclick="closeM('m-form')">Cancelar</button>
@@ -178,114 +201,280 @@ tr:hover .acts{opacity:1}
     </div>
   </div>
 </div>
+
 <script>
-const SURL='https://adbskoverysjohhwadln.supabase.co'
-const AKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
-const POR_PAG=25
-let SESSION=null,PERFIL='Consulta',editId=null
-const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
-const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-const fdt=iso=>iso?new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'—'
-const mascararCNPJ=el=>{let v=el.value.replace(/\D/g,'').substring(0,14);v=v.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d)/,'$1-$2');el.value=v}
-const fazerLogin=async()=>{
-  const email=document.getElementById('l-email').value.trim(),senha=document.getElementById('l-senha').value
-  const btn=document.getElementById('btn-login'),msg=document.getElementById('login-msg')
-  if(!email||!senha){toast('Preencha email e senha.','err');return}
-  btn.textContent='Entrando…';btn.disabled=true;msg.innerHTML=''
-  try{
-    const r=await fetch(`${SURL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})})
-    const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.message||'Erro')
-    SESSION={access_token:d.access_token,user:d.user};sessionStorage.setItem('ax_sess',JSON.stringify(SESSION));await posLogin()
-  }catch(e){msg.innerHTML=`<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`}
-  finally{btn.textContent='Entrar';btn.disabled=false}
+const SURL = 'https://adbskoverysjohhwadln.supabase.co'
+const AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+const POR_PAG = 25
+let SESSION = null, PERFIL = 'Consulta', editId = null
+
+const hAuth = () => ({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const fdt = iso => iso ? new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) : '&mdash;'
+
+// ── MASCARA CNPJ ──────────────────────────────────────────────
+const mascararCNPJ = el => {
+  let v = el.value.replace(/\D/g,'').substring(0,14)
+  v = v.replace(/^(\d{2})(\d)/,'$1.$2')
+       .replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3')
+       .replace(/\.(\d{3})(\d)/,'.$1/$2')
+       .replace(/(\d{4})(\d)/,'$1-$2')
+  el.value = v
 }
-const posLogin=async()=>{
-  const r=await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${SESSION.user.id}`,{headers:hAuth()})
-  const d=await r.json();PERFIL=d[0]?.perfil||'Consulta'
-  const nome=d[0]?.nome||SESSION.user.email?.split('@')[0]||'?'
-  document.getElementById('avatar').textContent=nome[0].toUpperCase()
-  document.getElementById('perfil-chip').textContent=PERFIL
-  document.getElementById('login-screen').style.display='none'
-  document.getElementById('app').style.display='block'
-  if(!['Administrador','Almoxarifado'].includes(PERFIL))document.getElementById('btn-novo').style.display='none'
+
+// ── BUSCA CNPJ ────────────────────────────────────────────────
+const buscarCNPJ = async cnpj => {
+  const digits = cnpj.replace(/\D/g,'')
+  if (digits.length !== 14) return
+
+  const hint   = document.getElementById('cnpj-hint')
+  const btn    = document.getElementById('btn-cnpj')
+  const nomeEl = document.getElementById('f-nome')
+
+  hint.style.display = 'block'
+  hint.style.color = 'var(--tx3)'
+  hint.textContent = 'Buscando...'
+  btn.textContent  = '...'
+  btn.disabled     = true
+
+  const preencher = razao => {
+    if (razao && !nomeEl.value.trim()) nomeEl.value = razao
+    hint.style.color = 'var(--gr)'
+    hint.textContent = razao || 'CNPJ valido'
+  }
+
+  const erro = msg => {
+    hint.style.color = 'var(--re)'
+    hint.textContent = msg
+  }
+
+  const aviso = msg => {
+    hint.style.color = 'var(--am)'
+    hint.textContent = msg
+  }
+
+  // Tenta BrasilAPI primeiro (sem CORS issues)
+  try {
+    const r = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${digits}`)
+    if (r.ok) {
+      const d = await r.json()
+      preencher(d.razao_social || d.nome_fantasia || '')
+      btn.textContent = 'Buscar'; btn.disabled = false
+      return
+    }
+  } catch {}
+
+  // Fallback: ReceitaWS
+  try {
+    const r = await fetch(`https://receitaws.com.br/v1/cnpj/${digits}`)
+    if (r.ok) {
+      const d = await r.json()
+      if (d.status === 'ERROR') throw new Error(d.message || 'CNPJ invalido')
+      preencher(d.nome || d.fantasia || '')
+      btn.textContent = 'Buscar'; btn.disabled = false
+      return
+    }
+  } catch (e) {
+    if (e.message && !e.message.includes('fetch')) {
+      erro(e.message)
+      btn.textContent = 'Buscar'; btn.disabled = false
+      return
+    }
+  }
+
+  aviso('Consulta indisponivel — preencha o nome manualmente')
+  btn.textContent = 'Buscar'; btn.disabled = false
+}
+
+// ── AUTH ──────────────────────────────────────────────────────
+const fazerLogin = async () => {
+  const email = document.getElementById('l-email').value.trim()
+  const senha = document.getElementById('l-senha').value
+  const btn = document.getElementById('btn-login')
+  const msg = document.getElementById('login-msg')
+  if (!email || !senha) { toast('Preencha email e senha.','err'); return }
+  btn.textContent = 'Entrando...'; btn.disabled = true; msg.innerHTML = ''
+  try {
+    const r = await fetch(`${SURL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})})
+    const d = await r.json()
+    if (!r.ok) throw new Error(d.error_description || d.message || 'Erro')
+    SESSION = { access_token: d.access_token, user: d.user }
+    sessionStorage.setItem('ax_sess', JSON.stringify(SESSION))
+    await posLogin()
+  } catch(e) {
+    msg.innerHTML = `<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`
+  } finally { btn.textContent = 'Entrar'; btn.disabled = false }
+}
+
+const posLogin = async () => {
+  const r = await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${SESSION.user.id}`,{headers:hAuth()})
+  const d = await r.json()
+  PERFIL = d[0]?.perfil || 'Consulta'
+  const nome = d[0]?.nome || SESSION.user.email?.split('@')[0] || '?'
+  document.getElementById('avatar').textContent = nome[0].toUpperCase()
+  document.getElementById('perfil-chip').textContent = PERFIL
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('app').style.display = 'block'
+  if (!['Administrador','Almoxarifado'].includes(PERFIL)) document.getElementById('btn-novo').style.display = 'none'
   carregar(true)
 }
-let QS={busca:'',ativo:'',sortCol:'nome',sortAsc:true,pagina:0,total:0}
-const buildQ=()=>{
-  const from=QS.pagina*POR_PAG,to=from+POR_PAG-1
-  let q=`clientes?select=*`
-  if(QS.ativo!=='')q+=`&ativo=eq.${QS.ativo}`
-  if(QS.busca){const b=encodeURIComponent(`%${QS.busca}%`);q+=`&or=(nome.ilike.${b},cnpj.ilike.${b})`}
-  q+=`&order=${QS.sortCol}.${QS.sortAsc?'asc':'desc'}.nullslast`
-  return{q,range:`${from}-${to}`}
+
+// ── QUERY ─────────────────────────────────────────────────────
+let QS = {busca:'',ativo:'',sortCol:'nome',sortAsc:true,pagina:0,total:0}
+
+const buildQ = () => {
+  const from = QS.pagina * POR_PAG, to = from + POR_PAG - 1
+  let q = 'clientes?select=*'
+  if (QS.ativo !== '') q += `&ativo=eq.${QS.ativo}`
+  if (QS.busca) { const b = encodeURIComponent(`%${QS.busca}%`); q += `&or=(nome.ilike.${b},cnpj.ilike.${b})` }
+  q += `&order=${QS.sortCol}.${QS.sortAsc?'asc':'desc'}.nullslast`
+  return { q, range: `${from}-${to}` }
 }
-let loading=false
-const carregar=async(reset=false)=>{
-  if(loading)return;if(reset)QS.pagina=0;loading=true;renderSkel()
-  try{
-    const{q,range}=buildQ()
-    const r=await fetch(`${SURL}/rest/v1/${q}`,{headers:{...hAuth(),'Prefer':'count=exact','Range':range,'Range-Unit':'items'}})
-    if(!r.ok)throw new Error((await r.json())?.message||'Erro')
-    const data=await r.json();const cr=r.headers.get('content-range')
-    QS.total=cr?parseInt(cr.split('/')[1]):data.length
-    renderTabela(data);renderPag()
-    document.getElementById('page-sub').textContent=`${QS.total} cliente(s) cadastrado(s)`
-    document.getElementById('cbadge').textContent=`${QS.total}`
-    document.getElementById('pag-info').textContent=QS.total?`${QS.pagina*POR_PAG+1}–${Math.min((QS.pagina+1)*POR_PAG,QS.total)} de ${QS.total}`:'Nenhum resultado'
-  }catch(e){document.getElementById('tbody').innerHTML=`<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--tx3)">${esc(e.message)}</td></tr>`;toast(e.message,'err')}
-  finally{loading=false}
+
+let loading = false
+const carregar = async (reset=false) => {
+  if (loading) return
+  if (reset) QS.pagina = 0
+  loading = true; renderSkel()
+  try {
+    const {q, range} = buildQ()
+    const r = await fetch(`${SURL}/rest/v1/${q}`,{headers:{...hAuth(),'Prefer':'count=exact','Range':range,'Range-Unit':'items'}})
+    if (!r.ok) throw new Error((await r.json())?.message || 'Erro')
+    const data = await r.json()
+    const cr = r.headers.get('content-range')
+    QS.total = cr ? parseInt(cr.split('/')[1]) : data.length
+    renderTabela(data); renderPag()
+    document.getElementById('page-sub').textContent = `${QS.total} cliente(s) cadastrado(s)`
+    document.getElementById('cbadge').textContent = `${QS.total}`
+    document.getElementById('pag-info').textContent = QS.total
+      ? `${QS.pagina*POR_PAG+1}-${Math.min((QS.pagina+1)*POR_PAG,QS.total)} de ${QS.total}`
+      : 'Nenhum resultado'
+  } catch(e) {
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--tx3)">${esc(e.message)}</td></tr>`
+    toast(e.message,'err')
+  } finally { loading = false }
 }
-let qt=null
-const onQ=v=>{clearTimeout(qt);qt=setTimeout(()=>{QS.busca=v.trim();QS.pagina=0;carregar()},280)}
-const onF=()=>{QS.ativo=document.getElementById('f-ativo').value;QS.pagina=0;carregar();document.getElementById('f-ativo').classList.toggle('on',!!document.getElementById('f-ativo').value)}
-const srt=col=>{if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc;else{QS.sortCol=col;QS.sortAsc=true};QS.pagina=0;carregar()}
-const renderSkel=()=>{document.getElementById('tbody').innerHTML=Array(5).fill(0).map(()=>`<tr>${Array(4).fill(0).map(()=>`<td><span class="sk" style="width:${50+Math.random()*80}px"></span></td>`).join('')}<td></td></tr>`).join('')}
-const renderTabela=rows=>{
-  if(!rows.length){document.getElementById('tbody').innerHTML=`<tr><td colspan="5"><div class="empty"><div class="empty-icon">🏢</div><div class="empty-t">Nenhum cliente encontrado</div></div></td></tr>`;return}
-  const canEdit=['Administrador','Almoxarifado'].includes(PERFIL)
-  document.getElementById('tbody').innerHTML=rows.map(c=>`<tr>
+
+let qt = null
+const onQ = v => { clearTimeout(qt); qt = setTimeout(()=>{QS.busca=v.trim();QS.pagina=0;carregar()},280) }
+const onF = () => { QS.ativo = document.getElementById('f-ativo').value; QS.pagina=0; carregar(); document.getElementById('f-ativo').classList.toggle('on',!!document.getElementById('f-ativo').value) }
+const srt = col => { if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc; else{QS.sortCol=col;QS.sortAsc=true}; QS.pagina=0; carregar() }
+
+const renderSkel = () => { document.getElementById('tbody').innerHTML = Array(5).fill(0).map(()=>`<tr>${Array(4).fill(0).map(()=>`<td><span class="sk" style="width:${50+Math.random()*80}px"></span></td>`).join('')}<td></td></tr>`).join('') }
+
+const renderTabela = rows => {
+  if (!rows.length) { document.getElementById('tbody').innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">&#127970;</div><div class="empty-t">Nenhum cliente encontrado</div></div></td></tr>'; return }
+  const canEdit = ['Administrador','Almoxarifado'].includes(PERFIL)
+  document.getElementById('tbody').innerHTML = rows.map(c => `<tr>
     <td style="font-weight:500;color:var(--tx)">${esc(c.nome)}</td>
-    <td><span class="mono">${esc(c.cnpj||'—')}</span></td>
+    <td><span class="mono">${esc(c.cnpj||'&mdash;')}</span></td>
     <td><span class="dot ${c.ativo?'dot-on':'dot-off'}"></span>${c.ativo?'Ativo':'Inativo'}</td>
     <td style="font-size:12px;color:var(--tx3)">${fdt(c.data_cadastro)}</td>
-    <td><div class="acts">${canEdit?`<button class="ab ab-e" onclick='editar(${JSON.stringify(c)})'>Editar</button><button class="ab ab-d" onclick='toggleAtivo("${c.id}",${c.ativo})'>${c.ativo?'Desativar':'Ativar'}</button>`:''}</div></td>
+    <td><div class="acts">${canEdit ? `<button class="ab ab-e" onclick='editar(${JSON.stringify(c)})'>Editar</button><button class="ab ab-d" onclick='toggleAtivo("${c.id}",${c.ativo})'>${c.ativo?'Desativar':'Ativar'}</button>` : ''}</div></td>
   </tr>`).join('')
 }
-const renderPag=()=>{
-  const total=Math.ceil(QS.total/POR_PAG);if(total<=1){document.getElementById('pag-ctrl').innerHTML='';return}
-  const p=[];p.push(`<button class="pb" onclick="irP(${QS.pagina-1})" ${QS.pagina===0?'disabled':''}>‹</button>`)
-  for(let i=0;i<total;i++){if(i===0||i===total-1||Math.abs(i-QS.pagina)<=2)p.push(`<button class="pb ${i===QS.pagina?'on':''}" onclick="irP(${i})">${i+1}</button>`);else if(Math.abs(i-QS.pagina)===3)p.push(`<span style="color:var(--tx3);font-size:11px;padding:0 2px">…</span>`)}
-  p.push(`<button class="pb" onclick="irP(${QS.pagina+1})" ${QS.pagina>=total-1?'disabled':''}>›</button>`)
-  document.getElementById('pag-ctrl').innerHTML=p.join('')
+
+const renderPag = () => {
+  const total = Math.ceil(QS.total/POR_PAG)
+  if (total <= 1) { document.getElementById('pag-ctrl').innerHTML=''; return }
+  const p = []
+  p.push(`<button class="pb" onclick="irP(${QS.pagina-1})" ${QS.pagina===0?'disabled':''}>&#8249;</button>`)
+  for (let i=0;i<total;i++) {
+    if (i===0||i===total-1||Math.abs(i-QS.pagina)<=2) p.push(`<button class="pb ${i===QS.pagina?'on':''}" onclick="irP(${i})">${i+1}</button>`)
+    else if (Math.abs(i-QS.pagina)===3) p.push(`<span style="color:var(--tx3);font-size:11px;padding:0 2px">...</span>`)
+  }
+  p.push(`<button class="pb" onclick="irP(${QS.pagina+1})" ${QS.pagina>=total-1?'disabled':''}>&#8250;</button>`)
+  document.getElementById('pag-ctrl').innerHTML = p.join('')
 }
-window.irP=p=>{const t=Math.ceil(QS.total/POR_PAG);if(p<0||p>=t)return;QS.pagina=p;carregar()}
-const abrirNovo=()=>{editId=null;document.getElementById('m-title').textContent='Novo cliente';['f-nome','f-cnpj'].forEach(id=>document.getElementById(id).value='');document.getElementById('m-err').style.display='none';document.getElementById('m-form').classList.add('open')}
-window.editar=c=>{editId=c.id;document.getElementById('m-title').textContent='Editar cliente';document.getElementById('f-nome').value=c.nome||'';document.getElementById('f-cnpj').value=c.cnpj||'';document.getElementById('m-err').style.display='none';document.getElementById('m-form').classList.add('open')}
-const salvar=async()=>{
-  const nome=document.getElementById('f-nome').value.trim(),cnpj=document.getElementById('f-cnpj').value.trim()
-  const err=document.getElementById('m-err');if(!nome){err.textContent='Nome é obrigatório.';err.style.display='block';return}
-  err.style.display='none';const btn=document.getElementById('btn-salvar');btn.textContent='Salvando…';btn.disabled=true
-  try{
-    const body={nome,cnpj:cnpj||null}
-    const r=editId
-      ?await fetch(`${SURL}/rest/v1/clientes?id=eq.${editId}`,{method:'PATCH',headers:{...hAuth(),'Prefer':'return=representation'},body:JSON.stringify(body)})
-      :await fetch(`${SURL}/rest/v1/clientes`,{method:'POST',headers:{...hAuth(),'Prefer':'return=representation'},body:JSON.stringify({...body,ativo:true})})
-    const d=await r.json();if(!r.ok)throw new Error(d?.message||JSON.stringify(d))
-    closeM('m-form');toast(editId?'Cliente atualizado ✓':'Cliente cadastrado ✓','ok');carregar(true)
-  }catch(e){err.textContent=e.message.includes('unique')?'CNPJ já cadastrado.':e.message;err.style.display='block'}
-  finally{btn.textContent='Salvar';btn.disabled=false}
+
+window.irP = p => { const t=Math.ceil(QS.total/POR_PAG); if(p<0||p>=t)return; QS.pagina=p; carregar() }
+
+// ── CRUD ──────────────────────────────────────────────────────
+const resetModal = () => {
+  document.getElementById('m-err').style.display = 'none'
+  document.getElementById('cnpj-hint').style.display = 'none'
+  document.getElementById('cnpj-hint').textContent = ''
+  document.getElementById('f-cnpj').value = ''
+  document.getElementById('f-nome').value = ''
+  document.getElementById('btn-cnpj').textContent = 'Buscar'
+  document.getElementById('btn-cnpj').disabled = false
 }
-window.toggleAtivo=async(id,atual)=>{
-  try{const r=await fetch(`${SURL}/rest/v1/clientes?id=eq.${id}`,{method:'PATCH',headers:{...hAuth(),'Prefer':'return=minimal'},body:JSON.stringify({ativo:!atual})});if(!r.ok)throw new Error('Erro');toast(atual?'Desativado':'Ativado','ok');carregar()}catch(e){toast(e.message,'err')}
+
+const abrirNovo = () => {
+  editId = null
+  document.getElementById('m-title').textContent = 'Novo cliente'
+  resetModal()
+  document.getElementById('m-form').classList.add('open')
 }
-const closeM=id=>document.getElementById(id).classList.remove('open')
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mback.open').forEach(m=>m.classList.remove('open'))})
-let tid=0
-const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
-const init=async()=>{
-  const saved=sessionStorage.getItem('ax_sess')
-  if(saved){try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{};sessionStorage.removeItem('ax_sess');SESSION=null}
-  document.getElementById('login-screen').style.display='block'
+
+window.editar = c => {
+  editId = c.id
+  document.getElementById('m-title').textContent = 'Editar cliente'
+  resetModal()
+  document.getElementById('f-cnpj').value = c.cnpj || ''
+  document.getElementById('f-nome').value = c.nome || ''
+  document.getElementById('m-form').classList.add('open')
+}
+
+const salvar = async () => {
+  const nome = document.getElementById('f-nome').value.trim()
+  const cnpj = document.getElementById('f-cnpj').value.trim()
+  const err  = document.getElementById('m-err')
+  if (!nome) { err.textContent = 'Razao social / nome e obrigatorio.'; err.style.display='block'; return }
+  err.style.display = 'none'
+  const btn = document.getElementById('btn-salvar')
+  btn.textContent = 'Salvando...'; btn.disabled = true
+  try {
+    const body = { nome, cnpj: cnpj || null }
+    const url  = editId ? `${SURL}/rest/v1/clientes?id=eq.${editId}` : `${SURL}/rest/v1/clientes`
+    const method = editId ? 'PATCH' : 'POST'
+    const r = await fetch(url, {
+      method,
+      headers: {...hAuth(), 'Prefer':'return=representation'},
+      body: JSON.stringify(editId ? body : {...body, ativo:true})
+    })
+    const d = await r.json()
+    if (!r.ok) throw new Error(d?.message || JSON.stringify(d))
+    closeM('m-form')
+    toast(editId ? 'Cliente atualizado' : 'Cliente cadastrado','ok')
+    carregar(true)
+  } catch(e) {
+    err.textContent = e.message.includes('unique') ? 'CNPJ ja cadastrado.' : e.message
+    err.style.display = 'block'
+  } finally { btn.textContent = 'Salvar'; btn.disabled = false }
+}
+
+window.toggleAtivo = async (id, atual) => {
+  try {
+    const r = await fetch(`${SURL}/rest/v1/clientes?id=eq.${id}`,{method:'PATCH',headers:{...hAuth(),'Prefer':'return=minimal'},body:JSON.stringify({ativo:!atual})})
+    if (!r.ok) throw new Error('Erro')
+    toast(atual ? 'Desativado' : 'Ativado','ok'); carregar()
+  } catch(e) { toast(e.message,'err') }
+}
+
+const closeM = id => document.getElementById(id).classList.remove('open')
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.mback.open').forEach(m=>m.classList.remove('open')) })
+
+let tid = 0
+const toast = (msg, tipo='info', dur=4000) => {
+  const el = document.createElement('div')
+  el.className = `toast ${tipo}`; el.textContent = msg
+  document.getElementById('tc').appendChild(el)
+  setTimeout(() => el.remove(), dur)
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+const init = async () => {
+  const saved = sessionStorage.getItem('ax_sess')
+  if (saved) {
+    try {
+      SESSION = JSON.parse(saved)
+      const r = await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}})
+      if (r.ok) { await posLogin(); return }
+    } catch {}
+    sessionStorage.removeItem('ax_sess'); SESSION = null
+  }
+  document.getElementById('login-screen').style.display = 'block'
 }
 init()
 </script>
