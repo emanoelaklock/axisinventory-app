@@ -126,6 +126,7 @@ tr:hover .acts{opacity:1}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
 @media(max-width:700px){.frow{grid-template-columns:1fr}.nav{display:none}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="page">
@@ -168,13 +169,13 @@ tr:hover .acts{opacity:1}
         <div class="page-sub" id="page-sub">Carregando...</div>
       </div>
       <div class="head-acts">
-        <button class="btn btn-sm" onclick="baixarModelo()" title="Baixar planilha modelo CSV">
+        <button class="btn btn-sm" onclick="baixarModelo()" title="Baixar planilha modelo Excel">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Baixar modelo
         </button>
         <button class="btn btn-sm" onclick="openM('m-import')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Importar CSV
+          Importar Excel
         </button>
         <button class="btn btn-p btn-sm" onclick="abrirNovo()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -284,17 +285,17 @@ tr:hover .acts{opacity:1}
     </div>
     <div class="mb">
       <div style="font-size:12px;color:var(--tx3);line-height:1.6">
-        O CSV deve ter as colunas: <strong>categoria, part_number, modelo, descricao</strong><br>
-        Use ponto-e-vírgula (;) ou vírgula (,) como separador. Baixe o modelo para garantir o formato correto.
+        O arquivo Excel deve ter as colunas: <strong>categoria, part_number, modelo, descricao</strong><br>
+        Baixe o modelo para garantir o formato correto. Formatos aceitos: <strong>.xlsx</strong> e <strong>.xls</strong>.
       </div>
       <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-input').click()"
         ondragover="event.preventDefault();this.classList.add('over')"
         ondragleave="this.classList.remove('over')"
         ondrop="onDrop(event)">
-        <input type="file" id="csv-input" accept=".csv,.txt" onchange="onFile(this.files[0])"/>
+        <input type="file" id="csv-input" accept=".xlsx,.xls" onchange="onFile(this.files[0])"/>
         <div class="drop-icon">📄</div>
-        <div style="font-size:13px;font-weight:600">Clique ou arraste o arquivo CSV</div>
-        <div style="font-size:12px;margin-top:4px">Formato .csv ou .txt</div>
+        <div style="font-size:13px;font-weight:600">Clique ou arraste o arquivo Excel</div>
+        <div style="font-size:12px;margin-top:4px">Formato .xlsx ou .xls</div>
       </div>
       <div id="import-preview" style="display:none">
         <div style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
@@ -556,18 +557,24 @@ window.toggleAtivo = async (id, atual) => {
   } catch(e) { toast(e.message,'err') }
 }
 
-// ── CSV DOWNLOAD (modelo) ─────────────────────────────────────
+// ── EXCEL DOWNLOAD (modelo) ──────────────────────────────────────
 const baixarModelo = () => {
-  const csv = 'categoria;part_number;modelo;descricao\nCameras;02060-001;AXIS P3818-PVE Panoramic Camera;Câmera panorâmica 12MP\nAcessórios;01179-001;AXIS Q35 Weathershield Kit A;Kit de proteção para câmeras série Q35\nIntercom;01995-001;AXIS I8016-LVE Network Video Intercom;Intercom IP externo\n'
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' })
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(blob)
-  a.download = 'modelo_importacao_modelos.csv'
-  a.click()
-  toast('Modelo baixado ✓', 'ok')
+  const dados = [
+    ['categoria', 'part_number', 'modelo', 'descricao'],
+    ['Cameras',    '02060-001', 'AXIS P3818-PVE Panoramic Camera',       'Câmera panorâmica 12MP'],
+    ['Acessórios', '01179-001', 'AXIS Q35 Weathershield Kit A',          'Kit de proteção para câmeras série Q35'],
+    ['Intercom',   '01995-001', 'AXIS I8016-LVE Network Video Intercom', 'Intercom de rede para ambientes externos'],
+    ['Cameras',    '02054-001', 'AXIS Q3536-LVE Dome Camera',            'Câmera dome externa 32MP'],
+  ]
+  const wb = XLSX.utils.book_new()
+  const ws = XLSX.utils.aoa_to_sheet(dados)
+  ws['!cols'] = [{wch:20},{wch:15},{wch:45},{wch:40}]
+  XLSX.utils.book_append_sheet(wb, ws, 'Modelos')
+  XLSX.writeFile(wb, 'modelo_importacao_modelos.xlsx')
+  toast('Modelo Excel baixado ✓', 'ok')
 }
 
-// ── CSV IMPORT ────────────────────────────────────────────────
+// ── EXCEL IMPORT ─────────────────────────────────────────────────
 const onDrop = e => {
   e.preventDefault()
   document.getElementById('drop-zone').classList.remove('over')
@@ -578,58 +585,61 @@ const onDrop = e => {
 const onFile = file => {
   if (!file) return
   const reader = new FileReader()
-  reader.onload = e => parseCSV(e.target.result)
-  reader.readAsText(file, 'UTF-8')
+  reader.onload = e => parseXLSX(e.target.result)
+  reader.readAsArrayBuffer(file)
 }
 
-const parseCSV = text => {
-  // Detecta separador
-  const sep = text.includes(';') ? ';' : ','
-  const lines = text.split(/\r?\n/).filter(l => l.trim())
-  if (lines.length < 2) {
-    showImpErr('Arquivo vazio ou sem dados.'); return
-  }
+const parseXLSX = buffer => {
+  try {
+    const wb   = XLSX.read(buffer, { type: 'array' })
+    const ws   = wb.Sheets[wb.SheetNames[0]]
+    const rows = XLSX.utils.sheet_to_json(ws, { defval: '' })
 
-  const headers = lines[0].toLowerCase().split(sep).map(h => h.trim().replace(/"/g,''))
-  const idxCat  = headers.indexOf('categoria')
-  const idxPN   = headers.indexOf('part_number')
-  const idxMod  = headers.indexOf('modelo')
-  const idxDesc = headers.indexOf('descricao')
+    if (!rows.length) { showImpErr('Planilha vazia ou sem dados.'); return }
 
-  if (idxPN < 0 || idxMod < 0) {
-    showImpErr('Colunas obrigatórias não encontradas: part_number, modelo'); return
-  }
+    const norm = s => String(s).toLowerCase().trim().replace(/\s+/g,'_')
+    const keys = Object.keys(rows[0])
+    const kCat  = keys.find(k => norm(k).includes('categoria'))
+    const kPN   = keys.find(k => norm(k).includes('part_number') || norm(k) === 'pn')
+    const kMod  = keys.find(k => norm(k).includes('modelo'))
+    const kDesc = keys.find(k => norm(k).includes('descricao') || norm(k).includes('desc'))
 
-  csvRows = []
-  const previewLines = []
-  const erros = []
-
-  lines.slice(1).forEach((line, i) => {
-    const cols = line.split(sep).map(c => c.trim().replace(/^"|"$/g,''))
-    const pn   = cols[idxPN]  || ''
-    const mod  = cols[idxMod] || ''
-    const cat  = idxCat  >= 0 ? cols[idxCat]  : ''
-    const desc = idxDesc >= 0 ? cols[idxDesc] : ''
-
-    if (!pn || !mod) {
-      erros.push(`Linha ${i+2}: part_number ou modelo vazio`)
-      previewLines.push(`<div class="imp-row imp-err">✗ Linha ${i+2}: dados incompletos</div>`)
-      return
+    if (!kPN || !kMod) {
+      showImpErr('Colunas obrigatórias não encontradas: part_number, modelo'); return
     }
-    csvRows.push({ part_number: pn, modelo: mod, categoria: cat||'Outro', descricao: desc||null, ativo: true })
-    previewLines.push(`<div class="imp-row imp-ok">✓ ${esc(pn)} — ${esc(mod.substring(0,40))}</div>`)
-  })
 
-  document.getElementById('imp-count').textContent = csvRows.length
-  document.getElementById('imp-rows').innerHTML = previewLines.join('')
-  document.getElementById('import-preview').style.display = 'block'
-  document.getElementById('imp-err').style.display = 'none'
-  document.getElementById('imp-ok').style.display = 'none'
-  document.getElementById('btn-importar').disabled = csvRows.length === 0
+    csvRows = []
+    const previewLines = []
+    let erros = 0
 
-  if (erros.length) {
-    document.getElementById('imp-err').textContent = `${erros.length} linha(s) com erro serão ignoradas.`
-    document.getElementById('imp-err').style.display = 'block'
+    rows.forEach((row, i) => {
+      const pn  = String(row[kPN]  || '').trim()
+      const mod = String(row[kMod] || '').trim()
+      const cat = kCat  ? String(row[kCat]  || '').trim() : ''
+      const desc= kDesc ? String(row[kDesc] || '').trim() : ''
+
+      if (!pn || !mod) {
+        erros++
+        previewLines.push('<div class="imp-row imp-err">✗ Linha ' + (i+2) + ': part_number ou modelo vazio</div>')
+        return
+      }
+      csvRows.push({ part_number: pn, modelo: mod, categoria: cat||'Outros', descricao: desc||null, ativo: true })
+      previewLines.push('<div class="imp-row imp-ok">✓ ' + esc(pn) + ' — ' + esc(mod.substring(0,42)) + '</div>')
+    })
+
+    document.getElementById('imp-count').textContent = csvRows.length
+    document.getElementById('imp-rows').innerHTML = previewLines.join('')
+    document.getElementById('import-preview').style.display = 'block'
+    document.getElementById('imp-err').style.display = 'none'
+    document.getElementById('imp-ok').style.display = 'none'
+    document.getElementById('btn-importar').disabled = csvRows.length === 0
+
+    if (erros) {
+      document.getElementById('imp-err').textContent = erros + ' linha(s) com dados incompletos serão ignoradas.'
+      document.getElementById('imp-err').style.display = 'block'
+    }
+  } catch(e) {
+    showImpErr('Erro ao ler o arquivo: ' + e.message)
   }
 }
 
