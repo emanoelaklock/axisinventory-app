@@ -204,6 +204,19 @@ tr:hover .acts{opacity:1}
         <button class="btn btn-sm" onclick="carregarItens(true)" title="Atualizar">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
+        <button class="btn btn-sm" onclick="baixarModeloItens()" title="Baixar planilha modelo para importacao">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Baixar modelo
+        </button>
+        <button class="btn btn-sm" onclick="document.getElementById('import-input').click()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Importar
+        </button>
+        <input type="file" id="import-input" accept=".xlsx,.xls" style="display:none" onchange="importarItens(this.files[0])"/>
+        <button class="btn btn-sm" id="btn-export" onclick="exportarItens()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar
+        </button>
         <button class="btn btn-p btn-sm" id="btn-novo" onclick="location.href='cadastrar-item.html'">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           <span>Cadastrar item</span>
@@ -323,6 +336,7 @@ tr:hover .acts{opacity:1}
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════
 // CONFIG
@@ -811,7 +825,262 @@ const init = async () => {
   document.getElementById('login-screen').style.display = 'block'
 }
 
+// ═══════════════════════════════════════════════════════════════
+// EXCEL: BAIXAR MODELO
+// ═══════════════════════════════════════════════════════════════
+const baixarModeloItens = () => {
+  const dados = [
+    ['serial','part_number','status_atual','localizacao_atual','nome_vms','observacoes'],
+    ['ACCC8E37C247','02060-001','Estoque Novo','Almoxarifado','CAM-01',''],
+    ['','01179-001','Estoque Novo','Almoxarifado','','Sem serial — acessorio'],
+  ]
+  const wb = XLSX.utils.book_new()
+  const ws = XLSX.utils.aoa_to_sheet(dados)
+  ws['!cols'] = [{wch:18},{wch:14},{wch:22},{wch:20},{wch:16},{wch:25}]
+  // Adiciona aba de referencia com status validos
+  const ref = [
+    ['Status validos (use exatamente como abaixo)'],
+    ['Estoque Novo'],['Estoque Usado'],['Reservado'],['Vendido'],
+    ['Com Tecnico'],['Locado'],['Aguardando Inspecao'],['Em Inspecao'],
+    ['Finalizada Inspecao'],['Em RMA / Assistencia Tecnica'],['Sucata'],
+  ]
+  const wsRef = XLSX.utils.aoa_to_sheet(ref)
+  XLSX.utils.book_append_sheet(wb, ws, 'Itens')
+  XLSX.utils.book_append_sheet(wb, wsRef, 'Status validos')
+  XLSX.writeFile(wb, 'modelo_importacao_itens.xlsx')
+  toast('Modelo baixado', 'info')
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXCEL: IMPORTAR ITENS
+// ═══════════════════════════════════════════════════════════════
+let itensParaImportar = []
+
+const importarItens = async file => {
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = async e => {
+    try {
+      const wb   = XLSX.read(e.target.result, { type: 'array' })
+      const ws   = wb.Sheets[wb.SheetNames[0]]
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' })
+      if (!rows.length) { showImpErr('Planilha vazia.'); return }
+
+      const norm = s => String(s).toLowerCase().trim().replace(/\s+/g,'_')
+      const keys = Object.keys(rows[0])
+      const kSerial  = keys.find(k => norm(k).includes('serial'))
+      const kPN      = keys.find(k => norm(k).includes('part_number') || norm(k) === 'pn')
+      const kStatus  = keys.find(k => norm(k).includes('status'))
+      const kLocal   = keys.find(k => norm(k).includes('locali'))
+      const kVms     = keys.find(k => norm(k).includes('vms') || norm(k).includes('nome_vms'))
+      const kObs     = keys.find(k => norm(k).includes('obs'))
+
+      if (!kPN || !kStatus) { showImpErr('Colunas obrigatorias nao encontradas: part_number, status_atual'); return }
+
+      // Carrega modelos do banco para resolver part_number -> modelo_id
+      const mResp = await fetch(`${SURL}/rest/v1/modelos?select=id,part_number&ativo=eq.true`, { headers: hAuth() })
+      const modelos = await mResp.json()
+      const modeloMap = {}
+      modelos.forEach(m => { modeloMap[m.part_number.toLowerCase()] = m.id })
+
+      const STATUS_VALIDOS = [
+        'Estoque Novo','Estoque Usado','Reservado','Vendido','Com Tecnico','Locado',
+        'Aguardando Inspecao','Em Inspecao','Finalizada Inspecao',
+        'Em RMA / Assistencia Tecnica','Sucata'
+      ]
+      // Mapa de normalizacao para aceitar com/sem acento
+      const STATUS_NORM = {
+        'estoque novo':'Estoque Novo','estoque usado':'Estoque Usado','reservado':'Reservado',
+        'vendido':'Vendido','com tecnico':'Com Tecnico','com tecnico':'Com Técnico',
+        'locado':'Locado','aguardando inspecao':'Aguardando Inspeção',
+        'em inspecao':'Em Inspeção','finalizada inspecao':'Finalizada Inspeção',
+        'em rma / assistencia tecnica':'Em RMA / Assistência Técnica',
+        'em rma':'Em RMA / Assistência Técnica','sucata':'Sucata',
+      }
+
+      itensParaImportar = []
+      const preview = []
+      let erros = 0
+
+      rows.forEach((row, i) => {
+        const pn     = String(row[kPN]     || '').trim()
+        const status = String(row[kStatus] || '').trim()
+        const serial = kSerial ? String(row[kSerial] || '').trim() : ''
+        const local  = kLocal  ? String(row[kLocal]  || '').trim() : ''
+        const vms    = kVms    ? String(row[kVms]    || '').trim() : ''
+        const obs    = kObs    ? String(row[kObs]    || '').trim() : ''
+
+        if (!pn || !status) {
+          erros++
+          preview.push(`<div style="color:#DC2626">x Linha ${i+2}: part_number ou status vazio</div>`)
+          return
+        }
+
+        const modeloId = modeloMap[pn.toLowerCase()]
+        if (!modeloId) {
+          erros++
+          preview.push(`<div style="color:#D97706">! Linha ${i+2}: part_number '${esc(pn)}' nao encontrado — cadastre o modelo primeiro</div>`)
+          return
+        }
+
+        const statusNorm = STATUS_NORM[status.toLowerCase()] || status
+        if (!STATUS_VALIDOS.includes(statusNorm) && !Object.values(STATUS_NORM).includes(status)) {
+          erros++
+          preview.push(`<div style="color:#D97706">! Linha ${i+2}: status invalido '${esc(status)}'</div>`)
+          return
+        }
+
+        itensParaImportar.push({
+          serial:           serial || null,
+          modelo_id:        modeloId,
+          status_atual:     statusNorm,
+          localizacao_atual: local || null,
+          nome_vms:         vms || null,
+          observacoes:      obs || null,
+          ativo:            true,
+        })
+        preview.push(`<div style="color:#059669">v ${esc(serial||'sem serial')} | ${esc(pn)} | ${esc(statusNorm)}</div>`)
+      })
+
+      document.getElementById('imp-count').textContent = itensParaImportar.length
+      document.getElementById('imp-rows').innerHTML = preview.join('')
+      document.getElementById('import-preview-box').style.display = 'block'
+      document.getElementById('imp-err-box').style.display = 'none'
+      document.getElementById('imp-ok-box').style.display = 'none'
+      document.getElementById('btn-confirmar-import').disabled = itensParaImportar.length === 0
+
+      if (erros) {
+        document.getElementById('imp-err-box').textContent = `${erros} linha(s) com erro serao ignoradas.`
+        document.getElementById('imp-err-box').style.display = 'block'
+      }
+
+      document.getElementById('modal-import').classList.add('open')
+
+    } catch(err) {
+      toast('Erro ao ler arquivo: ' + err.message, 'error')
+    }
+  }
+  reader.readAsArrayBuffer(file)
+  // Reset input so same file can be selected again
+  document.getElementById('import-input').value = ''
+}
+
+const confirmarImport = async () => {
+  if (!itensParaImportar.length) return
+  const btn = document.getElementById('btn-confirmar-import')
+  btn.textContent = 'Importando...'; btn.disabled = true
+  try {
+    // Insere em lotes de 50
+    let total = 0
+    for (let i = 0; i < itensParaImportar.length; i += 50) {
+      const lote = itensParaImportar.slice(i, i + 50)
+      const r = await fetch(`${SURL}/rest/v1/itens`, {
+        method: 'POST',
+        headers: { ...hAuth(), 'Prefer': 'return=minimal' },
+        body: JSON.stringify(lote)
+      })
+      if (!r.ok) {
+        const d = await r.json()
+        throw new Error(d?.message || d?.hint || 'Erro na importacao')
+      }
+      total += lote.length
+    }
+    document.getElementById('imp-ok-box').textContent = `${total} itens importados com sucesso!`
+    document.getElementById('imp-ok-box').style.display = 'block'
+    document.getElementById('btn-confirmar-import').disabled = true
+    toast(`${total} itens importados`, 'success')
+    itensParaImportar = []
+    setTimeout(() => { fecharModalImport(); carregarItens(true) }, 1500)
+  } catch(err) {
+    document.getElementById('imp-err-box').textContent = err.message
+    document.getElementById('imp-err-box').style.display = 'block'
+    toast(err.message, 'error')
+  } finally { btn.textContent = 'Importar'; btn.disabled = false }
+}
+
+const fecharModalImport = () => {
+  document.getElementById('modal-import').classList.remove('open')
+  document.getElementById('import-preview-box').style.display = 'none'
+  document.getElementById('imp-err-box').style.display = 'none'
+  document.getElementById('imp-ok-box').style.display = 'none'
+  itensParaImportar = []
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXCEL: EXPORTAR ITENS (todos os filtros ativos)
+// ═══════════════════════════════════════════════════════════════
+const exportarItens = async () => {
+  const btn = document.getElementById('btn-export')
+  btn.textContent = 'Exportando...'; btn.disabled = true
+  try {
+    // Busca todos (sem paginacao) com filtros atuais
+    const { path } = buildQuery()
+    // Remove Range para pegar tudo
+    const pathSemRange = path.replace(/&limit=\d+&offset=\d+/, '')
+    const r = await fetch(`${SURL}/rest/v1/${pathSemRange.replace(/&order=.*$/,'')}&order=data_cadastro.asc&limit=5000`, {
+      headers: hAuth()
+    })
+    if (!r.ok) throw new Error('Erro ao buscar dados')
+    const data = await r.json()
+
+    const cabecalho = [
+      'codigo_interno','serial','modelo','part_number','categoria',
+      'status_atual','localizacao_atual','responsavel_nome','cliente_nome',
+      'nome_vms','data_cadastro','data_ultima_movimentacao'
+    ]
+    const linhas = data.map(i => [
+      i.codigo_interno, i.serial || '',
+      i.modelo || '', i.part_number || '', i.categoria || '',
+      i.status_atual, i.localizacao_atual || '',
+      i.responsavel_nome || '', i.cliente_nome || '',
+      i.nome_vms || '',
+      i.data_cadastro ? new Date(i.data_cadastro).toLocaleDateString('pt-BR') : '',
+      i.data_ultima_movimentacao ? new Date(i.data_ultima_movimentacao).toLocaleDateString('pt-BR') : '',
+    ])
+
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.aoa_to_sheet([cabecalho, ...linhas])
+    ws['!cols'] = [{wch:14},{wch:18},{wch:30},{wch:14},{wch:14},{wch:22},{wch:20},{wch:18},{wch:18},{wch:16},{wch:12},{wch:16}]
+    XLSX.utils.book_append_sheet(wb, ws, 'Inventario')
+
+    const dataHoje = new Date().toISOString().slice(0,10)
+    XLSX.writeFile(wb, `axis_inventario_${dataHoje}.xlsx`)
+    toast(`${data.length} itens exportados`, 'success')
+  } catch(err) {
+    toast('Erro ao exportar: ' + err.message, 'error')
+  } finally { btn.textContent = 'Exportar'; btn.disabled = false }
+}
+
+
 init()
 </script>
+<!-- MODAL IMPORTAR ITENS -->
+<div class="modal-overlay" id="modal-import" onclick="if(event.target===this)fecharModalImport()">
+  <div style="background:#fff;border-radius:14px;border:1px solid #E2E6F0;width:100%;max-width:500px;box-shadow:0 8px 40px rgba(15,21,35,.14);animation:modalIn .18s ease">
+    <div style="padding:16px 18px;border-bottom:1px solid #E2E6F0;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:15px;font-weight:700">Importar itens</div>
+      <button onclick="fecharModalImport()" style="width:26px;height:26px;border-radius:6px;border:1px solid #E2E6F0;background:#F0F2F8;cursor:pointer;font-size:13px;color:#8892AA">&#x2715;</button>
+    </div>
+    <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:12px;color:#8892AA;line-height:1.6">
+        Colunas obrigatorias: <strong>serial, modelo (part_number), status_atual</strong><br>
+        Opcionais: localizacao_atual, responsavel, cliente, nome_vms, observacoes<br>
+        Baixe o modelo para garantir o formato correto.
+      </div>
+      <div id="import-preview-box" style="display:none">
+        <div style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+          Preview — <span id="imp-count">0</span> itens encontrados
+        </div>
+        <div id="imp-rows" style="background:#F0F2F8;border-radius:8px;padding:10px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;max-height:180px;overflow-y:auto"></div>
+      </div>
+      <div id="imp-err-box" style="display:none;padding:9px 12px;border-radius:7px;font-size:13px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA"></div>
+      <div id="imp-ok-box" style="display:none;padding:9px 12px;border-radius:7px;font-size:13px;background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0"></div>
+    </div>
+    <div style="padding:12px 18px;border-top:1px solid #E2E6F0;display:flex;gap:7px;justify-content:flex-end">
+      <button class="btn btn-sm" onclick="fecharModalImport()">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-confirmar-import" onclick="confirmarImport()" disabled>Importar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
