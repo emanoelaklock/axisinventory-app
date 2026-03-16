@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastrar Item — Axis Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;--bd:#E2E6F0;--bd2:#C8CEDF;--tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;--ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;--gr:#059669;--am:#D97706;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
+.page{display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.brand{font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto}.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:6px 11px;border-radius:7px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border:none;background:transparent;font-family:inherit;white-space:nowrap;transition:all .15s}
+.nav-btn:hover{background:var(--sur2);color:var(--tx)}.nav-btn.on{background:var(--acl);color:var(--ac);font-weight:600}
+.topbar-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--acl);color:var(--ac);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.perfil-chip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--sur2);color:var(--tx3)}
+.content{flex:1;padding:24px 20px 60px;max-width:760px;margin:0 auto;width:100%}
+.page-head{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.back-btn{padding:6px 12px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+.back-btn:hover{background:var(--sur2);color:var(--tx)}
+.page-title{font-size:19px;font-weight:700;letter-spacing:-.02em}
+
+/* Form card */
+.form-card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);overflow:hidden;margin-bottom:12px}
+.form-section{padding:20px 24px}
+.form-section + .form-section{border-top:1px solid var(--bd)}
+.section-label{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.section-label span{font-size:16px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fgrid.three{grid-template-columns:1fr 1fr 1fr}
+.fgrid.full{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.span2{grid-column:1/-1}
+.flabel{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.finput,.fselect,.ftextarea{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:14px;color:var(--tx);outline:none;transition:border .15s}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acl)}
+.finput::placeholder,.ftextarea::placeholder{color:var(--tx3)}
+.fselect{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.finput.error,.fselect.error{border-color:var(--re)}
+.field-hint{font-size:11px;color:var(--tx3);margin-top:3px}
+.field-error{font-size:11px;color:var(--re);margin-top:3px;display:none}
+.ftextarea{resize:vertical;min-height:80px}
+
+/* Modelo search */
+.modelo-search-wrap{position:relative}
+.modelo-results{position:absolute;top:100%;left:0;right:0;background:var(--sur);border:1.5px solid var(--ac);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:200px;overflow-y:auto;z-index:50;box-shadow:var(--shl);display:none}
+.modelo-results.open{display:block}
+.modelo-option{padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--bd);transition:background .1s}
+.modelo-option:last-child{border-bottom:none}
+.modelo-option:hover{background:var(--acl)}
+.modelo-option-pn{font-family:var(--mono);font-size:11px;color:var(--tx3)}
+.modelo-option-nome{font-size:13px;font-weight:500;color:var(--tx);margin-top:1px}
+.modelo-option-cat{font-size:11px;color:var(--tx3)}
+.modelo-selected{background:var(--acl);border-color:var(--acm);border-radius:7px;padding:8px 12px;font-size:13px;display:none;align-items:center;justify-content:space-between;gap:8px;margin-top:6px}
+.modelo-selected.show{display:flex}
+.modelo-selected-info strong{font-size:13px;font-weight:600;color:var(--ac)}
+.modelo-selected-info span{font-size:11px;color:var(--tx3);font-family:var(--mono)}
+.modelo-clear{border:none;background:none;color:var(--tx3);cursor:pointer;font-size:13px;padding:2px}
+.modelo-clear:hover{color:var(--re)}
+
+/* Serial toggle */
+.serial-toggle{display:flex;align-items:center;gap:8px;padding:8px 0}
+.toggle-switch{width:36px;height:20px;border-radius:10px;background:var(--bd2);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none}
+.toggle-switch.on{background:var(--ac)}
+.toggle-switch::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-switch.on::after{transform:translateX(16px)}
+.toggle-label{font-size:13px;color:var(--tx2)}
+
+/* Actions bar */
+.actions-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.btn{padding:10px 20px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s}
+.btn:hover{background:var(--sur2);color:var(--tx)}
+.btn-p{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
+.btn-p:hover{background:#1D4ED8;color:#fff}
+.btn-p:disabled{opacity:.5;cursor:default}
+.btn-g{background:var(--gr);border-color:var(--gr);color:#fff;font-weight:600}
+.btn-g:hover{background:#047857;color:#fff}
+
+/* Status badge preview */
+.status-preview{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:6px;display:none}
+.status-preview.show{display:inline-flex}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:var(--r);font-size:13px;font-weight:500;margin-bottom:16px;display:none;align-items:center;gap:8px}
+.alert.err{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;display:flex}
+.alert.ok{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;display:flex}
+
+/* Login */
+.login-wrap{max-width:360px;margin:60px auto;padding:0 16px}
+
+/* Toast */
+.tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
+.toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
+@keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
+.toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
+.toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
+
+@media(max-width:640px){.fgrid{grid-template-columns:1fr}.fgrid.three{grid-template-columns:1fr}.nav{display:none}.content{padding:16px 12px 60px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="topbar">
+  <div class="brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    Axis Inventory
+  </div>
+  <nav class="nav">
+    <button class="nav-btn on" onclick="location.href='lista-itens.html'">Equipamentos</button>
+    <button class="nav-btn" onclick="location.href='modelos.html'">Modelos</button>
+    <button class="nav-btn" onclick="location.href='clientes.html'">Clientes</button>
+    <button class="nav-btn" onclick="location.href='responsaveis.html'">Responsaveis</button>
+  </nav>
+  <div class="topbar-r">
+    <span class="perfil-chip" id="perfil-chip">&#8212;</span>
+    <div class="avatar" id="avatar">&#8212;</div>
+  </div>
+</header>
+
+<main class="content">
+
+  <!-- LOGIN -->
+  <div id="login-screen" style="display:none" class="login-wrap">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">&#128225;</div>
+      <div style="font-size:18px;font-weight:700">Axis Inventory</div>
+    </div>
+    <div id="login-msg" style="margin-bottom:10px"></div>
+    <div class="fg" style="margin-bottom:10px"><label class="flabel">Email</label><input type="email" class="finput" id="l-email" placeholder="seu@email.com"/></div>
+    <div class="fg" style="margin-bottom:16px"><label class="flabel">Senha</label><input type="password" class="finput" id="l-senha" onkeydown="if(event.key==='Enter')fazerLogin()"/></div>
+    <button class="btn btn-p" style="width:100%;justify-content:center" id="btn-login" onclick="fazerLogin()">Entrar</button>
+  </div>
+
+  <!-- APP -->
+  <div id="app" style="display:none">
+
+    <div class="page-head">
+      <button class="back-btn" onclick="location.href='lista-itens.html'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Voltar
+      </button>
+      <div class="page-title">Cadastrar item</div>
+    </div>
+
+    <div class="alert" id="alert-err"></div>
+    <div class="alert ok" id="alert-ok" style="display:none">
+      &#10003; Item cadastrado com sucesso!
+      <a href="lista-itens.html" style="color:var(--gr);margin-left:8px;font-weight:600">Ver inventario</a>
+    </div>
+
+    <!-- SECAO 1: IDENTIFICACAO -->
+    <div class="form-card">
+      <div class="form-section">
+        <div class="section-label"><span>&#128246;</span> Identificacao</div>
+        
+        <!-- Busca de modelo -->
+        <div class="fg" style="margin-bottom:14px">
+          <label class="flabel">Modelo * <span style="color:var(--re)"></span></label>
+          <div class="modelo-search-wrap">
+            <input class="finput" id="modelo-search" placeholder="Buscar por nome ou part number..."
+              autocomplete="off"
+              oninput="buscarModelo(this.value)"
+              onfocus="buscarModelo(this.value)"
+              onkeydown="navModeloResults(event)"/>
+            <div class="modelo-results" id="modelo-results"></div>
+          </div>
+          <div class="modelo-selected" id="modelo-selected">
+            <div class="modelo-selected-info">
+              <strong id="ms-nome">&#8212;</strong><br>
+              <span id="ms-pn">&#8212;</span>
+              <span id="ms-cat" style="margin-left:8px;padding:1px 6px;border-radius:10px;background:var(--acm);color:var(--ac);font-size:10px;font-weight:600"></span>
+            </div>
+            <button class="modelo-clear" onclick="limparModelo()" title="Remover">&#x2715;</button>
+          </div>
+          <div class="field-error" id="err-modelo">Selecione um modelo</div>
+        </div>
+
+        <!-- Serial -->
+        <div class="serial-toggle">
+          <button class="toggle-switch on" id="toggle-serial" onclick="toggleSerial()"></button>
+          <span class="toggle-label">Item possui numero de serie (serial)</span>
+        </div>
+
+        <div id="serial-field" style="margin-top:10px">
+          <div class="fg">
+            <label class="flabel">Numero de serie *</label>
+            <input class="finput" id="f-serial" placeholder="Ex: ACCC8E37C247" style="font-family:var(--mono);text-transform:uppercase"
+              oninput="this.value=this.value.toUpperCase()"/>
+            <div class="field-error" id="err-serial">Serial e obrigatorio para itens com numero de serie</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECAO 2: STATUS E LOCALIZACAO -->
+      <div class="form-section">
+        <div class="section-label"><span>&#128205;</span> Status e localizacao</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label class="flabel">Status inicial *</label>
+            <select class="fselect" id="f-status" onchange="atualizarStatusPreview()">
+              <option value="">Selecione...</option>
+              <option>Estoque Novo</option>
+              <option>Estoque Usado</option>
+              <option>Reservado</option>
+              <option>Locado</option>
+              <option>Com Tecnico</option>
+              <option>Aguardando Inspecao</option>
+              <option>Em Inspecao</option>
+              <option>Finalizada Inspecao</option>
+              <option>Em RMA / Assistencia Tecnica</option>
+              <option>Sucata</option>
+            </select>
+            <div id="status-preview" class="status-preview"></div>
+            <div class="field-error" id="err-status">Selecione um status</div>
+          </div>
+          <div class="fg">
+            <label class="flabel">Localizacao</label>
+            <input class="finput" id="f-local" placeholder="Ex: Almoxarifado Central"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECAO 3: RESPONSAVEL E CLIENTE -->
+      <div class="form-section">
+        <div class="section-label"><span>&#128101;</span> Responsavel e cliente</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label class="flabel">Responsavel</label>
+            <select class="fselect" id="f-resp">
+              <option value="">&#8212; Nenhum &#8212;</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="flabel">Cliente</label>
+            <select class="fselect" id="f-cliente">
+              <option value="">&#8212; Nenhum &#8212;</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECAO 4: INFORMACOES EXTRAS -->
+      <div class="form-section">
+        <div class="section-label"><span>&#128196;</span> Informacoes adicionais</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label class="flabel">Nome VMS</label>
+            <input class="finput" id="f-vms" placeholder="Nome no sistema VMS (opcional)"/>
+            <div class="field-hint">Identificador no sistema de video</div>
+          </div>
+          <div class="fg">
+            <label class="flabel">Valor de aquisicao (R$)</label>
+            <input class="finput" id="f-valor" type="number" step="0.01" min="0" placeholder="0,00"/>
+          </div>
+          <div class="fg">
+            <label class="flabel">Data de aquisicao</label>
+            <input class="finput" id="f-data-aq" type="date"/>
+          </div>
+        </div>
+        <div class="fg" style="margin-top:14px">
+          <label class="flabel">Observacoes</label>
+          <textarea class="ftextarea" id="f-obs" placeholder="Informacoes adicionais sobre o item..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACOES -->
+    <div class="actions-bar">
+      <button class="btn" onclick="location.href='lista-itens.html'">Cancelar</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-g" id="btn-salvar-novo" onclick="salvar(true)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Salvar e cadastrar outro
+        </button>
+        <button class="btn btn-p" id="btn-salvar" onclick="salvar(false)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Salvar item
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /app -->
+</main>
+</div>
+<div class="tc" id="tc"></div>
+
+<script>
+const SURL = 'https://adbskoverysjohhwadln.supabase.co'
+const AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+
+let SESSION = null, PERFIL = 'Consulta'
+let modeloSelecionado = null
+let temSerial = true
+let todosModelos = []
+
+const hAuth = () => ({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+
+// ── AUTH ──────────────────────────────────────────────────────
+const fazerLogin = async () => {
+  const email = document.getElementById('l-email').value.trim()
+  const senha = document.getElementById('l-senha').value
+  const btn = document.getElementById('btn-login')
+  if (!email || !senha) { toast('Preencha email e senha.','err'); return }
+  btn.textContent = 'Entrando...'; btn.disabled = true
+  try {
+    const r = await fetch(`${SURL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})})
+    const d = await r.json()
+    if (!r.ok) throw new Error(d.error_description || d.message)
+    SESSION = {access_token:d.access_token,user:d.user}
+    sessionStorage.setItem('ax_sess',JSON.stringify(SESSION))
+    await posLogin()
+  } catch(e) {
+    document.getElementById('login-msg').innerHTML = `<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`
+  } finally { btn.textContent = 'Entrar'; btn.disabled = false }
+}
+
+const posLogin = async () => {
+  const r = await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${SESSION.user.id}`,{headers:hAuth()})
+  const d = await r.json()
+  PERFIL = d[0]?.perfil || 'Consulta'
+  const nome = d[0]?.nome || SESSION.user.email?.split('@')[0] || '?'
+  document.getElementById('avatar').textContent = nome[0].toUpperCase()
+  document.getElementById('perfil-chip').textContent = PERFIL
+  // Apenas Admin e Almoxarifado podem cadastrar
+  if (!['Administrador','Almoxarifado'].includes(PERFIL)) {
+    document.getElementById('login-screen').style.display = 'none'
+    document.getElementById('app').style.display = 'block'
+    document.querySelector('.actions-bar').innerHTML = '<div style="color:var(--re);font-size:13px">Voce nao tem permissao para cadastrar itens.</div>'
+    return
+  }
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('app').style.display = 'block'
+  await Promise.all([carregarModelos(), carregarResponsaveis(), carregarClientes()])
+}
+
+// ── CARREGAR LISTAS ───────────────────────────────────────────
+const carregarModelos = async () => {
+  const r = await fetch(`${SURL}/rest/v1/modelos?select=id,part_number,modelo,categoria&ativo=eq.true&order=modelo.asc`,{headers:hAuth()})
+  todosModelos = await r.json()
+}
+
+const carregarResponsaveis = async () => {
+  const r = await fetch(`${SURL}/rest/v1/responsaveis?select=id,nome,cargo&ativo=eq.true&order=nome.asc`,{headers:hAuth()})
+  const data = await r.json()
+  const sel = document.getElementById('f-resp')
+  data.forEach(x => sel.innerHTML += `<option value="${x.id}">${esc(x.nome)}${x.cargo?' - '+esc(x.cargo):''}</option>`)
+}
+
+const carregarClientes = async () => {
+  const r = await fetch(`${SURL}/rest/v1/clientes?select=id,nome&ativo=eq.true&order=nome.asc`,{headers:hAuth()})
+  const data = await r.json()
+  const sel = document.getElementById('f-cliente')
+  data.forEach(x => sel.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
+}
+
+// ── BUSCA DE MODELO ───────────────────────────────────────────
+let modeloSearchTimer = null
+const buscarModelo = (q) => {
+  if (modeloSelecionado) return
+  clearTimeout(modeloSearchTimer)
+  modeloSearchTimer = setTimeout(() => {
+    const termo = q.trim().toLowerCase()
+    const results = document.getElementById('modelo-results')
+    if (!termo) { results.classList.remove('open'); return }
+    const filtrados = todosModelos.filter(m =>
+      m.modelo.toLowerCase().includes(termo) ||
+      m.part_number.toLowerCase().includes(termo) ||
+      (m.categoria||'').toLowerCase().includes(termo)
+    ).slice(0, 10)
+    if (!filtrados.length) {
+      results.innerHTML = '<div style="padding:12px;color:var(--tx3);font-size:13px">Nenhum modelo encontrado. <a href="modelos.html" style="color:var(--ac)">Cadastrar modelo</a></div>'
+    } else {
+      results.innerHTML = filtrados.map((m,i) => `
+        <div class="modelo-option" tabindex="0" data-idx="${i}"
+          onclick="selecionarModelo(${JSON.stringify(m).replace(/"/g,'&quot;')})"
+          onkeydown="if(event.key==='Enter')selecionarModelo(${JSON.stringify(m).replace(/"/g,'&quot;')})">
+          <div class="modelo-option-pn">${esc(m.part_number)} &bull; <span class="modelo-option-cat">${esc(m.categoria||'')}</span></div>
+          <div class="modelo-option-nome">${esc(m.modelo)}</div>
+        </div>`).join('')
+    }
+    results.classList.add('open')
+  }, 150)
+}
+
+const selecionarModelo = (m) => {
+  modeloSelecionado = m
+  document.getElementById('modelo-search').value = ''
+  document.getElementById('modelo-results').classList.remove('open')
+  document.getElementById('ms-nome').textContent = m.modelo
+  document.getElementById('ms-pn').textContent   = m.part_number
+  document.getElementById('ms-cat').textContent  = m.categoria || ''
+  document.getElementById('modelo-selected').classList.add('show')
+  document.getElementById('err-modelo').style.display = 'none'
+  document.getElementById('modelo-search').style.display = 'none'
+}
+
+const limparModelo = () => {
+  modeloSelecionado = null
+  document.getElementById('modelo-search').value = ''
+  document.getElementById('modelo-search').style.display = ''
+  document.getElementById('modelo-selected').classList.remove('show')
+  document.getElementById('modelo-search').focus()
+}
+
+const navModeloResults = (e) => {
+  const items = document.querySelectorAll('.modelo-option')
+  if (!items.length) return
+  const focused = document.querySelector('.modelo-option:focus')
+  if (e.key === 'ArrowDown') { e.preventDefault(); (focused ? focused.nextElementSibling : items[0])?.focus() }
+  if (e.key === 'ArrowUp')   { e.preventDefault(); focused?.previousElementSibling?.focus() }
+  if (e.key === 'Escape')    { document.getElementById('modelo-results').classList.remove('open') }
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.modelo-search-wrap')) {
+    document.getElementById('modelo-results').classList.remove('open')
+  }
+})
+
+// ── TOGGLE SERIAL ─────────────────────────────────────────────
+const toggleSerial = () => {
+  temSerial = !temSerial
+  const btn = document.getElementById('toggle-serial')
+  const field = document.getElementById('serial-field')
+  btn.classList.toggle('on', temSerial)
+  field.style.display = temSerial ? '' : 'none'
+  if (!temSerial) {
+    document.getElementById('f-serial').value = ''
+    document.getElementById('err-serial').style.display = 'none'
+  }
+}
+
+// ── STATUS PREVIEW ────────────────────────────────────────────
+const STATUS_COLORS = {
+  'Estoque Novo':{'b':'rgba(5,150,105,.1)','c':'#059669'},
+  'Estoque Usado':{'b':'rgba(217,119,6,.1)','c':'#D97706'},
+  'Reservado':{'b':'rgba(124,58,237,.1)','c':'#7C3AED'},
+  'Locado':{'b':'rgba(8,145,178,.1)','c':'#0891B2'},
+  'Com Tecnico':{'b':'rgba(109,40,217,.1)','c':'#6D28D9'},
+  'Aguardando Inspecao':{'b':'rgba(234,88,12,.1)','c':'#EA580C'},
+  'Em Inspecao':{'b':'rgba(202,138,4,.1)','c':'#CA8A04'},
+  'Finalizada Inspecao':{'b':'rgba(22,163,74,.1)','c':'#16A34A'},
+  'Em RMA / Assistencia Tecnica':{'b':'rgba(220,38,38,.1)','c':'#DC2626'},
+  'Sucata':{'b':'rgba(113,113,122,.1)','c':'#71717A'},
+}
+const atualizarStatusPreview = () => {
+  const status = document.getElementById('f-status').value
+  const prev   = document.getElementById('status-preview')
+  const sc = STATUS_COLORS[status]
+  if (sc) {
+    prev.textContent = status
+    prev.style.background = sc.b
+    prev.style.color = sc.c
+    prev.classList.add('show')
+  } else {
+    prev.classList.remove('show')
+  }
+}
+
+// ── VALIDAR ───────────────────────────────────────────────────
+const validar = () => {
+  let ok = true
+  if (!modeloSelecionado) {
+    document.getElementById('err-modelo').style.display = 'block'
+    ok = false
+  }
+  if (temSerial && !document.getElementById('f-serial').value.trim()) {
+    document.getElementById('err-serial').style.display = 'block'
+    document.getElementById('f-serial').classList.add('error')
+    ok = false
+  }
+  if (!document.getElementById('f-status').value) {
+    document.getElementById('err-status').style.display = 'block'
+    document.getElementById('f-status').classList.add('error')
+    ok = false
+  }
+  return ok
+}
+
+// ── SALVAR ────────────────────────────────────────────────────
+const salvar = async (salvarECadastrarOutro) => {
+  // Limpa erros anteriores
+  document.querySelectorAll('.field-error').forEach(el => el.style.display='none')
+  document.querySelectorAll('.finput,.fselect').forEach(el => el.classList.remove('error'))
+  document.getElementById('alert-err').style.display = 'none'
+
+  if (!validar()) return
+
+  const btnId  = salvarECadastrarOutro ? 'btn-salvar-novo' : 'btn-salvar'
+  const btn    = document.getElementById(btnId)
+  btn.disabled = true
+  btn.textContent = 'Salvando...'
+
+  try {
+    const serial  = temSerial ? document.getElementById('f-serial').value.trim() : null
+    const respId  = document.getElementById('f-resp').value    || null
+    const cliId   = document.getElementById('f-cliente').value || null
+    const valor   = document.getElementById('f-valor').value
+    const dataAq  = document.getElementById('f-data-aq').value
+
+    // Mapeia status para valor oficial do banco (com acentos)
+    const STATUS_MAP = {
+      'Estoque Novo':'Estoque Novo','Estoque Usado':'Estoque Usado',
+      'Reservado':'Reservado','Locado':'Locado',
+      'Com Tecnico':'Com Técnico',
+      'Aguardando Inspecao':'Aguardando Inspeção',
+      'Em Inspecao':'Em Inspeção',
+      'Finalizada Inspecao':'Finalizada Inspeção',
+      'Em RMA / Assistencia Tecnica':'Em RMA / Assistência Técnica',
+      'Sucata':'Sucata',
+    }
+
+    const body = {
+      modelo_id:        modeloSelecionado.id,
+      serial:           serial || null,
+      status_atual:     STATUS_MAP[document.getElementById('f-status').value] || document.getElementById('f-status').value,
+      localizacao_atual: document.getElementById('f-local').value.trim() || null,
+      responsavel_atual: respId,
+      cliente_atual:    cliId,
+      nome_vms:         document.getElementById('f-vms').value.trim()  || null,
+      valor_aquisicao:  valor ? parseFloat(valor) : null,
+      data_aquisicao:   dataAq || null,
+      observacoes:      document.getElementById('f-obs').value.trim()   || null,
+      ativo:            true,
+    }
+
+    const r = await fetch(`${SURL}/rest/v1/itens`, {
+      method: 'POST',
+      headers: {...hAuth(), 'Prefer':'return=representation'},
+      body: JSON.stringify(body)
+    })
+    const d = await r.json()
+    if (!r.ok) throw new Error(d?.message || d?.hint || JSON.stringify(d))
+
+    const codigo = Array.isArray(d) ? d[0]?.codigo_interno : d?.codigo_interno
+
+    if (salvarECadastrarOutro) {
+      toast(`Item ${codigo || ''} cadastrado! Cadastre o proximo.`, 'ok')
+      resetForm()
+    } else {
+      document.getElementById('alert-ok').style.display = 'flex'
+      document.getElementById('alert-ok').innerHTML = `&#10003; Item <strong>${esc(codigo||'')}</strong> cadastrado com sucesso! <a href="lista-itens.html" style="color:var(--gr);margin-left:8px;font-weight:600">Ver inventario</a>`
+      window.scrollTo({top:0, behavior:'smooth'})
+    }
+  } catch(e) {
+    const msg = e.message.includes('unique') ? 'Serial ja cadastrado para outro item.' : e.message
+    const alertEl = document.getElementById('alert-err')
+    alertEl.textContent = msg
+    alertEl.style.display = 'flex'
+    window.scrollTo({top:0, behavior:'smooth'})
+  } finally {
+    btn.disabled = false
+    btn.innerHTML = btnId === 'btn-salvar-novo'
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Salvar e cadastrar outro'
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Salvar item'
+  }
+}
+
+const resetForm = () => {
+  limparModelo()
+  document.getElementById('f-serial').value  = ''
+  document.getElementById('f-status').value  = ''
+  document.getElementById('f-local').value   = ''
+  document.getElementById('f-resp').value    = ''
+  document.getElementById('f-cliente').value = ''
+  document.getElementById('f-vms').value     = ''
+  document.getElementById('f-valor').value   = ''
+  document.getElementById('f-data-aq').value = ''
+  document.getElementById('f-obs').value     = ''
+  document.getElementById('status-preview').classList.remove('show')
+  document.getElementById('alert-err').style.display = 'none'
+  document.getElementById('alert-ok').style.display  = 'none'
+  if (!temSerial) toggleSerial()
+  window.scrollTo({top:0, behavior:'smooth'})
+  document.getElementById('modelo-search').focus()
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+const toast = (msg, tipo='info', dur=4000) => {
+  const el = document.createElement('div')
+  el.className = `toast ${tipo}`; el.textContent = msg
+  document.getElementById('tc').appendChild(el)
+  setTimeout(() => el.remove(), dur)
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+const init = async () => {
+  const saved = sessionStorage.getItem('ax_sess')
+  if (saved) {
+    try {
+      SESSION = JSON.parse(saved)
+      const r = await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}})
+      if (r.ok) { await posLogin(); return }
+    } catch {}
+    sessionStorage.removeItem('ax_sess'); SESSION = null
+  }
+  document.getElementById('login-screen').style.display = 'block'
+}
+init()
+</script>
+</body>
+</html>
