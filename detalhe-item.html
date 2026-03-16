@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detalhe do Item — Axis Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;
+  --bd:#E2E6F0;--bd2:#C8CEDF;
+  --tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;
+  --ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;
+  --gr:#059669;--am:#D97706;--re:#DC2626;--pu:#7C3AED;
+  --sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);
+  --shl:0 4px 32px rgba(15,21,35,.12);
+  --r:10px;--mono:'IBM Plex Mono',monospace;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
+
+/* status */
+.s-en{--c:#059669;--b:rgba(5,150,105,.1)} .s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}
+.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)} .s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}
+.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)} .s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}
+.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}  .s-ei{--c:#CA8A04;--b:rgba(202,138,4,.1)}
+.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}  .s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}
+.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--b);color:var(--c)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--c);flex-shrink:0}
+
+/* layout */
+.page{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;margin:-20px -16px 24px;padding-left:16px}
+.brand{font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;gap:6px}
+.back-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s}
+.back-btn:hover{background:var(--sur2);color:var(--tx)}
+.topbar-r{margin-left:auto;display:flex;align-items:center;gap:7px}
+
+/* hero */
+.hero{background:var(--sur);border:1px solid var(--bd);border-radius:14px;padding:24px;margin-bottom:16px;box-shadow:var(--sh)}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hero-id{display:flex;flex-direction:column;gap:6px}
+.hero-code{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--tx);letter-spacing:-.01em}
+.hero-serial{font-family:var(--mono);font-size:13px;color:var(--tx3);display:flex;align-items:center;gap:6px}
+.hero-model{font-size:16px;font-weight:600;color:var(--tx2);margin-top:2px}
+.hero-pn{font-family:var(--mono);font-size:12px;color:var(--tx3)}
+.hero-acts{display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0}
+
+/* info grid */
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+@media(max-width:700px){.info-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.info-grid{grid-template-columns:1fr}}
+.info-cell{display:flex;flex-direction:column;gap:3px}
+.info-label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em}
+.info-val{font-size:13px;font-weight:500;color:var(--tx)}
+.info-val.dim{color:var(--tx3);font-weight:400}
+.info-val.mono{font-family:var(--mono);font-size:12px}
+.hero-sep{border:none;border-top:1px solid var(--bd);margin:18px 0 0}
+
+/* section */
+.section{margin-bottom:16px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sec-title{font-size:12px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:7px}
+.sec-title span{background:var(--sur2);color:var(--tx3);font-size:11px;padding:1px 7px;border-radius:20px}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:14px;padding-bottom:0;position:relative}
+.tl-item:not(:last-child) .tl-line{flex:1}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:32px;flex-shrink:0}
+.tl-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border:2px solid var(--bd);background:var(--sur);z-index:1}
+.tl-line{width:2px;background:var(--bd);flex:1;min-height:24px}
+.tl-body{flex:1;padding-bottom:20px}
+.tl-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px}
+.tl-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.tl-tipo{font-size:13px;font-weight:600;color:var(--tx)}
+.tl-dt{font-size:11px;color:var(--tx3);font-family:var(--mono);white-space:nowrap}
+.tl-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);margin-bottom:6px;flex-wrap:wrap}
+.tl-arr{color:var(--tx3);font-size:11px}
+.tl-meta{font-size:12px;color:var(--tx3);margin-top:6px;display:flex;flex-wrap:wrap;gap:10px}
+.tl-motivo{font-size:12px;color:var(--tx2);margin-top:6px;padding:7px 10px;background:var(--sur2);border-radius:7px;border-left:3px solid var(--bd2);font-style:italic}
+
+/* checklists */
+.chk-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:8px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.chk-date{font-size:13px;font-weight:600;color:var(--tx)}
+.chk-sub{font-size:12px;color:var(--tx3);margin-top:2px}
+.chk-mans{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chk-man{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--acl);color:var(--ac);border:1px solid var(--acm)}
+.chk-obs{font-size:12px;color:var(--tx2);margin-top:6px;font-style:italic}
+.chk-fotos{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.chk-foto{width:70px;height:52px;object-fit:cover;border-radius:7px;border:1px solid var(--bd);cursor:pointer;transition:transform .15s}
+.chk-foto:hover{transform:scale(1.04)}
+
+/* anexos */
+.anx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.anx-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .15s}
+.anx-card:hover{box-shadow:var(--sh);border-color:var(--bd2)}
+.anx-thumb{height:80px;overflow:hidden;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:28px}
+.anx-thumb img{width:100%;height:100%;object-fit:cover}
+.anx-info{padding:7px 9px}
+.anx-tipo{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.anx-nome{font-size:12px;color:var(--tx2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* generic card container */
+.card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:16px;box-shadow:var(--sh)}
+
+/* buttons */
+.btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}
+.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn-p:hover{background:#1D4ED8;border-color:#1D4ED8;color:#fff}
+.btn-g{background:#059669;border-color:#059669;color:#fff}
+.btn-g:hover{background:#047857;color:#fff}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* states */
+.empty{text-align:center;padding:32px;color:var(--tx3);font-size:13px}
+.empty-icon{font-size:26px;margin-bottom:8px}
+.sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bd) 50%,var(--sur2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;height:14px;display:inline-block}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.err-state{text-align:center;padding:60px 20px;color:var(--tx3)}
+.err-state h2{font-size:18px;font-weight:700;color:var(--tx2);margin-bottom:6px}
+
+/* modal */
+.mback{display:none;position:fixed;inset:0;background:rgba(15,21,35,.5);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px}
+.mback.open{display:flex}
+.modal{background:var(--sur);border-radius:14px;border:1px solid var(--bd);width:100%;max-width:500px;box-shadow:var(--shl);animation:min .18s ease}
+@keyframes min{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.mh{padding:16px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;justify-content:space-between}
+.mt{font-size:15px;font-weight:700} .ms{font-size:11px;color:var(--tx3);margin-top:2px;font-family:var(--mono)}
+.mx{width:26px;height:26px;border-radius:6px;border:1px solid var(--bd);background:var(--sur2);color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
+.mb{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.mf{padding:12px 18px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.fg select,.fg input,.fg textarea{padding:8px 11px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx);outline:none;transition:border .15s}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:26px}
+.fg select:focus,.fg input:focus,.fg textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acl)}
+.fg textarea{resize:vertical;min-height:64px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.merr{padding:9px 12px;border-radius:7px;font-size:13px;font-weight:500;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;display:none}
+
+/* QR modal */
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0}
+.qr-box{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;display:inline-flex;flex-direction:column;align-items:center;gap:10px}
+.qr-label{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--tx)}
+.qr-sub{font-size:11px;color:var(--tx3);text-align:center}
+
+/* lightbox */
+.lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;align-items:center;justify-content:center;cursor:zoom-out}
+.lb.open{display:flex}
+.lb img{max-width:92vw;max-height:88vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.lb-close{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.15);color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* toast */
+.tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
+.toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px}
+@keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0}
+.toast.err{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA}
+.toast.info{background:var(--acl);color:var(--ac);border:1px solid var(--acm)}
+
+@media(max-width:600px){
+  .page{padding:12px 12px 60px}
+  .hero{padding:16px}
+  .hero-code{font-size:18px}
+  .hero-acts .btn span{display:none}
+  .info-grid{grid-template-columns:1fr 1fr}
+  .frow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      Axis Inventory
+    </div>
+    <button class="back-btn" onclick="history.back()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Voltar
+    </button>
+    <div class="topbar-r">
+      <span id="topbar-codigo" style="font-family:var(--mono);font-size:12px;color:var(--tx3)">—</span>
+    </div>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div id="state-err" class="err-state" style="display:none">
+    <div style="font-size:40px;margin-bottom:12px">🔍</div>
+    <h2>Item não encontrado</h2>
+    <p style="font-size:13px;color:var(--tx3);margin-bottom:16px" id="err-msg">Verifique o identificador e tente novamente.</p>
+    <button class="btn" onclick="history.back()">← Voltar</button>
+  </div>
+
+  <!-- SKELETON -->
+  <div id="state-loading">
+    <div class="hero">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span class="sk" style="width:180px;height:22px"></span>
+        <span class="sk" style="width:120px"></span>
+        <span class="sk" style="width:220px;height:18px"></span>
+      </div>
+    </div>
+    <div class="card" style="height:140px"></div>
+  </div>
+
+  <!-- MAIN CONTENT (hidden until loaded) -->
+  <div id="state-content" style="display:none">
+
+    <!-- ── HERO ──────────────────────────────────────────── -->
+    <div class="hero">
+      <div class="hero-top">
+        <div class="hero-id">
+          <div class="hero-code" id="h-codigo">—</div>
+          <div class="hero-serial" id="h-serial">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>
+            <span id="h-serial-val">—</span>
+          </div>
+          <div class="hero-model" id="h-model">—</div>
+          <div class="hero-pn" id="h-pn"></div>
+        </div>
+        <div class="hero-acts">
+          <button class="btn btn-p" onclick="openMov()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <span>Movimentação</span>
+          </button>
+          <button class="btn btn-g" onclick="window.open('checklist-axis.html?item='+ITEM_ID,'_blank')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <span>Checklist</span>
+          </button>
+          <button class="btn" onclick="openQR()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>QR Code</span>
+          </button>
+        </div>
+      </div>
+
+      <hr class="hero-sep">
+
+      <div class="info-grid">
+        <div class="info-cell">
+          <div class="info-label">Status atual</div>
+          <div id="h-status">—</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Responsável</div>
+          <div class="info-val" id="h-resp">—</div>
+          <div class="info-val dim" id="h-resp-cargo" style="font-size:11px"></div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Cliente</div>
+          <div class="info-val" id="h-cliente">—</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Localização</div>
+          <div class="info-val" id="h-local">—</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Categoria</div>
+          <div class="info-val" id="h-cat">—</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Última movimentação</div>
+          <div class="info-val dim" id="h-ultima">—</div>
+        </div>
+        <div class="info-cell" id="h-vms-cell" style="display:none">
+          <div class="info-label">Nome VMS</div>
+          <div class="info-val mono" id="h-vms">—</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Cadastro</div>
+          <div class="info-val dim" id="h-cadastro">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TIMELINE ─────────────────────────────────────── -->
+    <div class="section">
+      <div class="sec-head">
+        <div class="sec-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Histórico de movimentações
+          <span id="tl-count">0</span>
+        </div>
+      </div>
+      <div id="tl-content">
+        <div class="card empty"><div class="empty-icon">📋</div>Nenhuma movimentação registrada</div>
+      </div>
+    </div>
+
+    <!-- ── CHECKLISTS ────────────────────────────────────── -->
+    <div class="section">
+      <div class="sec-head">
+        <div class="sec-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Checklists de inspeção
+          <span id="chk-count">0</span>
+        </div>
+        <button class="btn btn-sm" onclick="window.open('checklist-axis.html?item='+ITEM_ID,'_blank')">+ Novo</button>
+      </div>
+      <div id="chk-content">
+        <div class="card empty"><div class="empty-icon">✅</div>Nenhum checklist registrado</div>
+      </div>
+    </div>
+
+    <!-- ── ANEXOS ─────────────────────────────────────────── -->
+    <div class="section">
+      <div class="sec-head">
+        <div class="sec-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          Anexos
+          <span id="anx-count">0</span>
+        </div>
+      </div>
+      <div id="anx-content">
+        <div class="card empty"><div class="empty-icon">📎</div>Nenhum anexo</div>
+      </div>
+    </div>
+
+  </div><!-- /state-content -->
+</div><!-- /page -->
+
+<div class="tc" id="tc"></div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="closeLB()">
+  <button class="lb-close" onclick="closeLB()">✕</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
+<!-- MODAL: MOVIMENTAÇÃO -->
+<div class="mback" id="m-mov" onclick="if(event.target===this)closeM('m-mov')">
+  <div class="modal">
+    <div class="mh">
+      <div><div class="mt">Registrar movimentação</div><div class="ms" id="m-ref">—</div></div>
+      <button class="mx" onclick="closeM('m-mov')">✕</button>
+    </div>
+    <div class="mb">
+      <div class="merr" id="m-err"></div>
+      <div class="fg"><label>Tipo *</label>
+        <select id="m-tipo" onchange="onTipo()">
+          <option value="">Selecione…</option>
+          <option>Entrada estoque</option><option>Reserva</option>
+          <option>Envio cliente</option><option>Retorno cliente</option>
+          <option>Envio técnico</option><option>Retorno técnico</option>
+          <option>Envio inspeção</option><option>Resultado inspeção</option>
+          <option>Envio RMA</option><option>Retorno RMA</option>
+          <option>Substituição RMA</option><option>Baixa</option>
+          <option>Ajuste administrativo</option>
+        </select>
+      </div>
+      <div class="fg"><label>Novo status *</label>
+        <select id="m-status">
+          <option value="">Selecione…</option>
+          <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
+          <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
+          <option>Aguardando Inspeção</option><option>Em Inspeção</option>
+          <option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option>
+          <option>Sucata</option>
+        </select>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Localização</label><input id="m-local" placeholder="Ex: Almoxarifado"/></div>
+        <div class="fg"><label>Responsável</label><select id="m-resp"><option value="">— Manter —</option></select></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Cliente</label><select id="m-cli"><option value="">— Manter —</option></select></div>
+        <div class="fg" id="m-emp-w" style="display:none"><label>Empresa destino</label><input id="m-emp-dest" placeholder="Ex: Axis AB"/></div>
+      </div>
+      <div class="frow" id="m-emp-orig-row" style="display:none">
+        <div class="fg"><label>Empresa origem</label><input id="m-emp-orig" placeholder="Ex: Traders Service"/></div>
+      </div>
+      <div class="fg"><label>Motivo</label><textarea id="m-motivo" placeholder="Descreva o motivo…"></textarea></div>
+      <div class="fg"><label>Observação</label><input id="m-obs" placeholder="Informações adicionais (opcional)"/></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-mov')">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-reg" onclick="registrar()">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: QR CODE -->
+<div class="mback" id="m-qr" onclick="if(event.target===this)closeM('m-qr')">
+  <div class="modal" style="max-width:360px">
+    <div class="mh">
+      <div><div class="mt">QR Code</div><div class="ms" id="qr-ref">—</div></div>
+      <button class="mx" onclick="closeM('m-qr')">✕</button>
+    </div>
+    <div class="mb">
+      <div class="qr-wrap">
+        <div class="qr-box">
+          <div style="font-size:11px;font-weight:800;color:#0B1120;letter-spacing:.08em;text-transform:uppercase">📡 AXIS INVENTORY</div>
+          <div id="qr-canvas"></div>
+          <div class="qr-label" id="qr-codigo">—</div>
+          <div style="width:100%;height:1px;background:#E2E8F0"></div>
+          <div class="qr-sub" id="qr-model">—</div>
+          <div style="font-size:9px;color:#94A3B8">Escaneie para abrir ficha do equipamento</div>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-qr')">Fechar</button>
+      <button class="btn btn-p btn-sm" onclick="imprimirQR()">🖨️ Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<div id="qr-print-area" style="display:none"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════
+const SURL    = 'https://adbskoverysjohhwadln.supabase.co'
+const AKEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+const BASE_URL = 'https://axisinventory-app.vercel.app'
+
+let ITEM_ID   = null
+let ITEM      = null
+let SESSION   = null
+let PERFIL    = 'Consulta'
+
+// ════════════════════════════════════════════════════════════
+// AUTH (lê sessão do sessionStorage — compartilhada com lista-itens)
+// ════════════════════════════════════════════════════════════
+const hAuth = () => ({
+  'apikey': AKEY,
+  'Authorization': `Bearer ${SESSION.access_token}`,
+  'Content-Type': 'application/json',
+})
+
+// carregarSessao — exige login obrigatório.
+// Sem JWT válido, retorna false e init() redireciona para acesso negado.
+// Não existe modo anon: todas as queries usam SESSION.access_token.
+const carregarSessao = async () => {
+  const saved = sessionStorage.getItem('ax_sess')
+  if (!saved) return false
+
+  try {
+    SESSION = JSON.parse(saved)
+    // Valida token com Supabase Auth
+    const r = await fetch(`${SURL}/auth/v1/user`, {
+      headers: { 'apikey': AKEY, 'Authorization': `Bearer ${SESSION.access_token}` }
+    })
+    if (!r.ok) { SESSION = null; return false }
+
+    const u = await r.json()
+    // Carrega perfil da tabela usuarios (exige token válido)
+    const p = await fetch(
+      `${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${u.id}`,
+      { headers: hAuth() }
+    )
+    const pd = await p.json()
+    PERFIL = pd[0]?.perfil || 'Consulta'
+    return true
+  } catch {
+    SESSION = null
+    return false
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// API
+// ════════════════════════════════════════════════════════════
+const get = async (path) => {
+  const r = await fetch(`${SURL}/rest/v1/${path}`, { headers: hAuth() })
+  const d = await r.json()
+  if (!r.ok) throw new Error(d?.message || d?.hint || JSON.stringify(d))
+  return d
+}
+
+const rpc = async (fn, params) => {
+  const r = await fetch(`${SURL}/rest/v1/rpc/${fn}`, {
+    method: 'POST', headers: hAuth(), body: JSON.stringify(params)
+  })
+  const d = await r.json()
+  if (!r.ok) throw new Error(d?.message || d?.hint || JSON.stringify(d))
+  return d
+}
+
+// ════════════════════════════════════════════════════════════
+// STATUS MAP
+// ════════════════════════════════════════════════════════════
+const SM = {
+  'Estoque Novo':'s-en','Estoque Usado':'s-eu','Reservado':'s-rv','Vendido':'s-vd',
+  'Com Técnico':'s-ct','Locado':'s-lc','Aguardando Inspeção':'s-ai','Em Inspeção':'s-ei',
+  'Finalizada Inspeção':'s-fi','Em RMA / Assistência Técnica':'s-rm','Sucata':'s-sc',
+}
+const sbadge = s => {
+  const cls = SM[s] || 's-sc'
+  const lbl = s === 'Em RMA / Assistência Técnica' ? 'Em RMA / Assist. Técnica' : (s||'—')
+  return `<span class="badge ${cls}"><span class="dot"></span>${esc(lbl)}</span>`
+}
+
+// ════════════════════════════════════════════════════════════
+// UTIL
+// ════════════════════════════════════════════════════════════
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent = v||'—' }
+
+const fdt = (iso, opts={}) => {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric', ...opts })
+}
+
+const frel = (iso) => {
+  if (!iso) return '—'
+  const d = new Date(iso), now = new Date()
+  const diff = Math.floor((now - d) / 86400000)
+  if (diff === 0) return 'Hoje'
+  if (diff === 1) return 'Ontem'
+  if (diff <  7) return `${diff}d atrás`
+  return fdt(iso)
+}
+
+const fhora = iso => {
+  if (!iso) return ''
+  return new Date(iso).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })
+}
+
+// ════════════════════════════════════════════════════════════
+// CARREGAR ITEM — usa buscar_item_por_qr (RPC)
+// ════════════════════════════════════════════════════════════
+const carregarItem = async (id) => {
+  try {
+    // Carrega item por UUID via vw_itens_completo (query direta, autenticada).
+    // Não usa buscar_item_por_qr — essa RPC é para leitura por codigo_interno
+    // ou serial no contexto do scanner QR. Aqui o ID já é UUID.
+    let item = null
+    try {
+      const rows = await get(`vw_itens_completo?id=eq.${id}&select=*`)
+      item = rows[0]
+    } catch {}
+
+    if (!item) { mostrarErro('Item não encontrado para: ' + id); return }
+
+    ITEM = item
+    renderHero(item)
+    document.getElementById('state-loading').style.display = 'none'
+    document.getElementById('state-content').style.display = 'block'
+
+    // Carrega seções em paralelo
+    await Promise.all([
+      carregarTimeline(id),
+      carregarChecklists(id),
+      carregarAnexos(id),
+      carregarDropdowns(),
+    ])
+  } catch(e) {
+    mostrarErro(e.message)
+  }
+}
+
+const mostrarAcessoNegado = () => {
+  document.getElementById('state-loading').style.display = 'none'
+  const el = document.getElementById('state-err')
+  el.style.display = 'block'
+  el.querySelector('div:first-child').textContent = '🔒'
+  el.querySelector('h2').textContent = 'Acesso restrito'
+  document.getElementById('err-msg').textContent =
+    'Faça login no sistema para visualizar este item.'
+  // Botão vira link para lista de itens (onde há login)
+  el.querySelector('button').textContent = '← Ir para o sistema'
+  el.querySelector('button').onclick = () => window.location.href = 'lista-itens.html'
+}
+
+const mostrarErro = (msg) => {
+  document.getElementById('state-loading').style.display = 'none'
+  document.getElementById('state-err').style.display = 'block'
+  document.getElementById('err-msg').textContent = msg
+}
+
+// ════════════════════════════════════════════════════════════
+// RENDER HERO
+// ════════════════════════════════════════════════════════════
+const renderHero = (i) => {
+  document.title = `${i.codigo_interno} — Axis Inventory`
+  set('topbar-codigo', i.codigo_interno)
+  set('h-codigo', i.codigo_interno)
+  set('h-serial-val', i.serial || 'Sem número de série')
+  set('h-model', i.modelo || '—')
+  document.getElementById('h-pn').textContent = i.part_number ? `PN: ${i.part_number}` : ''
+  document.getElementById('h-status').innerHTML = sbadge(i.status_atual)
+  set('h-resp', i.responsavel_nome)
+  set('h-resp-cargo', i.responsavel_cargo)
+  set('h-cliente', i.cliente_nome)
+  set('h-local', i.localizacao_atual)
+  set('h-cat', i.categoria)
+  set('h-ultima', frel(i.data_ultima_movimentacao))
+  set('h-cadastro', fdt(i.data_cadastro))
+  if (i.nome_vms) {
+    document.getElementById('h-vms-cell').style.display = ''
+    set('h-vms', i.nome_vms)
+  }
+
+  // Botão movimentação só aparece para quem pode mover
+  if (['Consulta'].includes(PERFIL))
+    document.querySelector('button[onclick="openMov()"]').style.display = 'none'
+}
+
+// ════════════════════════════════════════════════════════════
+// TIMELINE — usa vw_movimentacoes_completo
+// ════════════════════════════════════════════════════════════
+const TL_ICONS = {
+  'Entrada estoque':'📦','Reserva':'🔒','Envio cliente':'🚚','Retorno cliente':'↩️',
+  'Envio técnico':'🔧','Retorno técnico':'↩️','Envio inspeção':'🔬','Resultado inspeção':'📋',
+  'Envio RMA':'⚠️','Retorno RMA':'✅','Substituição RMA':'🔄',
+  'Baixa':'🗑️','Ajuste administrativo':'⚙️',
+}
+
+const carregarTimeline = async (id) => {
+  const el = document.getElementById('tl-content')
+  el.innerHTML = '<div class="card" style="padding:20px;text-align:center;color:var(--tx3)">Carregando...</div>'
+  try {
+    // vw_movimentacoes_completo — view consolidada com JOIN de item + modelo + responsáveis + cliente + usuário
+    const movs = await get(
+      `vw_movimentacoes_completo?item_id=eq.${id}&order=data_movimentacao.desc&limit=100`
+    )
+    document.getElementById('tl-count').textContent = movs.length
+    if (!movs.length) {
+      el.innerHTML = '<div class="card empty"><div class="empty-icon">📋</div>Nenhuma movimentação registrada</div>'
+      return
+    }
+
+    el.innerHTML = `<div class="tl">${movs.map((m, i) => {
+      const icon = TL_ICONS[m.tipo_movimentacao] || '•'
+      const dt   = fdt(m.data_movimentacao)
+      const hora = fhora(m.data_movimentacao)
+      const statusChange = (m.status_anterior && m.status_anterior !== m.status_novo)
+        ? `<div class="tl-status">
+            <span class="badge ${SM[m.status_anterior]||'s-sc'}"><span class="dot"></span>${esc(m.status_anterior)}</span>
+            <span class="tl-arr">→</span>
+            <span class="badge ${SM[m.status_novo]||'s-sc'}"><span class="dot"></span>${esc(m.status_novo)}</span>
+           </div>`
+        : `<div class="tl-status"><span class="badge ${SM[m.status_novo]||'s-sc'}"><span class="dot"></span>${esc(m.status_novo)}</span></div>`
+
+      const meta = [
+        m.responsavel_novo_snapshot && `<span>→ ${esc(m.responsavel_novo_snapshot)}</span>`,
+        m.cliente_novo_snapshot      && `<span>📌 ${esc(m.cliente_novo_snapshot)}</span>`,
+        m.localizacao_nova           && `<span>📍 ${esc(m.localizacao_nova)}</span>`,
+        m.empresa_destino            && `<span>🏢 ${esc(m.empresa_destino)}</span>`,
+        m.usuario_nome               && `<span style="margin-left:auto;color:var(--tx3)">por ${esc(m.usuario_nome)}</span>`,
+      ].filter(Boolean).join('')
+
+      const motivo = m.motivo
+        ? `<div class="tl-motivo">${esc(m.motivo)}${m.observacao ? ' — ' + esc(m.observacao) : ''}</div>`
+        : ''
+
+      return `<div class="tl-item">
+        <div class="tl-left">
+          <div class="tl-dot">${icon}</div>
+          ${i < movs.length-1 ? '<div class="tl-line"></div>' : ''}
+        </div>
+        <div class="tl-body">
+          <div class="tl-card">
+            <div class="tl-top">
+              <span class="tl-tipo">${esc(m.tipo_movimentacao)}</span>
+              <span class="tl-dt">${dt} ${hora}</span>
+            </div>
+            ${statusChange}
+            ${meta ? `<div class="tl-meta">${meta}</div>` : ''}
+            ${motivo}
+          </div>
+        </div>
+      </div>`
+    }).join('')}</div>`
+  } catch(e) {
+    el.innerHTML = `<div class="card empty"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// CHECKLISTS
+// ════════════════════════════════════════════════════════════
+const carregarChecklists = async (id) => {
+  const el = document.getElementById('chk-content')
+  try {
+    const chks = await get(
+      `checklists_axis?item_id=eq.${id}&order=data_checklist.desc&select=*`
+    )
+    document.getElementById('chk-count').textContent = chks.length
+    if (!chks.length) {
+      el.innerHTML = '<div class="card empty"><div class="empty-icon">✅</div>Nenhum checklist registrado</div>'
+      return
+    }
+    el.innerHTML = chks.map(c => {
+      const mans = (c.manutencoes||[]).map(m => `<span class="chk-man">${esc(m)}</span>`).join('')
+      const fotos = [c.foto_1, c.foto_2, c.foto_3].filter(Boolean)
+        .map(f => `<img class="chk-foto" src="${f}" onclick="openLB('${f}')" alt="Foto" loading="lazy"/>`)
+        .join('')
+      return `<div class="chk-card">
+        <div>
+          <div class="chk-date">${fdt(c.data_checklist)} <span style="font-size:11px;color:var(--tx3)">por ${esc(c.responsavel||'—')}</span></div>
+          <div class="chk-sub">${esc(c.origem||'')}${c.rma ? ' · RMA: ' + esc(c.rma) : ''}</div>
+          ${mans ? `<div class="chk-mans">${mans}</div>` : ''}
+          ${c.observacoes ? `<div class="chk-obs">${esc(c.observacoes)}</div>` : ''}
+          ${fotos ? `<div class="chk-fotos">${fotos}</div>` : ''}
+        </div>
+        <div style="text-align:right">
+          <span style="font-size:11px;color:var(--tx3)">${esc(c.tipo_equipamento||'')}</span>
+        </div>
+      </div>`
+    }).join('')
+  } catch(e) {
+    el.innerHTML = `<div class="card empty"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// ANEXOS
+// ════════════════════════════════════════════════════════════
+const TIPO_ICON = { imagem:'🖼️', pdf:'📄', outro:'📎' }
+
+const carregarAnexos = async (id) => {
+  const el = document.getElementById('anx-content')
+  try {
+    const anx = await get(
+      `anexos?item_id=eq.${id}&order=data_upload.desc&select=*`
+    )
+    document.getElementById('anx-count').textContent = anx.length
+    if (!anx.length) {
+      el.innerHTML = '<div class="card empty"><div class="empty-icon">📎</div>Nenhum anexo</div>'
+      return
+    }
+    el.innerHTML = `<div class="card" style="padding:14px"><div class="anx-grid">${
+      anx.map(a => {
+        const isImg = (a.tipo === 'imagem') || (a.arquivo||'').startsWith('data:image')
+        const thumb = isImg
+          ? `<div class="anx-thumb" onclick="openLB('${a.arquivo}')"><img src="${a.arquivo}" alt="" loading="lazy"/></div>`
+          : `<div class="anx-thumb">${TIPO_ICON[a.tipo]||'📎'}</div>`
+        return `<div class="anx-card">
+          ${thumb}
+          <div class="anx-info">
+            <div class="anx-tipo">${esc(a.tipo||'arquivo')}</div>
+            <div class="anx-nome">${fdt(a.data_upload)}</div>
+          </div>
+        </div>`
+      }).join('')
+    }</div></div>`
+  } catch(e) {
+    el.innerHTML = `<div class="card empty"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// DROPDOWNS para modal movimentação
+// ════════════════════════════════════════════════════════════
+const carregarDropdowns = async () => {
+  try {
+    const [rs, cs] = await Promise.all([
+      get('responsaveis?select=id,nome,cargo&ativo=eq.true&order=nome'),
+      get('clientes?select=id,nome&ativo=eq.true&order=nome'),
+    ])
+    const mR = document.getElementById('m-resp')
+    const mC = document.getElementById('m-cli')
+    rs.forEach(r => mR.innerHTML += `<option value="${r.id}">${esc(r.nome)}${r.cargo?' · '+esc(r.cargo):''}</option>`)
+    cs.forEach(c => mC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`)
+  } catch {}
+}
+
+// ════════════════════════════════════════════════════════════
+// MOVIMENTAÇÃO — RPC registrar_movimentacao_mobile
+// ════════════════════════════════════════════════════════════
+const TIPOS_EMP = ['Envio RMA','Retorno RMA','Substituição RMA','Envio cliente','Retorno cliente','Envio técnico','Retorno técnico']
+
+const openMov = () => {
+  if (!ITEM) return
+  document.getElementById('m-ref').textContent =
+    `${ITEM.codigo_interno}${ITEM.serial ? ' · ' + ITEM.serial : ''}`
+  ;['m-tipo','m-status','m-resp','m-cli'].forEach(id => document.getElementById(id).value = '')
+  ;['m-local','m-motivo','m-obs','m-emp-dest','m-emp-orig'].forEach(id => document.getElementById(id).value = '')
+  document.getElementById('m-emp-w').style.display = 'none'
+  document.getElementById('m-emp-orig-row').style.display = 'none'
+  document.getElementById('m-err').style.display = 'none'
+  document.getElementById('m-mov').classList.add('open')
+}
+
+window.onTipo = () => {
+  const t = document.getElementById('m-tipo').value
+  const show = TIPOS_EMP.includes(t)
+  document.getElementById('m-emp-w').style.display = show ? '' : 'none'
+  document.getElementById('m-emp-orig-row').style.display = show ? '' : 'none'
+}
+
+const registrar = async () => {
+  const tipo   = document.getElementById('m-tipo').value
+  const status = document.getElementById('m-status').value
+  const err    = document.getElementById('m-err')
+
+  if (!tipo || !status) {
+    err.textContent = 'Tipo e status são obrigatórios.'
+    err.style.display = 'block'; return
+  }
+  err.style.display = 'none'
+  const btn = document.getElementById('btn-reg')
+  btn.textContent = 'Registrando…'; btn.disabled = true
+
+  try {
+    await rpc('registrar_movimentacao_mobile', {
+      p_item_id:          ITEM.id,
+      p_tipo:             tipo,
+      p_status_novo:      status,
+      p_localizacao_nova: document.getElementById('m-local').value.trim()    || null,
+      p_responsavel_id:   document.getElementById('m-resp').value            || null,
+      p_cliente_id:       document.getElementById('m-cli').value             || null,
+      p_empresa_origem:   document.getElementById('m-emp-orig').value.trim() || null,
+      p_empresa_destino:  document.getElementById('m-emp-dest').value.trim() || null,
+      p_motivo:           document.getElementById('m-motivo').value.trim()   || null,
+      p_observacao:       document.getElementById('m-obs').value.trim()      || null,
+    })
+    closeM('m-mov')
+    toast('Movimentação registrada ✓', 'ok')
+    // Recarrega item e timeline
+    await carregarItem(ITEM_ID)
+  } catch(e) {
+    err.textContent = e.message
+    err.style.display = 'block'
+  } finally { btn.textContent = 'Registrar'; btn.disabled = false }
+}
+
+// ════════════════════════════════════════════════════════════
+// QR CODE
+// ════════════════════════════════════════════════════════════
+const openQR = () => {
+  if (!ITEM) return
+  const url = `${BASE_URL}/qr.html#${ITEM.codigo_interno}`
+  document.getElementById('qr-ref').textContent = ITEM.codigo_interno
+  set('qr-codigo', ITEM.codigo_interno)
+  set('qr-model', ITEM.modelo || '')
+  document.getElementById('qr-canvas').innerHTML = ''
+  new QRCode(document.getElementById('qr-canvas'), {
+    text: url, width: 160, height: 160,
+    colorDark: '#0B1120', colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.H,
+  })
+  document.getElementById('m-qr').classList.add('open')
+}
+
+const imprimirQR = () => {
+  if (!ITEM) return
+  const url = `${BASE_URL}/qr.html#${ITEM.codigo_interno}`
+  const area = document.getElementById('qr-print-area')
+  area.innerHTML = `
+    <style>@page{size:60mm 40mm;margin:0}
+    .etq{width:60mm;height:40mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px;font-family:'IBM Plex Mono',monospace;background:#fff}
+    .etq-brand{font-size:7px;font-weight:800;color:#0B1120;letter-spacing:.08em;text-transform:uppercase}
+    .etq-code{font-size:12px;font-weight:800;color:#0B1120}
+    .etq-model{font-size:9px;color:#64748B;text-align:center}</style>
+    <div class="etq">
+      <div class="etq-brand">📡 Axis Inventory</div>
+      <div id="pp-qr"></div>
+      <div class="etq-code">${esc(ITEM.codigo_interno)}</div>
+      ${ITEM.modelo ? `<div class="etq-model">${esc(ITEM.modelo)}</div>` : ''}
+    </div>`
+  new QRCode(document.getElementById('pp-qr'), {
+    text: url, width: 90, height: 90,
+    colorDark: '#0B1120', colorLight: '#fff',
+    correctLevel: QRCode.CorrectLevel.H,
+  })
+  area.style.display = 'block'
+  setTimeout(() => {
+    window.print()
+    setTimeout(() => { area.style.display = 'none' }, 400)
+  }, 300)
+}
+
+// ════════════════════════════════════════════════════════════
+// LIGHTBOX
+// ════════════════════════════════════════════════════════════
+const openLB = src => {
+  document.getElementById('lb-img').src = src
+  document.getElementById('lb').classList.add('open')
+}
+const closeLB = () => document.getElementById('lb').classList.remove('open')
+window.openLB = openLB
+
+// ════════════════════════════════════════════════════════════
+// MODAL / TOAST
+// ════════════════════════════════════════════════════════════
+const closeM = id => document.getElementById(id).classList.remove('open')
+window.closeM = closeM
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.mback.open').forEach(m => m.classList.remove('open'))
+    closeLB()
+  }
+})
+
+let tid = 0
+const toast = (msg, tipo='info', dur=4000) => {
+  const el = document.createElement('div')
+  el.className = `toast ${tipo}`
+  el.textContent = msg
+  document.getElementById('tc').appendChild(el)
+  setTimeout(() => el.remove(), dur)
+}
+
+// ════════════════════════════════════════════════════════════
+// INIT — lê ID do hash e carrega
+// ════════════════════════════════════════════════════════════
+const init = async () => {
+  const autenticado = await carregarSessao()
+
+  // Sem sessão válida: para aqui — nenhuma query é feita.
+  // Item, timeline, checklists e anexos só carregam com JWT real.
+  if (!autenticado) {
+    mostrarAcessoNegado()
+    return
+  }
+
+  // Suporta: detalhe-item.html#<uuid>
+  //          axis-inventory.html#detalhe-<uuid>
+  // Usa query direta em vw_itens_completo — não usa buscar_item_por_qr,
+  // pois aqui o identificador é sempre um UUID, não codigo_interno ou serial.
+  let id = location.hash.replace('#', '').trim()
+  if (id.startsWith('detalhe-')) id = id.replace('detalhe-', '')
+
+  if (!id || id.length < 32) {
+    mostrarErro('ID do item não informado na URL. Verifique o link.')
+    return
+  }
+  ITEM_ID = id
+  await carregarItem(id)
+}
+
+init()
+</script>
+</body>
+</html>

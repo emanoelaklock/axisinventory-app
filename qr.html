@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0B1120">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Axis QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<style>
+:root{--bg:#0B1120;--bg2:#111827;--bg3:#1a2235;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);--text:#F0F4FF;--text2:#8B9FBE;--text3:#4B607A;--accent:#3B82F6;--accent2:#60A5FA;--green:#10B981;--green2:#34D399;--amber:#F59E0B;--red:#EF4444;--purple:#8B5CF6;--radius:16px;--radius-sm:10px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Geist',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
+.topbar{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:50}
+.topbar-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0}
+.topbar-title{font-size:16px;font-weight:600;color:var(--text);flex:1}
+.topbar-badge{font-family:'Geist Mono',monospace;font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(59,130,246,.15);color:var(--accent2);border:1px solid rgba(59,130,246,.25)}
+#screen-login{align-items:center;justify-content:center;padding:40px 24px}
+.login-card{width:100%;max-width:340px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:32px 24px}
+.login-brand{text-align:center;margin-bottom:28px}
+.login-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px;box-shadow:0 0 32px rgba(59,130,246,.3)}
+.login-title{font-size:22px;font-weight:800;letter-spacing:-.03em}
+.login-sub{font-size:13px;color:var(--text3);margin-top:4px}
+.fgroup{margin-bottom:14px}
+.flabel{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px}
+.finput,.fselect,.ftextarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'Geist',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .15s;appearance:none}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:var(--accent)}
+.ftextarea{min-height:72px;resize:none}
+.fselect{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B9FBE' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.btn-primary{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'Geist',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px}
+.login-footer{text-align:center;margin-top:16px;font-size:12px;color:var(--text3)}
+#screen-home{align-items:center;justify-content:center;padding:40px 24px}
+.home-brand{text-align:center;margin-bottom:36px}
+.home-icon{width:64px;height:64px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;box-shadow:0 0 36px rgba(59,130,246,.3)}
+.home-title{font-size:24px;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,#fff 0%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.home-sub{font-size:13px;color:var(--text3);margin-top:4px}
+.user-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);font-size:12px;color:var(--text2);margin-top:10px;cursor:pointer}
+.home-actions{width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px}
+.btn-home{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg3);cursor:pointer;transition:all .2s;text-align:left;width:100%}
+.btn-home:active{transform:scale(.97)}
+.btn-home-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.btn-home-icon.blue{background:rgba(59,130,246,.15)}.btn-home-icon.amber{background:rgba(245,158,11,.15)}.btn-home-icon.green{background:rgba(16,185,129,.15)}
+.btn-home-text strong{display:block;font-size:14px;font-weight:600;color:var(--text)}
+.btn-home-text span{font-size:12px;color:var(--text3);margin-top:1px;display:block}
+#screen-scan{background:#000}
+.scan-viewport{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#scan-reader{width:100%;height:100%}
+#scan-reader video{width:100%!important;height:100%!important;object-fit:cover!important}
+.scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.scan-frame{width:240px;height:240px;position:relative}
+.scan-corner{position:absolute;width:28px;height:28px;border-color:var(--accent2);border-style:solid}
+.scan-corner.tl{top:0;left:0;border-width:3px 0 0 3px;border-radius:6px 0 0 0}.scan-corner.tr{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 6px 0 0}
+.scan-corner.bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 6px}.scan-corner.br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 6px 0}
+.scan-line{position:absolute;left:12px;right:12px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scanline 2s ease-in-out infinite;top:0}
+@keyframes scanline{0%{top:12px;opacity:1}80%{top:calc(100% - 14px);opacity:1}100%{top:calc(100% - 14px);opacity:0}}
+.scan-topbar{position:absolute;top:0;left:0;right:0;background:rgba(0,0,0,.65);border:none;z-index:10}
+.scan-hint{position:absolute;bottom:28px;left:0;right:0;text-align:center;padding:0 24px}
+.scan-hint p{font-size:14px;color:rgba(255,255,255,.7)}
+.scan-manual{margin-top:10px;display:flex;align-items:center;gap:8px;justify-content:center}
+.scan-manual input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-family:'Geist Mono',monospace;font-size:13px;padding:8px 12px;text-transform:uppercase;width:170px;outline:none}
+.scan-manual input::placeholder{color:rgba(255,255,255,.35)}
+.scan-manual button{padding:8px 14px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.scan-status{position:absolute;top:76px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:600;padding:6px 16px;border-radius:20px;white-space:nowrap;opacity:0;transition:all .3s}
+.scan-status.show{opacity:1}.scan-status.searching{background:rgba(59,130,246,.3);color:var(--accent2);border:1px solid rgba(59,130,246,.4)}
+.scan-status.found{background:rgba(16,185,129,.3);color:var(--green2);border:1px solid rgba(16,185,129,.4)}.scan-status.error{background:rgba(239,68,68,.3);color:#FCA5A5;border:1px solid rgba(239,68,68,.4)}
+#screen-item{background:var(--bg)}
+.item-content{flex:1;padding:0 0 100px;overflow-y:auto}
+.status-hero{padding:20px 20px 0;display:flex;align-items:flex-start;gap:14px}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.item-codigo{font-family:'Geist Mono',monospace;font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.item-serial{font-family:'Geist Mono',monospace;font-size:12px;color:var(--text3);margin-top:4px}
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:8px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 20px}
+.info-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px}
+.info-card.full{grid-column:1/-1}
+.info-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.info-value{font-size:14px;font-weight:500;color:var(--text);line-height:1.3}
+.info-value.mono{font-family:'Geist Mono',monospace;font-size:13px}
+.info-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.last-mov{margin:0 20px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:var(--radius-sm);padding:12px 14px}
+.last-mov-label{font-size:10px;font-weight:600;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em}
+.last-mov-tipo{font-size:13px;font-weight:600;color:var(--text);margin-top:4px}
+.last-mov-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.section-title{padding:18px 20px 8px;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.actions{position:fixed;bottom:0;left:0;right:0;padding:12px 16px 22px;background:linear-gradient(to top,var(--bg) 70%,transparent);display:flex;gap:10px}
+.btn-action{flex:1;padding:13px 8px;border-radius:var(--radius-sm);border:none;font-family:'Geist',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .15s}
+.btn-action:active{transform:scale(.96)}
+.btn-action-icon{font-size:19px}
+.btn-action.primary{background:var(--accent);color:#fff}
+.btn-action.secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.btn-action.green-btn{background:var(--green);color:#fff}
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border2);padding:12px 20px 40px;animation:slideUp .25s ease;max-height:90vh;overflow-y:auto}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:20px}
+.btn-submit{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'Geist',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px}
+.btn-cancel{width:100%;padding:12px;background:transparent;color:var(--text3);border:none;font-family:'Geist',sans-serif;font-size:14px;cursor:pointer;margin-top:6px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fsep{border:none;border-top:1px solid var(--border);margin:4px 0 14px}
+#screen-print{background:var(--bg)}
+.print-content{flex:1;padding:20px;overflow-y:auto}
+.qr-card{background:#fff;border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:10px;max-width:280px;margin:0 auto}
+.qr-card-logo{font-size:11px;font-weight:800;color:#0B1120;letter-spacing:.08em;text-transform:uppercase}
+.qr-card-codigo{font-family:'Geist Mono',monospace;font-size:18px;font-weight:800;color:#0B1120}
+.qr-card-modelo{font-size:11px;color:#64748B;text-align:center}
+.qr-card-sep{width:100%;height:1px;background:#E2E8F0}
+.qr-card-hint{font-size:9px;color:#94A3B8}
+.print-form{max-width:360px;margin:20px auto 0}
+.size-opts{display:flex;gap:8px;margin-top:6px}
+.size-opt{flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s}
+.size-opt.active{border-color:var(--accent);color:var(--accent2);background:rgba(59,130,246,.1)}
+.btn-print{width:100%;padding:14px;background:var(--green);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'Geist',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px}
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;z-index:500;opacity:0;pointer-events:none;transition:opacity .3s;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.toast.show{opacity:1}.toast.success{border-color:rgba(16,185,129,.4);color:var(--green2)}.toast.error{border-color:rgba(239,68,68,.4);color:#FCA5A5}
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px}
+.loader-spin{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader p{font-size:13px;color:var(--text3)}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px;gap:10px;text-align:center}
+.empty-icon{font-size:44px}.empty-title{font-size:18px;font-weight:700}.empty-sub{font-size:13px;color:var(--text3)}
+.btn-retry{margin-top:8px;padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:'Geist',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+@media print{body>*:not(#print-page){display:none!important}#print-page{display:block!important}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div id="print-page" style="display:none"></div>
+
+<!-- LOGIN -->
+<div class="screen active" id="screen-login">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-icon">&#x1F4E1;</div>
+      <div class="login-title">Axis QR</div>
+      <div class="login-sub">Entre para escanear equipamentos</div>
+    </div>
+    <div id="login-msg"></div>
+    <div class="fgroup"><label class="flabel">Email</label><input class="finput" type="email" id="l-email" placeholder="seu@email.com" autocomplete="email"/></div>
+    <div class="fgroup"><label class="flabel">Senha</label><input class="finput" type="password" id="l-senha" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()"/></div>
+    <button class="btn-primary" id="btn-login" onclick="fazerLogin()">Entrar</button>
+    <div class="login-footer">Axis Inventory &middot; Supabase Auth</div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="screen-home">
+  <div class="home-brand">
+    <div class="home-icon">&#x1F4E1;</div>
+    <div class="home-title">Axis QR</div>
+    <div class="home-sub">Scanner de inventario</div>
+    <div class="user-chip" onclick="fazerLogout()"><span>&#x1F464;</span><span id="home-user">&#x2014;</span><span style="color:var(--red)">Sair</span></div>
+  </div>
+  <div class="home-actions">
+    <button class="btn-home" onclick="iniciarScanner()"><div class="btn-home-icon blue">&#x1F4F7;</div><div class="btn-home-text"><strong>Escanear equipamento</strong><span>Aponte para o QR code do item</span></div></button>
+    <button class="btn-home" onclick="abrirBuscaManual()"><div class="btn-home-icon amber">&#x1F50D;</div><div class="btn-home-text"><strong>Busca manual</strong><span>Digite o codigo interno ou serial</span></div></button>
+    <button class="btn-home" onclick="showScreen('print')"><div class="btn-home-icon green">&#x1F5A8;</div><div class="btn-home-text"><strong>Gerar etiqueta QR</strong><span>Imprimir etiqueta para o equipamento</span></div></button>
+  </div>
+</div>
+
+<!-- SCANNER -->
+<div class="screen" id="screen-scan">
+  <div class="topbar scan-topbar"><button class="topbar-back" onclick="pararScanner()">&#x2190;</button><span class="topbar-title">Escanear QR Code</span></div>
+  <div class="scan-viewport">
+    <div id="scan-reader"></div>
+    <div class="scan-overlay"><div class="scan-frame"><div class="scan-corner tl"></div><div class="scan-corner tr"></div><div class="scan-corner bl"></div><div class="scan-corner br"></div><div class="scan-line"></div></div></div>
+    <div class="scan-status" id="scan-status"></div>
+    <div class="scan-hint"><p>Posicione o QR code dentro da moldura</p><div class="scan-manual"><input id="manual-code" placeholder="AXIS-000000" maxlength="25" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')buscarManual()"/><button onclick="buscarManual()">&#x2192;</button></div></div>
+  </div>
+</div>
+
+<!-- ITEM -->
+<div class="screen" id="screen-item">
+  <div class="topbar"><button class="topbar-back" onclick="voltarDoItem()">&#x2190;</button><span class="topbar-title" id="item-topbar-title">Equipamento</span><span class="topbar-badge" id="item-topbar-badge">&#x2014;</span></div>
+  <div id="item-loading" class="loader" style="display:none"><div class="loader-spin"></div><p>Carregando item...</p></div>
+  <div id="item-error" class="empty-state" style="display:none"><div class="empty-icon">&#x1F50D;</div><div class="empty-title">Item nao encontrado</div><div class="empty-sub" id="item-error-msg">Verifique o codigo.</div><button class="btn-retry" onclick="voltarDoItem()">Voltar</button></div>
+  <div class="item-content" id="item-content" style="display:none">
+    <div class="status-hero"><div class="status-dot" id="item-status-dot"></div><div><div class="item-codigo" id="item-codigo">&#x2014;</div><div class="item-serial" id="item-serial"></div><div style="margin-top:8px"><span class="status-pill" id="item-status-pill"></span></div></div></div>
+    <div style="padding:14px 20px 0"><div class="last-mov" id="item-last-mov" style="display:none"><div class="last-mov-label">Ultima movimentacao</div><div class="last-mov-tipo" id="lm-tipo">&#x2014;</div><div class="last-mov-meta" id="lm-meta"></div></div></div>
+    <div class="section-title">Detalhes</div>
+    <div class="info-grid">
+      <div class="info-card full"><div class="info-label">Modelo</div><div class="info-value" id="item-modelo">&#x2014;</div><div class="info-sub" id="item-pn"></div></div>
+      <div class="info-card"><div class="info-label">Status</div><div class="info-value" id="item-status-txt">&#x2014;</div></div>
+      <div class="info-card"><div class="info-label">Localizacao</div><div class="info-value" id="item-local">&#x2014;</div></div>
+      <div class="info-card"><div class="info-label">Responsavel</div><div class="info-value" id="item-resp">&#x2014;</div><div class="info-sub" id="item-resp-cargo"></div></div>
+      <div class="info-card"><div class="info-label">Cliente</div><div class="info-value" id="item-cliente">&#x2014;</div></div>
+      <div class="info-card full" id="item-vms-card" style="display:none"><div class="info-label">Nome VMS</div><div class="info-value mono" id="item-vms">&#x2014;</div></div>
+    </div>
+  </div>
+  <div class="actions" id="item-actions" style="display:none">
+    <button class="btn-action primary" onclick="abrirMovimentacao()"><span class="btn-action-icon">&#x2197;&#xFE0F;</span>Movimentacao</button>
+    <button class="btn-action green-btn" onclick="abrirChecklist()"><span class="btn-action-icon">&#x2705;</span>Checklist</button>
+    <button class="btn-action secondary" onclick="abrirHistorico()"><span class="btn-action-icon">&#x1F4CB;</span>Historico</button>
+  </div>
+</div>
+
+<!-- PRINT -->
+<div class="screen" id="screen-print">
+  <div class="topbar"><button class="topbar-back" onclick="showScreen('home')">&#x2190;</button><span class="topbar-title">Gerar etiqueta QR</span></div>
+  <div class="print-content">
+    <div class="qr-card"><div class="qr-card-logo">&#x1F4E1; AXIS INVENTORY</div><div id="qr-canvas-wrap"></div><div class="qr-card-codigo" id="qr-codigo">AXIS-000000</div><div class="qr-card-sep"></div><div class="qr-card-modelo" id="qr-modelo">&#x2014;</div><div class="qr-card-hint">Escaneie para abrir ficha do equipamento</div></div>
+    <div class="print-form">
+      <div class="fgroup"><label class="flabel">Codigo interno</label><input class="finput" id="print-codigo" placeholder="AXIS-000000" oninput="this.value=this.value.toUpperCase();atualizarQRPreview()"/></div>
+      <div class="fgroup"><label class="flabel">Modelo (opcional)</label><input class="finput" id="print-modelo" placeholder="AXIS P1405-E" oninput="atualizarQRPreview()"/></div>
+      <div class="fgroup"><label class="flabel">Tamanho</label><div class="size-opts"><div class="size-opt active" onclick="selecionarTamanho(this,'50x30')">50x30mm</div><div class="size-opt" onclick="selecionarTamanho(this,'62x29')">62x29mm</div><div class="size-opt" onclick="selecionarTamanho(this,'A4')">A4</div></div></div>
+      <button class="btn-print" onclick="imprimirEtiqueta()">&#x1F5A8; Imprimir etiqueta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MOVIMENTACAO -->
+<div class="modal-overlay" id="modal-mov" onclick="fecharModal('modal-mov')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Registrar movimentacao</div>
+    <div class="fgroup"><label class="flabel">Tipo *</label>
+      <select class="fselect" id="mov-tipo" onchange="ajustarCamposPorTipo()">
+        <option value="">Selecione o tipo...</option>
+        <option>Entrada estoque</option><option>Reserva</option><option>Envio cliente</option>
+        <option>Retorno cliente</option><option>Envio técnico</option><option>Retorno técnico</option>
+        <option>Envio inspeção</option><option>Resultado inspeção</option>
+        <option>Envio RMA</option><option>Retorno RMA</option><option>Substituição RMA</option>
+        <option>Baixa</option><option>Ajuste administrativo</option>
+      </select>
+    </div>
+    <div class="fgroup"><label class="flabel">Novo status *</label>
+      <select class="fselect" id="mov-status">
+        <option value="">Selecione o status...</option>
+        <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
+        <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
+        <option>Aguardando Inspeção</option><option>Em Inspeção</option><option>Finalizada Inspeção</option>
+        <option>Em RMA / Assistência Técnica</option><option>Sucata</option>
+      </select>
+    </div>
+    <div class="fgroup"><label class="flabel">Nova localizacao</label><input class="finput" id="mov-local" placeholder="Ex: Almoxarifado Central"/></div>
+    <div class="frow">
+      <div class="fgroup"><label class="flabel">Responsavel</label><select class="fselect" id="mov-resp"><option value="">Manter atual</option></select></div>
+      <div class="fgroup"><label class="flabel">Cliente</label><select class="fselect" id="mov-cliente"><option value="">Manter atual</option></select></div>
+    </div>
+    <div id="mov-empresas-wrap" style="display:none">
+      <hr class="fsep">
+      <div class="frow">
+        <div class="fgroup"><label class="flabel">Empresa origem</label><input class="finput" id="mov-origem" placeholder="Ex: Traders Service"/></div>
+        <div class="fgroup"><label class="flabel">Empresa destino</label><input class="finput" id="mov-destino" placeholder="Ex: Axis AB"/></div>
+      </div>
+    </div>
+    <div class="fgroup"><label class="flabel">Motivo</label><textarea class="ftextarea" id="mov-motivo" placeholder="Descreva o motivo..."></textarea></div>
+    <div class="fgroup"><label class="flabel">Observacao</label><input class="finput" id="mov-obs" placeholder="Informacoes adicionais (opcional)"/></div>
+    <button class="btn-submit" id="btn-salvar-mov" onclick="salvarMovimentacao()">Registrar movimentacao</button>
+    <button class="btn-cancel" onclick="fecharModal('modal-mov')">Cancelar</button>
+  </div>
+</div>
+
+<script>
+const SURL='https://adbskoverysjohhwadln.supabase.co';
+const AKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4';
+const BASE_URL='https://axisinventory-app.vercel.app';
+const ITEM_URL=(c)=>`${BASE_URL}/qr.html#${c}`;
+let SESSION=null,itemAtual=null,html5Qr=null,tamEtiqueta='50x30',responsaveis=[],clientes=[];
+const authHeaders=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION?.access_token||AKEY}`,'Content-Type':'application/json'});
+const rpc=async(fn,params={})=>{const r=await fetch(`${SURL}/rest/v1/rpc/${fn}`,{method:'POST',headers:authHeaders(),body:JSON.stringify(params)});const d=await r.json();if(!r.ok)throw new Error(d?.message||d?.hint||JSON.stringify(d));return d;};
+const authApi=async(path,body)=>{const r=await fetch(`${SURL}/auth/v1${path}`,{method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d?.error_description||d?.message||'Erro de autenticacao');return d;};
+const query=async(path)=>{const r=await fetch(`${SURL}/rest/v1/${path}`,{headers:authHeaders()});const d=await r.json();if(!r.ok)throw new Error(d?.message||JSON.stringify(d));return d;};
+const showScreen=(name)=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(`screen-${name}`).classList.add('active');window.scrollTo(0,0);};
+let toastTimer;
+const toast=(msg,tipo='')=>{const el=document.getElementById('toast');el.textContent=msg;el.className=`toast show ${tipo}`;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3500);};
+const fazerLogin=async()=>{
+  const email=document.getElementById('l-email').value.trim(),senha=document.getElementById('l-senha').value;
+  const btn=document.getElementById('btn-login'),msg=document.getElementById('login-msg');
+  if(!email||!senha){toast('Preencha email e senha.','error');return;}
+  btn.textContent='Entrando...';btn.disabled=true;msg.innerHTML='';
+  try{const data=await authApi('/token?grant_type=password',{email,password:senha});SESSION={access_token:data.access_token,user:data.user};sessionStorage.setItem('axis_session',JSON.stringify(SESSION));await posLogin();}
+  catch(e){msg.innerHTML=`<p style="color:var(--red);font-size:13px;text-align:center;margin-bottom:12px">${e.message}</p>`;}
+  finally{btn.textContent='Entrar';btn.disabled=false;}
+};
+const posLogin=async()=>{document.getElementById('home-user').textContent=SESSION.user?.email?.split('@')[0]||'Tecnico';await Promise.all([carregarResponsaveis(),carregarClientes()]);showScreen('home');verificarHash();};
+const fazerLogout=()=>{SESSION=null;sessionStorage.removeItem('axis_session');itemAtual=null;showScreen('login');};
+const carregarResponsaveis=async()=>{try{responsaveis=await query('responsaveis?select=id,nome,cargo&ativo=eq.true&order=nome');const sel=document.getElementById('mov-resp');sel.innerHTML='<option value="">Manter atual</option>';responsaveis.forEach(r=>{sel.innerHTML+=`<option value="${r.id}">${r.nome}${r.cargo?' - '+r.cargo:''}</option>`;});}catch{}};
+const carregarClientes=async()=>{try{clientes=await query('clientes?select=id,nome&ativo=eq.true&order=nome');const sel=document.getElementById('mov-cliente');sel.innerHTML='<option value="">Manter atual</option>';clientes.forEach(c=>{sel.innerHTML+=`<option value="${c.id}">${c.nome}</option>`;});}catch{}};
+const iniciarScanner=async()=>{showScreen('scan');await new Promise(r=>setTimeout(r,100));if(html5Qr){try{await html5Qr.stop();}catch{}}html5Qr=new Html5Qrcode('scan-reader');try{await html5Qr.start({facingMode:'environment'},{fps:10,qrbox:{width:240,height:240},aspectRatio:1.0},onQRSuccess,()=>{});}catch{setScanStatus('Camera nao disponivel. Use busca manual.','error');}};
+const pararScanner=async()=>{if(html5Qr){try{await html5Qr.stop();}catch{};html5Qr=null;}showScreen('home');};
+let scanBloqueado=false;
+const onQRSuccess=async(decoded)=>{if(scanBloqueado)return;scanBloqueado=true;setScanStatus('QR lido - buscando...','searching');const codigo=extrairCodigo(decoded);if(!codigo){setScanStatus('QR invalido','error');setTimeout(()=>{scanBloqueado=false;},2000);return;}await carregarItem(codigo);};
+const extrairCodigo=(v)=>{const m=v.match(/[/#]([A-Za-z0-9-]{4,30})$/);if(m)return m[1].toUpperCase();if(/^AXIS(-ACC)?-\d+$/i.test(v.trim()))return v.trim().toUpperCase();if(v.trim().length>=6&&v.trim().length<=30)return v.trim();return null;};
+const setScanStatus=(msg,tipo)=>{const el=document.getElementById('scan-status');el.textContent=msg;el.className=`scan-status show ${tipo}`;};
+const buscarManual=async()=>{const c=document.getElementById('manual-code').value.trim();if(!c)return;setScanStatus('Buscando...','searching');await carregarItem(c);};
+const abrirBuscaManual=()=>{showScreen('scan');setTimeout(()=>document.getElementById('manual-code').focus(),300);};
+const carregarItem=async(codigo)=>{
+  if(html5Qr){try{await html5Qr.stop();}catch{};html5Qr=null;}
+  showScreen('item');
+  document.getElementById('item-loading').style.display='flex';
+  document.getElementById('item-content').style.display='none';
+  document.getElementById('item-error').style.display='none';
+  document.getElementById('item-actions').style.display='none';
+  scanBloqueado=false;
+  try{
+    const isCodigo=/^AXIS(-ACC)?-\d+$/i.test(codigo);
+    const dados=await rpc('buscar_item_por_qr',isCodigo?{p_codigo_interno:codigo}:{p_serial:codigo});
+    const item=Array.isArray(dados)?dados[0]:dados;
+    if(!item)throw new Error(`Nenhum item encontrado: ${codigo}`);
+    itemAtual=item;renderItem(item);
+  }catch(e){document.getElementById('item-loading').style.display='none';document.getElementById('item-error').style.display='flex';document.getElementById('item-error-msg').textContent=e.message;}
+};
+const SC={
+  'Estoque Novo':{dot:'#10B981',bg:'rgba(16,185,129,.2)',txt:'#34D399'},
+  'Estoque Usado':{dot:'#F59E0B',bg:'rgba(245,158,11,.2)',txt:'#FCD34D'},
+  'Locado':{dot:'#3B82F6',bg:'rgba(59,130,246,.2)',txt:'#60A5FA'},
+  'Com Técnico':{dot:'#8B5CF6',bg:'rgba(139,92,246,.2)',txt:'#A78BFA'},
+  'Reservado':{dot:'#F59E0B',bg:'rgba(245,158,11,.15)',txt:'#FCD34D'},
+  'Vendido':{dot:'#6366F1',bg:'rgba(99,102,241,.2)',txt:'#818CF8'},
+  'Aguardando Inspeção':{dot:'#F97316',bg:'rgba(249,115,22,.2)',txt:'#FB923C'},
+  'Em Inspeção':{dot:'#EAB308',bg:'rgba(234,179,8,.2)',txt:'#FDE047'},
+  'Finalizada Inspeção':{dot:'#10B981',bg:'rgba(16,185,129,.15)',txt:'#34D399'},
+  'Em RMA / Assistência Técnica':{dot:'#EF4444',bg:'rgba(239,68,68,.2)',txt:'#FCA5A5'},
+  'Sucata':{dot:'#6B7280',bg:'rgba(107,114,128,.2)',txt:'#9CA3AF'},
+};
+const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val||'—';};
+const renderItem=(i)=>{
+  document.getElementById('item-loading').style.display='none';
+  document.getElementById('item-content').style.display='block';
+  document.getElementById('item-actions').style.display='flex';
+  document.getElementById('item-topbar-title').textContent=i.modelo||'Equipamento';
+  document.getElementById('item-topbar-badge').textContent=i.codigo_interno;
+  set('item-codigo',i.codigo_interno);
+  document.getElementById('item-serial').textContent=i.serial?`S/N: ${i.serial}`:'Sem numero de serie';
+  const sc=SC[i.status_atual]||{dot:'#6B7280',bg:'rgba(107,114,128,.2)',txt:'#9CA3AF'};
+  document.getElementById('item-status-dot').style.background=sc.dot;
+  const pill=document.getElementById('item-status-pill');pill.textContent=i.status_atual;pill.style.background=sc.bg;pill.style.color=sc.txt;
+  const lm=document.getElementById('item-last-mov');
+  if(i.ultima_mov_data){lm.style.display='block';set('lm-tipo',i.ultima_mov_tipo);const dt=new Date(i.ultima_mov_data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});document.getElementById('lm-meta').textContent=`${dt} - ${i.ultima_mov_usuario||'Sistema'}`;}else{lm.style.display='none';}
+  set('item-modelo',i.modelo);document.getElementById('item-pn').textContent=i.part_number?`PN: ${i.part_number}`:'';
+  set('item-status-txt',i.status_atual);set('item-local',i.localizacao_atual);set('item-resp',i.responsavel_nome);
+  document.getElementById('item-resp-cargo').textContent=i.responsavel_cargo||'';set('item-cliente',i.cliente_nome);
+  const vms=document.getElementById('item-vms-card');if(i.nome_vms){vms.style.display='block';set('item-vms',i.nome_vms);}else{vms.style.display='none';}
+};
+const voltarDoItem=()=>{itemAtual=null;showScreen('home');};
+const TIPOS_EMPRESA=['Envio RMA','Retorno RMA','Substituição RMA','Envio cliente','Retorno cliente','Envio técnico','Retorno técnico'];
+const ajustarCamposPorTipo=()=>{const tipo=document.getElementById('mov-tipo').value;document.getElementById('mov-empresas-wrap').style.display=TIPOS_EMPRESA.includes(tipo)?'block':'none';};
+const abrirMovimentacao=()=>{if(!itemAtual)return;['mov-tipo','mov-status','mov-resp','mov-cliente'].forEach(id=>document.getElementById(id).value='');['mov-local','mov-motivo','mov-obs','mov-origem','mov-destino'].forEach(id=>document.getElementById(id).value='');document.getElementById('mov-empresas-wrap').style.display='none';document.getElementById('modal-mov').classList.add('open');};
+const fecharModal=(id)=>document.getElementById(id).classList.remove('open');
+const salvarMovimentacao=async()=>{
+  const tipo=document.getElementById('mov-tipo').value,status=document.getElementById('mov-status').value;
+  if(!tipo||!status){toast('Tipo e status sao obrigatorios.','error');return;}
+  const btn=document.getElementById('btn-salvar-mov');btn.textContent='Registrando...';btn.disabled=true;
+  try{
+    await rpc('registrar_movimentacao_mobile',{
+      p_item_id:itemAtual.id,p_tipo:tipo,p_status_novo:status,
+      p_localizacao_nova:document.getElementById('mov-local').value.trim()||null,
+      p_responsavel_id:document.getElementById('mov-resp').value||null,
+      p_cliente_id:document.getElementById('mov-cliente').value||null,
+      p_empresa_origem:document.getElementById('mov-origem').value.trim()||null,
+      p_empresa_destino:document.getElementById('mov-destino').value.trim()||null,
+      p_motivo:document.getElementById('mov-motivo').value.trim()||null,
+      p_observacao:document.getElementById('mov-obs').value.trim()||null,
+    });
+    fecharModal('modal-mov');toast('Movimentacao registrada','success');await carregarItem(itemAtual.codigo_interno);
+  }catch(e){toast(`Erro: ${e.message}`,'error');}
+  finally{btn.textContent='Registrar movimentacao';btn.disabled=false;}
+};
+const abrirChecklist=()=>{if(!itemAtual)return;const p=new URLSearchParams({item:itemAtual.id,codigo:itemAtual.codigo_interno,serial:itemAtual.serial||'',modelo:itemAtual.modelo||''});window.open(`checklist-axis.html?${p}`,'_blank');};
+const abrirHistorico=()=>{if(!itemAtual)return;window.open(`axis-inventory.html#historico-${itemAtual.id}`,'_blank');};
+const gerarQRCode=(codigo,containerId,size=150)=>{const el=document.getElementById(containerId);el.innerHTML='';return new QRCode(el,{text:ITEM_URL(codigo),width:size,height:size,colorDark:'#0B1120',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.H});};
+const atualizarQRPreview=()=>{const c=document.getElementById('print-codigo').value||'AXIS-000000';const m=document.getElementById('print-modelo').value||'—';document.getElementById('qr-codigo').textContent=c;document.getElementById('qr-modelo').textContent=m;gerarQRCode(c,'qr-canvas-wrap',130);};
+const selecionarTamanho=(el,tam)=>{document.querySelectorAll('.size-opt').forEach(o=>o.classList.remove('active'));el.classList.add('active');tamEtiqueta=tam;};
+const imprimirEtiqueta=()=>{
+  const codigo=document.getElementById('print-codigo').value.trim(),modelo=document.getElementById('print-modelo').value.trim();
+  if(!codigo){toast('Informe o codigo interno.','error');return;}
+  const dims={'50x30':{w:'50mm',h:'30mm',qr:80,fs:11},'62x29':{w:'62mm',h:'29mm',qr:72,fs:10},'A4':{w:'210mm',h:'297mm',qr:120,fs:14}};
+  const d=dims[tamEtiqueta]||dims['50x30'];
+  const area=document.getElementById('print-page');
+  area.innerHTML=`<style>@page{size:${d.w} ${d.h};margin:0}.etq{width:${d.w};height:${d.h};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px;font-family:'Geist',Arial,sans-serif;background:#fff}.etq-brand{font-size:7px;font-weight:800;color:#0B1120;letter-spacing:.08em;text-transform:uppercase}.etq-codigo{font-family:'Geist Mono',monospace;font-size:${d.fs}px;font-weight:800;color:#0B1120}.etq-modelo{font-size:${Math.max(d.fs-2,8)}px;color:#64748B;text-align:center;max-width:90%}</style><div class="etq"><div class="etq-brand">AXIS INVENTORY</div><div id="pp-qr"></div><div class="etq-codigo">${codigo}</div>${modelo?`<div class="etq-modelo">${modelo}</div>`:''}</div>`;
+  new QRCode(document.getElementById('pp-qr'),{text:ITEM_URL(codigo),width:d.qr,height:d.qr,colorDark:'#0B1120',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});
+  area.style.display='block';setTimeout(()=>{window.print();setTimeout(()=>{area.style.display='none';},500);},300);
+};
+const verificarHash=async()=>{const hash=location.hash.replace('#','').trim();if(hash&&hash.length>3)await carregarItem(hash);};
+const init=async()=>{
+  atualizarQRPreview();
+  const saved=sessionStorage.getItem('axis_session');
+  if(saved){try{SESSION=JSON.parse(saved);const check=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(check.ok){await posLogin();return;}}catch{}sessionStorage.removeItem('axis_session');SESSION=null;}
+  showScreen('login');
+};
+init();
+</script>
+</body>
+</html>
