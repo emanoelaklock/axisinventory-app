@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modelos — Axis Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;
+  --bd:#E2E6F0;--bd2:#C8CEDF;
+  --tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;
+  --ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;
+  --gr:#059669;--am:#D97706;--re:#DC2626;
+  --sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);
+  --shl:0 4px 32px rgba(15,21,35,.12);
+  --r:10px;--mono:'IBM Plex Mono',monospace;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
+.page{display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.brand{font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto}.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:6px 11px;border-radius:7px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border:none;background:transparent;font-family:inherit;white-space:nowrap;transition:all .15s}
+.nav-btn:hover{background:var(--sur2);color:var(--tx)}
+.nav-btn.on{background:var(--acl);color:var(--ac);font-weight:600}
+.topbar-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--acl);color:var(--ac);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.perfil-chip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--sur2);color:var(--tx3)}
+.content{flex:1;padding:20px;max-width:1200px;margin:0 auto;width:100%}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.page-sub{font-size:12px;color:var(--tx3);margin-top:3px}
+.head-acts{display:flex;gap:7px;flex-wrap:wrap}
+.btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}
+.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn-p:hover{background:#1D4ED8;border-color:#1D4ED8;color:#fff}
+.btn-g{background:var(--gr);border-color:var(--gr);color:#fff}
+.btn-g:hover{background:#047857;color:#fff}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:default}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;max-width:340px;min-width:180px}
+.search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--tx3);pointer-events:none}
+.sinput{width:100%;padding:7px 10px 7px 30px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx);outline:none;transition:border .15s}
+.sinput:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acl)}
+.sinput::placeholder{color:var(--tx3)}
+.fsel{padding:7px 26px 7px 9px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center;font-family:inherit;font-size:13px;color:var(--tx2);outline:none;cursor:pointer;appearance:none;transition:border .15s}
+.fsel:focus{border-color:var(--ac)}
+.fsel.on{border-color:var(--ac);background-color:var(--acl);color:var(--ac)}
+.cbadge{font-size:12px;font-weight:600;color:var(--tx3);padding:3px 9px;border-radius:20px;background:var(--sur2);white-space:nowrap}
+.tcard{background:var(--sur);border:1px solid var(--bd);border-radius:12px;overflow:hidden;box-shadow:var(--sh)}
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--sur2)}
+th{padding:9px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bd);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--tx2)}
+td{padding:11px 13px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(37,99,235,.015)}
+.mono{font-family:var(--mono);font-size:12px}
+.cat-badge{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.cat-camera{background:rgba(37,99,235,.1);color:#2563EB}
+.cat-acessorio{background:rgba(245,158,11,.1);color:#D97706}
+.cat-radar{background:rgba(139,92,246,.1);color:#7C3AED}
+.cat-intercom{background:rgba(8,145,178,.1);color:#0891B2}
+.cat-acesso{background:rgba(5,150,105,.1);color:#059669}
+.cat-outro{background:var(--sur2);color:var(--tx3)}
+.acts{display:flex;gap:3px;opacity:0;transition:opacity .15s}
+tr:hover .acts{opacity:1}
+.ab{padding:4px 8px;border-radius:6px;border:1px solid transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.ab-e{color:var(--ac);background:var(--acl);border-color:var(--acm)}
+.ab-e:hover{background:var(--ac);color:#fff}
+.ab-d{color:var(--tx3);background:var(--sur2);border-color:var(--bd)}
+.ab-d:hover{background:var(--re);color:#fff;border-color:var(--re)}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+.dot-on{background:var(--gr)}.dot-off{background:var(--tx3)}
+.pag{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--bd);flex-wrap:wrap;gap:6px}
+.pag-info{font-size:12px;color:var(--tx3)}
+.pag-ctrl{display:flex;align-items:center;gap:3px}
+.pb{width:29px;height:29px;border-radius:7px;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;font-family:inherit;font-weight:500}
+.pb:hover:not(:disabled){background:var(--sur2);color:var(--tx)}
+.pb:disabled{opacity:.3;cursor:default}
+.pb.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.empty{text-align:center;padding:52px 20px;color:var(--tx3)}
+.empty-icon{font-size:28px;margin-bottom:8px}
+.empty-t{font-size:14px;font-weight:600;color:var(--tx2);margin-bottom:3px}
+.sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bd) 50%,var(--sur2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;height:13px;display:inline-block}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.mback{display:none;position:fixed;inset:0;background:rgba(15,21,35,.48);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px}
+.mback.open{display:flex}
+.modal{background:var(--sur);border-radius:14px;border:1px solid var(--bd);width:100%;max-width:480px;box-shadow:var(--shl);animation:min .18s ease}
+@keyframes min{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.mh{padding:16px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.mt{font-size:15px;font-weight:700}
+.mx{width:26px;height:26px;border-radius:6px;border:1px solid var(--bd);background:var(--sur2);color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
+.mb{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.mf{padding:12px 18px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.fg input,.fg select,.fg textarea{padding:8px 11px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx);outline:none;transition:border .15s}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:26px}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acl)}
+.fg textarea{resize:vertical;min-height:64px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.merr{padding:9px 12px;border-radius:7px;font-size:13px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;display:none}
+.mok{padding:9px 12px;border-radius:7px;font-size:13px;background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;display:none}
+/* Import modal */
+.drop-zone{border:2px dashed var(--bd2);border-radius:var(--r);padding:28px;text-align:center;cursor:pointer;transition:all .2s;color:var(--tx3)}
+.drop-zone:hover,.drop-zone.over{border-color:var(--ac);background:var(--acl);color:var(--ac)}
+.drop-zone input{display:none}
+.drop-icon{font-size:28px;margin-bottom:8px}
+.import-preview{background:var(--sur2);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--tx2);max-height:180px;overflow-y:auto;font-family:var(--mono)}
+.imp-row{padding:3px 0;border-bottom:1px solid var(--bd)}
+.imp-row:last-child{border-bottom:none}
+.imp-ok{color:var(--gr)}.imp-err{color:var(--re)}
+.tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
+.toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
+@keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
+.toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
+.toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
+@media(max-width:700px){.frow{grid-template-columns:1fr}.nav{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="topbar">
+  <div class="brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    Axis Inventory
+  </div>
+  <nav class="nav">
+    <button class="nav-btn" onclick="location.href='lista-itens.html'">Equipamentos</button>
+    <button class="nav-btn" onclick="location.href='lista-itens.html'">Movimentações</button>
+    <button class="nav-btn" onclick="location.href='lista-itens.html'">Checklists</button>
+    <button class="nav-btn on">Modelos</button>
+    <button class="nav-btn" onclick="location.href='lista-itens.html'">Clientes</button>
+    <button class="nav-btn" onclick="location.href='lista-itens.html'">Responsáveis</button>
+  </nav>
+  <div class="topbar-r">
+    <span class="perfil-chip" id="perfil-chip">—</span>
+    <div class="avatar" id="avatar">—</div>
+  </div>
+</header>
+
+<main class="content">
+  <div id="login-screen" style="display:none;max-width:360px;margin:60px auto">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">📡</div>
+      <div style="font-size:18px;font-weight:700">Axis Inventory</div>
+      <div style="font-size:13px;color:var(--tx3);margin-top:4px">Entre para continuar</div>
+    </div>
+    <div id="login-msg" style="margin-bottom:10px"></div>
+    <div class="fg" style="margin-bottom:10px"><label>Email</label><input type="email" id="l-email" placeholder="seu@email.com"/></div>
+    <div class="fg" style="margin-bottom:16px"><label>Senha</label><input type="password" id="l-senha" onkeydown="if(event.key==='Enter')fazerLogin()"/></div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;padding:10px" id="btn-login" onclick="fazerLogin()">Entrar</button>
+  </div>
+
+  <div id="app" style="display:none">
+    <div class="page-head">
+      <div>
+        <div class="page-title">Modelos de equipamento</div>
+        <div class="page-sub" id="page-sub">Carregando...</div>
+      </div>
+      <div class="head-acts">
+        <button class="btn btn-sm" onclick="baixarModelo()" title="Baixar planilha modelo CSV">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Baixar modelo
+        </button>
+        <button class="btn btn-sm" onclick="openM('m-import')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Importar CSV
+        </button>
+        <button class="btn btn-p btn-sm" onclick="abrirNovo()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Novo modelo
+        </button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="sinput" id="q" type="search" placeholder="Part number, modelo, categoria..." oninput="onQ(this.value)"/>
+      </div>
+      <select class="fsel" id="f-cat" onchange="onF()">
+        <option value="">Categoria</option>
+        <option>Câmera</option>
+        <option>Acessório</option>
+        <option>Radar</option>
+        <option>Intercom</option>
+        <option>Controle de Acesso</option>
+        <option>Outro</option>
+      </select>
+      <select class="fsel" id="f-ativo" onchange="onF()">
+        <option value="">Status</option>
+        <option value="true">Ativos</option>
+        <option value="false">Inativos</option>
+      </select>
+      <span class="cbadge" id="cbadge">—</span>
+    </div>
+
+    <div class="tcard">
+      <div class="twrap">
+        <table>
+          <thead><tr>
+            <th onclick="srt('categoria')">Categoria</th>
+            <th onclick="srt('part_number')">Part Number</th>
+            <th onclick="srt('modelo')">Modelo</th>
+            <th>Descrição</th>
+            <th onclick="srt('ativo')">Status</th>
+            <th style="width:100px"></th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="pag">
+        <span class="pag-info" id="pag-info">—</span>
+        <div class="pag-ctrl" id="pag-ctrl"></div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<div class="tc" id="tc"></div>
+
+<!-- MODAL: NOVO / EDITAR MODELO -->
+<div class="mback" id="m-form" onclick="if(event.target===this)closeM('m-form')">
+  <div class="modal">
+    <div class="mh">
+      <div class="mt" id="m-form-title">Novo modelo</div>
+      <button class="mx" onclick="closeM('m-form')">✕</button>
+    </div>
+    <div class="mb">
+      <div class="merr" id="m-err"></div>
+      <div class="frow">
+        <div class="fg">
+          <label>Part Number *</label>
+          <input id="f-pn" placeholder="Ex: 02060-001"/>
+        </div>
+        <div class="fg">
+          <label>Categoria *</label>
+          <select id="f-cat-form">
+            <option value="">Selecione...</option>
+            <option>Câmera</option>
+            <option>Acessório</option>
+            <option>Radar</option>
+            <option>Intercom</option>
+            <option>Controle de Acesso</option>
+            <option>Outro</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Modelo *</label>
+        <input id="f-modelo" placeholder="Ex: AXIS P3818-PVE Panoramic Camera"/>
+      </div>
+      <div class="fg">
+        <label>Descrição</label>
+        <textarea id="f-desc" placeholder="Descrição opcional..."></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-form')">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-salvar" onclick="salvar()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: IMPORTAR CSV -->
+<div class="mback" id="m-import" onclick="if(event.target===this)closeM('m-import')">
+  <div class="modal" style="max-width:540px">
+    <div class="mh">
+      <div class="mt">Importar modelos via CSV</div>
+      <button class="mx" onclick="closeM('m-import')">✕</button>
+    </div>
+    <div class="mb">
+      <div style="font-size:12px;color:var(--tx3);line-height:1.6">
+        O CSV deve ter as colunas: <strong>categoria, part_number, modelo, descricao</strong><br>
+        Use ponto-e-vírgula (;) ou vírgula (,) como separador. Baixe o modelo para garantir o formato correto.
+      </div>
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-input').click()"
+        ondragover="event.preventDefault();this.classList.add('over')"
+        ondragleave="this.classList.remove('over')"
+        ondrop="onDrop(event)">
+        <input type="file" id="csv-input" accept=".csv,.txt" onchange="onFile(this.files[0])"/>
+        <div class="drop-icon">📄</div>
+        <div style="font-size:13px;font-weight:600">Clique ou arraste o arquivo CSV</div>
+        <div style="font-size:12px;margin-top:4px">Formato .csv ou .txt</div>
+      </div>
+      <div id="import-preview" style="display:none">
+        <div style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+          Preview — <span id="imp-count">0</span> registros encontrados
+        </div>
+        <div class="import-preview" id="imp-rows"></div>
+      </div>
+      <div class="merr" id="imp-err"></div>
+      <div class="mok" id="imp-ok"></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-import')">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-importar" onclick="importar()" disabled>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Importar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SURL = 'https://adbskoverysjohhwadln.supabase.co'
+const AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+const POR_PAG = 25
+
+let SESSION = null, PERFIL = 'Consulta'
+let editId = null
+let csvRows = []
+
+// ── AUTH ──────────────────────────────────────────────────────
+const hAuth = () => ({
+  'apikey': AKEY,
+  'Authorization': `Bearer ${SESSION.access_token}`,
+  'Content-Type': 'application/json',
+})
+
+const fazerLogin = async () => {
+  const email = document.getElementById('l-email').value.trim()
+  const senha = document.getElementById('l-senha').value
+  const btn = document.getElementById('btn-login')
+  const msg = document.getElementById('login-msg')
+  if (!email || !senha) { toast('Preencha email e senha.','err'); return }
+  btn.textContent = 'Entrando…'; btn.disabled = true; msg.innerHTML = ''
+  try {
+    const r = await fetch(`${SURL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'apikey': AKEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: senha }),
+    })
+    const d = await r.json()
+    if (!r.ok) throw new Error(d.error_description || d.message || 'Erro')
+    SESSION = { access_token: d.access_token, user: d.user }
+    sessionStorage.setItem('ax_sess', JSON.stringify(SESSION))
+    await posLogin()
+  } catch(e) {
+    msg.innerHTML = `<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`
+  } finally { btn.textContent = 'Entrar'; btn.disabled = false }
+}
+
+const posLogin = async () => {
+  const r = await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${SESSION.user.id}`, { headers: hAuth() })
+  const d = await r.json()
+  PERFIL = d[0]?.perfil || 'Consulta'
+  const nome = d[0]?.nome || SESSION.user.email?.split('@')[0] || '?'
+  document.getElementById('avatar').textContent = nome[0].toUpperCase()
+  document.getElementById('perfil-chip').textContent = PERFIL
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('app').style.display = 'block'
+  // Só Admin e Almoxarifado podem cadastrar/editar
+  if (!['Administrador','Almoxarifado'].includes(PERFIL)) {
+    document.querySelector('.head-acts').style.display = 'none'
+  }
+  carregarModelos(true)
+}
+
+// ── QUERY STATE ───────────────────────────────────────────────
+let QS = { busca:'', cat:'', ativo:'', sortCol:'categoria', sortAsc:true, pagina:0, total:0 }
+
+const buildQ = () => {
+  const from = QS.pagina * POR_PAG
+  const to   = from + POR_PAG - 1
+  let q = `modelos?select=*`
+  if (QS.ativo !== '') q += `&ativo=eq.${QS.ativo}`
+  if (QS.cat)   q += `&categoria=eq.${encodeURIComponent(QS.cat)}`
+  if (QS.busca) {
+    const b = encodeURIComponent(`%${QS.busca}%`)
+    q += `&or=(part_number.ilike.${b},modelo.ilike.${b},categoria.ilike.${b},descricao.ilike.${b})`
+  }
+  q += `&order=${QS.sortCol}.${QS.sortAsc?'asc':'desc'}.nullslast`
+  return { q, range: `${from}-${to}` }
+}
+
+// ── CARREGAR ──────────────────────────────────────────────────
+let loading = false
+const carregarModelos = async (reset=false) => {
+  if (loading) return
+  if (reset) QS.pagina = 0
+  loading = true
+  renderSkel()
+  try {
+    const { q, range } = buildQ()
+    const r = await fetch(`${SURL}/rest/v1/${q}`, {
+      headers: { ...hAuth(), 'Prefer': 'count=exact', 'Range': range, 'Range-Unit': 'items' }
+    })
+    if (!r.ok) throw new Error((await r.json())?.message || 'Erro')
+    const data = await r.json()
+    const cr = r.headers.get('content-range')
+    QS.total = cr ? parseInt(cr.split('/')[1]) : data.length
+    renderTabela(data)
+    renderPag()
+    document.getElementById('page-sub').textContent = `${QS.total} modelos cadastrados`
+    document.getElementById('cbadge').textContent = `${QS.total} modelo${QS.total!==1?'s':''}`
+    document.getElementById('pag-info').textContent = QS.total
+      ? `${QS.pagina*POR_PAG+1}–${Math.min((QS.pagina+1)*POR_PAG,QS.total)} de ${QS.total}`
+      : 'Nenhum resultado'
+  } catch(e) {
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--tx3)">${esc(e.message)}</td></tr>`
+    toast(e.message,'err')
+  } finally { loading = false }
+}
+
+// ── FILTROS ───────────────────────────────────────────────────
+let qt = null
+const onQ = v => { clearTimeout(qt); qt = setTimeout(()=>{QS.busca=v.trim();QS.pagina=0;carregarModelos()},280) }
+const onF = () => {
+  QS.cat   = document.getElementById('f-cat').value
+  QS.ativo = document.getElementById('f-ativo').value
+  QS.pagina = 0; carregarModelos()
+  ;['f-cat','f-ativo'].forEach(id=>{const el=document.getElementById(id);el.classList.toggle('on',!!el.value)})
+}
+const srt = col => { if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc; else{QS.sortCol=col;QS.sortAsc=true}; QS.pagina=0; carregarModelos() }
+
+// ── CATEGORIA BADGE ───────────────────────────────────────────
+const CAT_CLS = {
+  'Câmera':'cat-camera','Acessório':'cat-acessorio','Radar':'cat-radar',
+  'Intercom':'cat-intercom','Controle de Acesso':'cat-acesso',
+}
+const catBadge = c => `<span class="cat-badge ${CAT_CLS[c]||'cat-outro'}">${esc(c||'—')}</span>`
+
+// ── RENDER ────────────────────────────────────────────────────
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+
+const renderSkel = () => {
+  document.getElementById('tbody').innerHTML = Array(6).fill(0).map(()=>
+    `<tr>${Array(5).fill(0).map(()=>`<td><span class="sk" style="width:${40+Math.random()*80}px"></span></td>`).join('')}<td></td></tr>`
+  ).join('')
+}
+
+const renderTabela = rows => {
+  if (!rows.length) {
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📦</div><div class="empty-t">Nenhum modelo encontrado</div><div>Ajuste os filtros ou cadastre um novo modelo</div></div></td></tr>`
+    return
+  }
+  const canEdit = ['Administrador','Almoxarifado'].includes(PERFIL)
+  document.getElementById('tbody').innerHTML = rows.map(m => `<tr>
+    <td>${catBadge(m.categoria)}</td>
+    <td><span class="mono">${esc(m.part_number)}</span></td>
+    <td style="font-weight:500;color:var(--tx)">${esc(m.modelo)}</td>
+    <td style="font-size:12px;color:var(--tx3);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.descricao||'—')}</td>
+    <td><span class="status-dot ${m.ativo?'dot-on':'dot-off'}"></span>${m.ativo?'Ativo':'Inativo'}</td>
+    <td><div class="acts">${canEdit?`
+      <button class="ab ab-e" onclick='editar(${JSON.stringify(m)})'>Editar</button>
+      <button class="ab ab-d" onclick='toggleAtivo("${m.id}",${m.ativo})'>${m.ativo?'Desativar':'Ativar'}</button>
+    `:''}</div></td>
+  </tr>`).join('')
+}
+
+const renderPag = () => {
+  const total = Math.ceil(QS.total / POR_PAG)
+  if (total <= 1) { document.getElementById('pag-ctrl').innerHTML=''; return }
+  const pages = []
+  pages.push(`<button class="pb" onclick="irP(${QS.pagina-1})" ${QS.pagina===0?'disabled':''}>‹</button>`)
+  for (let i=0; i<total; i++) {
+    if (i===0||i===total-1||Math.abs(i-QS.pagina)<=2)
+      pages.push(`<button class="pb ${i===QS.pagina?'on':''}" onclick="irP(${i})">${i+1}</button>`)
+    else if (Math.abs(i-QS.pagina)===3)
+      pages.push(`<span style="color:var(--tx3);font-size:11px;padding:0 2px">…</span>`)
+  }
+  pages.push(`<button class="pb" onclick="irP(${QS.pagina+1})" ${QS.pagina>=total-1?'disabled':''}>›</button>`)
+  document.getElementById('pag-ctrl').innerHTML = pages.join('')
+}
+
+window.irP = p => { const t=Math.ceil(QS.total/POR_PAG); if(p<0||p>=t)return; QS.pagina=p; carregarModelos() }
+
+// ── CRUD ──────────────────────────────────────────────────────
+const abrirNovo = () => {
+  editId = null
+  document.getElementById('m-form-title').textContent = 'Novo modelo'
+  ;['f-pn','f-modelo','f-desc'].forEach(id => document.getElementById(id).value='')
+  document.getElementById('f-cat-form').value = ''
+  document.getElementById('m-err').style.display = 'none'
+  openM('m-form')
+}
+
+window.editar = m => {
+  editId = m.id
+  document.getElementById('m-form-title').textContent = 'Editar modelo'
+  document.getElementById('f-pn').value    = m.part_number || ''
+  document.getElementById('f-modelo').value = m.modelo || ''
+  document.getElementById('f-desc').value  = m.descricao || ''
+  document.getElementById('f-cat-form').value = m.categoria || ''
+  document.getElementById('m-err').style.display = 'none'
+  openM('m-form')
+}
+
+const salvar = async () => {
+  const pn  = document.getElementById('f-pn').value.trim()
+  const mod = document.getElementById('f-modelo').value.trim()
+  const cat = document.getElementById('f-cat-form').value
+  const desc= document.getElementById('f-desc').value.trim()
+  const err = document.getElementById('m-err')
+
+  if (!pn || !mod || !cat) {
+    err.textContent = 'Part number, modelo e categoria são obrigatórios.'
+    err.style.display = 'block'; return
+  }
+  err.style.display = 'none'
+  const btn = document.getElementById('btn-salvar')
+  btn.textContent = 'Salvando…'; btn.disabled = true
+
+  try {
+    const body = { part_number: pn, modelo: mod, categoria: cat, descricao: desc || null }
+    let r
+    if (editId) {
+      r = await fetch(`${SURL}/rest/v1/modelos?id=eq.${editId}`, {
+        method: 'PATCH',
+        headers: { ...hAuth(), 'Prefer': 'return=representation' },
+        body: JSON.stringify(body)
+      })
+    } else {
+      r = await fetch(`${SURL}/rest/v1/modelos`, {
+        method: 'POST',
+        headers: { ...hAuth(), 'Prefer': 'return=representation' },
+        body: JSON.stringify({ ...body, ativo: true })
+      })
+    }
+    const d = await r.json()
+    if (!r.ok) throw new Error(d?.message || d?.hint || JSON.stringify(d))
+    closeM('m-form')
+    toast(editId ? 'Modelo atualizado ✓' : 'Modelo cadastrado ✓', 'ok')
+    carregarModelos(true)
+  } catch(e) {
+    err.textContent = e.message.includes('unique') ? 'Part number já cadastrado.' : e.message
+    err.style.display = 'block'
+  } finally { btn.textContent = 'Salvar'; btn.disabled = false }
+}
+
+window.toggleAtivo = async (id, atual) => {
+  try {
+    const r = await fetch(`${SURL}/rest/v1/modelos?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { ...hAuth(), 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ ativo: !atual })
+    })
+    if (!r.ok) throw new Error('Erro ao atualizar')
+    toast(atual ? 'Modelo desativado' : 'Modelo ativado', 'ok')
+    carregarModelos()
+  } catch(e) { toast(e.message,'err') }
+}
+
+// ── CSV DOWNLOAD (modelo) ─────────────────────────────────────
+const baixarModelo = () => {
+  const csv = 'categoria;part_number;modelo;descricao\nCâmera;02060-001;AXIS P3818-PVE Panoramic Camera;Câmera panorâmica 12MP\nAcessório;01179-001;AXIS Q35 Weathershield Kit A;Kit de proteção para câmeras série Q35\n'
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'modelo_importacao_modelos.csv'
+  a.click()
+  toast('Modelo baixado ✓', 'ok')
+}
+
+// ── CSV IMPORT ────────────────────────────────────────────────
+const onDrop = e => {
+  e.preventDefault()
+  document.getElementById('drop-zone').classList.remove('over')
+  const file = e.dataTransfer.files[0]
+  if (file) onFile(file)
+}
+
+const onFile = file => {
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = e => parseCSV(e.target.result)
+  reader.readAsText(file, 'UTF-8')
+}
+
+const parseCSV = text => {
+  // Detecta separador
+  const sep = text.includes(';') ? ';' : ','
+  const lines = text.split(/\r?\n/).filter(l => l.trim())
+  if (lines.length < 2) {
+    showImpErr('Arquivo vazio ou sem dados.'); return
+  }
+
+  const headers = lines[0].toLowerCase().split(sep).map(h => h.trim().replace(/"/g,''))
+  const idxCat  = headers.indexOf('categoria')
+  const idxPN   = headers.indexOf('part_number')
+  const idxMod  = headers.indexOf('modelo')
+  const idxDesc = headers.indexOf('descricao')
+
+  if (idxPN < 0 || idxMod < 0) {
+    showImpErr('Colunas obrigatórias não encontradas: part_number, modelo'); return
+  }
+
+  csvRows = []
+  const previewLines = []
+  const erros = []
+
+  lines.slice(1).forEach((line, i) => {
+    const cols = line.split(sep).map(c => c.trim().replace(/^"|"$/g,''))
+    const pn   = cols[idxPN]  || ''
+    const mod  = cols[idxMod] || ''
+    const cat  = idxCat  >= 0 ? cols[idxCat]  : ''
+    const desc = idxDesc >= 0 ? cols[idxDesc] : ''
+
+    if (!pn || !mod) {
+      erros.push(`Linha ${i+2}: part_number ou modelo vazio`)
+      previewLines.push(`<div class="imp-row imp-err">✗ Linha ${i+2}: dados incompletos</div>`)
+      return
+    }
+    csvRows.push({ part_number: pn, modelo: mod, categoria: cat||'Outro', descricao: desc||null, ativo: true })
+    previewLines.push(`<div class="imp-row imp-ok">✓ ${esc(pn)} — ${esc(mod.substring(0,40))}</div>`)
+  })
+
+  document.getElementById('imp-count').textContent = csvRows.length
+  document.getElementById('imp-rows').innerHTML = previewLines.join('')
+  document.getElementById('import-preview').style.display = 'block'
+  document.getElementById('imp-err').style.display = 'none'
+  document.getElementById('imp-ok').style.display = 'none'
+  document.getElementById('btn-importar').disabled = csvRows.length === 0
+
+  if (erros.length) {
+    document.getElementById('imp-err').textContent = `${erros.length} linha(s) com erro serão ignoradas.`
+    document.getElementById('imp-err').style.display = 'block'
+  }
+}
+
+const showImpErr = msg => {
+  document.getElementById('imp-err').textContent = msg
+  document.getElementById('imp-err').style.display = 'block'
+  document.getElementById('import-preview').style.display = 'none'
+  document.getElementById('btn-importar').disabled = true
+}
+
+const importar = async () => {
+  if (!csvRows.length) return
+  const btn = document.getElementById('btn-importar')
+  btn.textContent = 'Importando…'; btn.disabled = true
+
+  try {
+    // Insere em lotes de 50
+    let inseridos = 0, ignorados = 0
+    const lotes = []
+    for (let i=0; i<csvRows.length; i+=50) lotes.push(csvRows.slice(i,i+50))
+
+    for (const lote of lotes) {
+      const r = await fetch(`${SURL}/rest/v1/modelos`, {
+        method: 'POST',
+        headers: { ...hAuth(), 'Prefer': 'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify(lote)
+      })
+      if (!r.ok) {
+        const d = await r.json()
+        throw new Error(d?.message || 'Erro na importação')
+      }
+      inseridos += lote.length
+    }
+
+    const okEl = document.getElementById('imp-ok')
+    okEl.textContent = `${inseridos} modelos importados com sucesso! Part numbers duplicados foram ignorados.`
+    okEl.style.display = 'block'
+    toast(`${inseridos} modelos importados ✓`, 'ok')
+    csvRows = []
+    document.getElementById('btn-importar').disabled = true
+    carregarModelos(true)
+  } catch(e) {
+    document.getElementById('imp-err').textContent = e.message
+    document.getElementById('imp-err').style.display = 'block'
+    toast(e.message,'err')
+  } finally { btn.textContent = 'Importar'; btn.disabled = false }
+}
+
+// ── MODAL / TOAST ─────────────────────────────────────────────
+const openM  = id => document.getElementById(id).classList.add('open')
+const closeM = id => {
+  document.getElementById(id).classList.remove('open')
+  if (id === 'm-import') {
+    csvRows = []
+    document.getElementById('import-preview').style.display = 'none'
+    document.getElementById('imp-err').style.display = 'none'
+    document.getElementById('imp-ok').style.display = 'none'
+    document.getElementById('btn-importar').disabled = true
+    document.getElementById('drop-zone').classList.remove('over')
+  }
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.mback.open').forEach(m=>m.classList.remove('open')) })
+
+let tid=0
+const toast = (msg, tipo='info', dur=4000) => {
+  const el=document.createElement('div')
+  el.className=`toast ${tipo}`; el.textContent=msg
+  document.getElementById('tc').appendChild(el)
+  setTimeout(()=>el.remove(),dur)
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+const init = async () => {
+  const saved = sessionStorage.getItem('ax_sess')
+  if (saved) {
+    try {
+      SESSION = JSON.parse(saved)
+      const r = await fetch(`${SURL}/auth/v1/user`, {
+        headers: { 'apikey': AKEY, 'Authorization': `Bearer ${SESSION.access_token}` }
+      })
+      if (r.ok) { await posLogin(); return }
+    } catch {}
+    sessionStorage.removeItem('ax_sess'); SESSION = null
+  }
+  document.getElementById('login-screen').style.display = 'block'
+}
+
+init()
+</script>
+</body>
+</html>
