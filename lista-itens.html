@@ -832,14 +832,13 @@ const init = async () => {
 // ═══════════════════════════════════════════════════════════════
 const baixarModeloItens = () => {
   const dados = [
-    ['serial','part_number','status_atual','localizacao_atual','nome_vms','observacoes'],
-    ['ACCC8E37C247','02060-001','Estoque Novo','Almoxarifado','CAM-01',''],
-    ['','01179-001','Estoque Novo','Almoxarifado','','Sem serial — acessorio'],
+    ['serial','part_number','status_atual','localizacao_atual','responsavel','cliente','nome_vms','observacoes'],
+    ['ACCC8E37C247','02060-001','Estoque Novo','Almoxarifado Central','Joao Silva','Empresa ABC','CAM-01',''],
+    ['','01179-001','Estoque Novo','Almoxarifado Central','','','','Sem serial — acessorio'],
   ]
   const wb = XLSX.utils.book_new()
   const ws = XLSX.utils.aoa_to_sheet(dados)
-  ws['!cols'] = [{wch:18},{wch:14},{wch:22},{wch:20},{wch:16},{wch:25}]
-  // Adiciona aba de referencia com status validos
+  ws['!cols'] = [{wch:18},{wch:14},{wch:22},{wch:22},{wch:18},{wch:20},{wch:16},{wch:25}]
   const ref = [
     ['Status validos (use exatamente como abaixo)'],
     ['Estoque Novo'],['Estoque Usado'],['Reservado'],['Vendido'],
@@ -876,14 +875,28 @@ const importarItens = async file => {
       const kLocal   = keys.find(k => norm(k).includes('locali'))
       const kVms     = keys.find(k => norm(k).includes('vms') || norm(k).includes('nome_vms'))
       const kObs     = keys.find(k => norm(k).includes('obs'))
+      const kResp    = keys.find(k => norm(k).includes('respons'))
+      const kCli     = keys.find(k => norm(k).includes('cliente'))
 
       if (!kPN || !kStatus) { showImpErr('Colunas obrigatorias nao encontradas: part_number, status_atual'); return }
 
-      // Carrega modelos do banco para resolver part_number -> modelo_id
-      const mResp = await fetch(`${SURL}/rest/v1/modelos?select=id,part_number&ativo=eq.true`, { headers: hAuth() })
+      // Carrega modelos, responsaveis e clientes do banco em paralelo
+      const [mResp, rResp, cResp] = await Promise.all([
+        fetch(`${SURL}/rest/v1/modelos?select=id,part_number&ativo=eq.true`, { headers: hAuth() }),
+        fetch(`${SURL}/rest/v1/responsaveis?select=id,nome&ativo=eq.true`, { headers: hAuth() }),
+        fetch(`${SURL}/rest/v1/clientes?select=id,nome&ativo=eq.true`, { headers: hAuth() }),
+      ])
       const modelos = await mResp.json()
+      const resps   = await rResp.json()
+      const clis    = await cResp.json()
+
+      // Mapas nome (lowercase) -> id
       const modeloMap = {}
       modelos.forEach(m => { modeloMap[m.part_number.toLowerCase()] = m.id })
+      const respMap = {}
+      resps.forEach(r => { respMap[r.nome.toLowerCase()] = r.id })
+      const cliMap = {}
+      clis.forEach(c => { cliMap[c.nome.toLowerCase()] = c.id })
 
       const STATUS_VALIDOS = [
         'Estoque Novo','Estoque Usado','Reservado','Vendido','Com Tecnico','Locado',
@@ -911,6 +924,8 @@ const importarItens = async file => {
         const local  = kLocal  ? String(row[kLocal]  || '').trim() : ''
         const vms    = kVms    ? String(row[kVms]    || '').trim() : ''
         const obs    = kObs    ? String(row[kObs]    || '').trim() : ''
+        const respNome = kResp ? String(row[kResp] || '').trim() : ''
+        const cliNome  = kCli  ? String(row[kCli]  || '').trim() : ''
 
         if (!pn || !status) {
           erros++
@@ -932,16 +947,28 @@ const importarItens = async file => {
           return
         }
 
+        // Resolve responsavel e cliente pelo nome (busca case-insensitive)
+        const respId = respNome ? (respMap[respNome.toLowerCase()] || null) : null
+        const cliId  = cliNome  ? (cliMap[cliNome.toLowerCase()]  || null) : null
+
+        // Aviso se nome informado mas nao encontrado
+        const avisos = []
+        if (respNome && !respId) avisos.push(`resp '${respNome}' nao encontrado`)
+        if (cliNome  && !cliId)  avisos.push(`cliente '${cliNome}' nao encontrado`)
+
         itensParaImportar.push({
-          serial:           serial || null,
-          modelo_id:        modeloId,
-          status_atual:     statusNorm,
+          serial:            serial || null,
+          modelo_id:         modeloId,
+          status_atual:      statusNorm,
           localizacao_atual: local || null,
-          nome_vms:         vms || null,
-          observacoes:      obs || null,
-          ativo:            true,
+          responsavel_atual: respId,
+          cliente_atual:     cliId,
+          nome_vms:          vms || null,
+          observacoes:       obs || null,
+          ativo:             true,
         })
-        preview.push(`<div style="color:#059669">v ${esc(serial||'sem serial')} | ${esc(pn)} | ${esc(statusNorm)}</div>`)
+        const aviso = avisos.length ? ` <span style="color:#D97706">(${avisos.join(', ')})</span>` : ''
+        preview.push(`<div style="color:#059669">v ${esc(serial||'sem serial')} | ${esc(pn)} | ${esc(statusNorm)}${aviso}</div>`)
       })
 
       document.getElementById('imp-count').textContent = itensParaImportar.length
