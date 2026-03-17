@@ -43,10 +43,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .hero{background:var(--sur);border:1px solid var(--bd);border-radius:14px;padding:24px;margin-bottom:16px;box-shadow:var(--sh)}
 .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .hero-id{display:flex;flex-direction:column;gap:6px}
-.hero-code{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--tx);letter-spacing:-.01em}
-.hero-serial{font-family:var(--mono);font-size:13px;color:var(--tx3);display:flex;align-items:center;gap:6px}
-.hero-model{font-size:16px;font-weight:600;color:var(--tx2);margin-top:2px}
-.hero-pn{font-family:var(--mono);font-size:12px;color:var(--tx3)}
+.hero-pn{font-size:12px;color:var(--tx3);font-weight:400;margin-bottom:4px}
+.hero-model{font-size:20px;font-weight:700;color:var(--tx);letter-spacing:-.02em;line-height:1.2}
+.hero-serial{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--tx);margin-top:4px}
+.hero-code{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--tx3);margin-top:3px}
 .hero-acts{display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0}
 
 /* info grid */
@@ -95,14 +95,23 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .chk-foto:hover{transform:scale(1.04)}
 
 /* anexos */
-.anx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
-.anx-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .15s}
+.anx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.anx-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;transition:all .15s;position:relative}
 .anx-card:hover{box-shadow:var(--sh);border-color:var(--bd2)}
-.anx-thumb{height:80px;overflow:hidden;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:28px}
+.anx-thumb{height:90px;overflow:hidden;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer}
 .anx-thumb img{width:100%;height:100%;object-fit:cover}
 .anx-info{padding:7px 9px}
 .anx-tipo{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
-.anx-nome{font-size:12px;color:var(--tx2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.anx-nome{font-size:11px;color:var(--tx2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.anx-actions{display:flex;gap:4px;padding:6px 7px 7px;border-top:1px solid var(--bd)}
+.anx-btn{flex:1;padding:4px 6px;border-radius:6px;border:1px solid transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center}
+.anx-btn-open{color:var(--ac);background:var(--acl);border-color:var(--acm)}
+.anx-btn-open:hover{background:var(--ac);color:#fff}
+.anx-btn-del{color:var(--tx3);background:var(--sur2);border-color:var(--bd)}
+.anx-btn-del:hover{background:var(--re);color:#fff;border-color:var(--re)}
+.anx-upload-zone{border:2px dashed var(--bd2);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .2s;color:var(--tx3);font-size:13px}
+.anx-upload-zone:hover{border-color:var(--ac);background:var(--acl);color:var(--ac)}
+.anx-upload-zone input{display:none}
 
 /* generic card container */
 .card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:16px;box-shadow:var(--sh)}
@@ -218,13 +227,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
     <div class="hero">
       <div class="hero-top">
         <div class="hero-id">
-          <div class="hero-code" id="h-codigo">—</div>
+          <div class="hero-pn" id="h-pn"></div>
+          <div class="hero-model" id="h-model">—</div>
           <div class="hero-serial" id="h-serial">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>
             <span id="h-serial-val">—</span>
           </div>
-          <div class="hero-model" id="h-model">—</div>
-          <div class="hero-pn" id="h-pn"></div>
+          <div class="hero-code" id="h-codigo">—</div>
         </div>
         <div class="hero-acts">
           <button class="btn btn-p" onclick="openMov()">
@@ -318,6 +326,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
           Anexos
           <span id="anx-count">0</span>
         </div>
+        <label class="btn btn-sm" style="cursor:pointer" title="Adicionar anexo">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Incluir
+          <input type="file" style="display:none" id="anx-file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" onchange="uploadAnexos(this.files)"/>
+        </label>
       </div>
       <div id="anx-content">
         <div class="card empty"><div class="empty-icon">📎</div>Nenhum anexo</div>
@@ -585,9 +598,10 @@ const mostrarErro = (msg) => {
 const renderHero = (i) => {
   document.title = `${i.codigo_interno} — Axis Inventory`
   set('topbar-codigo', i.codigo_interno)
-  set('h-codigo', i.codigo_interno)
-  set('h-serial-val', i.serial || 'Sem número de série')
   set('h-model', i.modelo || '—')
+  set('h-serial-val', i.serial || '—')
+  document.getElementById('h-serial').style.display = i.serial ? '' : 'none'
+  set('h-codigo', i.codigo_interno)
   document.getElementById('h-pn').textContent = i.part_number ? `PN: ${i.part_number}` : ''
   document.getElementById('h-status').innerHTML = sbadge(i.status_atual)
   set('h-resp', i.responsavel_nome)
@@ -735,19 +749,101 @@ const carregarAnexos = async (id) => {
       anx.map(a => {
         const isImg = (a.tipo === 'imagem') || (a.arquivo||'').startsWith('data:image')
         const thumb = isImg
-          ? `<div class="anx-thumb" onclick="openLB('${a.arquivo}')"><img src="${a.arquivo}" alt="" loading="lazy"/></div>`
-          : `<div class="anx-thumb">${TIPO_ICON[a.tipo]||'📎'}</div>`
+          ? `<div class="anx-thumb" onclick="openLB('${a.arquivo.replace(/'/g,"\\'")}')"><img src="${a.arquivo}" alt="" loading="lazy"/></div>`
+          : `<div class="anx-thumb" onclick="abrirAnexo('${a.id}')">${TIPO_ICON[a.tipo]||'📎'}</div>`
+        const label = isImg ? 'Imagem' : (a.tipo || 'Arquivo')
+        const data  = fdt(a.data_upload)
         return `<div class="anx-card">
           ${thumb}
           <div class="anx-info">
-            <div class="anx-tipo">${esc(a.tipo||'arquivo')}</div>
-            <div class="anx-nome">${fdt(a.data_upload)}</div>
+            <div class="anx-tipo">${esc(label)}</div>
+            <div class="anx-nome">${data}</div>
+          </div>
+          <div class="anx-actions">
+            <button class="anx-btn anx-btn-open" onclick="${isImg ? `openLB('${a.arquivo.replace(/'/g,"\\'")}')` : `abrirAnexo('${a.id}')`}">Abrir</button>
+            <button class="anx-btn anx-btn-del" onclick="excluirAnexo('${a.id}')">Excluir</button>
           </div>
         </div>`
       }).join('')
     }</div></div>`
   } catch(e) {
     el.innerHTML = `<div class="card empty"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
+  }
+}
+
+// Upload de anexos
+const uploadAnexos = async (files) => {
+  if (!files || !files.length) return
+  if (!ITEM_ID) return
+
+  let ok = 0, erros = 0
+  for (const file of files) {
+    try {
+      // Converte para base64
+      const base64 = await new Promise((res, rej) => {
+        const reader = new FileReader()
+        reader.onload  = e => res(e.target.result)
+        reader.onerror = () => rej(new Error('Erro ao ler arquivo'))
+        reader.readAsDataURL(file)
+      })
+
+      const tipo = file.type.startsWith('image/') ? 'imagem'
+                 : file.type === 'application/pdf' ? 'pdf'
+                 : 'outro'
+
+      const r = await fetch(`${SURL}/rest/v1/anexos`, {
+        method: 'POST',
+        headers: { ...hAuth(), 'Prefer': 'return=minimal' },
+        body: JSON.stringify({
+          item_id:   ITEM_ID,
+          arquivo:   base64,
+          tipo,
+          usuario_id: SESSION?.user?.id || null,
+        })
+      })
+      if (!r.ok) throw new Error((await r.json())?.message || 'Erro')
+      ok++
+    } catch(e) {
+      erros++
+      toast(`Erro ao enviar ${file.name}: ${e.message}`, 'err')
+    }
+  }
+
+  if (ok) {
+    toast(`${ok} anexo(s) incluído(s) ✓`, 'ok')
+    await carregarAnexos(ITEM_ID)
+  }
+  // Reset input
+  document.getElementById('anx-file-input').value = ''
+}
+
+// Abrir anexo não-imagem em nova aba
+const abrirAnexo = (id) => {
+  // Busca o arquivo pelo id e abre
+  get(`anexos?id=eq.${id}&select=arquivo,tipo`).then(rows => {
+    if (!rows.length) return
+    const a = rows[0]
+    const link = document.createElement('a')
+    link.href = a.arquivo
+    link.target = '_blank'
+    link.download = `anexo_${id.slice(0,8)}`
+    link.click()
+  }).catch(e => toast(e.message, 'err'))
+}
+
+// Excluir anexo
+const excluirAnexo = async (id) => {
+  if (!confirm('Excluir este anexo? Esta ação não pode ser desfeita.')) return
+  try {
+    const r = await fetch(`${SURL}/rest/v1/anexos?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: hAuth()
+    })
+    if (!r.ok) throw new Error('Erro ao excluir')
+    toast('Anexo excluído', 'ok')
+    await carregarAnexos(ITEM_ID)
+  } catch(e) {
+    toast(e.message, 'err')
   }
 }
 
