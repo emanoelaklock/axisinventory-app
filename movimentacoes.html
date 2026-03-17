@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movimentações — Axis Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;--bd:#E2E6F0;--bd2:#C8CEDF;--tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;--ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;--gr:#059669;--am:#D97706;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
+.page{display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.brand{font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto}.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:6px 11px;border-radius:7px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border:none;background:transparent;font-family:inherit;white-space:nowrap;transition:all .15s}
+.nav-btn:hover{background:var(--sur2);color:var(--tx)}.nav-btn.on{background:var(--acl);color:var(--ac);font-weight:600}
+.topbar-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--acl);color:var(--ac);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.perfil-chip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--sur2);color:var(--tx3)}
+.content{flex:1;padding:20px;max-width:1300px;margin:0 auto;width:100%}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.page-sub{font-size:12px;color:var(--tx3);margin-top:3px}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;max-width:300px;min-width:160px}
+.search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--tx3);pointer-events:none}
+.sinput{width:100%;padding:7px 10px 7px 30px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx);outline:none;transition:border .15s}
+.sinput:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acl)}.sinput::placeholder{color:var(--tx3)}
+.fsel{padding:7px 26px 7px 9px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center;font-family:inherit;font-size:13px;color:var(--tx2);outline:none;cursor:pointer;appearance:none;min-width:130px}
+.fsel:focus{border-color:var(--ac)}.fsel.on{border-color:var(--ac);background-color:var(--acl);color:var(--ac)}
+.finput-date{padding:7px 10px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx2);outline:none;transition:border .15s}
+.finput-date:focus{border-color:var(--ac)}
+.cbadge{font-size:12px;font-weight:600;color:var(--tx3);padding:3px 9px;border-radius:20px;background:var(--sur2);white-space:nowrap}
+.btn{padding:7px 13px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.btn:hover{background:var(--sur2);color:var(--tx)}.btn-sm{padding:5px 9px;font-size:12px}
+.tcard{background:var(--sur);border:1px solid var(--bd);border-radius:12px;overflow:hidden;box-shadow:var(--sh)}
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--sur2)}
+th{padding:9px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bd);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--tx2)}
+td{padding:10px 13px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(37,99,235,.015)}
+.mono{font-family:var(--mono);font-size:12px;color:var(--tx)}
+.dim{color:var(--tx3);font-size:12px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.arrow{color:var(--tx3);font-size:11px;margin:0 4px}
+.pag{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--bd);flex-wrap:wrap;gap:6px}
+.pag-info{font-size:12px;color:var(--tx3)}
+.pag-ctrl{display:flex;gap:3px}
+.pb{width:29px;height:29px;border-radius:7px;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;font-family:inherit}
+.pb:hover:not(:disabled){background:var(--sur2)}.pb:disabled{opacity:.3;cursor:default}.pb.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.empty{text-align:center;padding:48px 20px;color:var(--tx3)}
+.empty-icon{font-size:28px;margin-bottom:8px}.empty-t{font-size:14px;font-weight:600;color:var(--tx2);margin-bottom:3px}
+.sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bd) 50%,var(--sur2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;height:13px;display:inline-block}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.tipo-icon{font-size:16px;margin-right:4px}
+.tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
+.toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
+@keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
+.toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
+.toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
+@media(max-width:900px){.col-resp,.col-cli,.col-local,.col-empresa{display:none}.nav{display:none}}
+@media(max-width:600px){.col-status{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="topbar">
+  <div class="brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    Axis Inventory
+  </div>
+  <nav class="nav">
+    <button class="nav-btn" onclick="location.href='lista-itens.html'">Equipamentos</button>
+    <button class="nav-btn on" onclick="location.href='movimentacoes.html'">Movimentacoes</button>
+    <button class="nav-btn" onclick="location.href='checklists.html'">Checklists</button>
+    <button class="nav-btn" onclick="location.href='modelos.html'">Modelos</button>
+    <button class="nav-btn" onclick="location.href='clientes.html'">Clientes</button>
+    <button class="nav-btn" onclick="location.href='responsaveis.html'">Responsaveis</button>
+  </nav>
+  <div class="topbar-r">
+    <span class="perfil-chip" id="perfil-chip">&#8212;</span>
+    <div class="avatar" id="avatar">&#8212;</div>
+  </div>
+</header>
+<main class="content">
+  <div id="login-screen" style="display:none;max-width:360px;margin:60px auto">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">&#9202;</div>
+      <div style="font-size:18px;font-weight:700">Axis Inventory</div>
+    </div>
+    <div id="login-msg" style="margin-bottom:10px"></div>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px"><label style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em">Email</label><input type="email" style="padding:9px 12px;border:1.5px solid var(--bd);border-radius:var(--r);font-family:inherit;font-size:14px;outline:none" id="l-email" placeholder="seu@email.com"/></div>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px"><label style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em">Senha</label><input type="password" style="padding:9px 12px;border:1.5px solid var(--bd);border-radius:var(--r);font-family:inherit;font-size:14px;outline:none" id="l-senha" onkeydown="if(event.key==='Enter')fazerLogin()"/></div>
+    <button style="width:100%;padding:10px;background:var(--ac);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer" id="btn-login" onclick="fazerLogin()">Entrar</button>
+  </div>
+  <div id="app" style="display:none">
+    <div class="page-head">
+      <div>
+        <div class="page-title">Movimentações</div>
+        <div class="page-sub" id="page-sub">Histórico completo de movimentações</div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="sinput" id="q" type="search" placeholder="Código, serial, modelo..." oninput="onQ(this.value)"/>
+      </div>
+      <select class="fsel" id="f-tipo" onchange="onF()">
+        <option value="">Tipo</option>
+        <option>Entrada estoque</option><option>Reserva</option>
+        <option>Envio cliente</option><option>Retorno cliente</option>
+        <option>Envio técnico</option><option>Retorno técnico</option>
+        <option>Envio inspeção</option><option>Resultado inspeção</option>
+        <option>Envio RMA</option><option>Retorno RMA</option>
+        <option>Substituição RMA</option><option>Baixa</option>
+        <option>Ajuste administrativo</option>
+      </select>
+      <input type="date" class="finput-date" id="f-de" onchange="onF()" title="Data inicial"/>
+      <input type="date" class="finput-date" id="f-ate" onchange="onF()" title="Data final"/>
+      <button class="btn btn-sm" id="btn-clear" onclick="limparF()" style="display:none">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Limpar
+      </button>
+      <span class="cbadge" id="cbadge">&#8212;</span>
+    </div>
+    <div class="tcard">
+      <div class="twrap">
+        <table>
+          <thead><tr>
+            <th onclick="srt('data_movimentacao')">Data</th>
+            <th onclick="srt('tipo_movimentacao')">Tipo</th>
+            <th>Item</th>
+            <th class="col-status">Status</th>
+            <th class="col-resp">Responsável</th>
+            <th class="col-cli">Cliente</th>
+            <th class="col-local">Localização</th>
+            <th>Registrado por</th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="pag">
+        <span class="pag-info" id="pag-info">&#8212;</span>
+        <div class="pag-ctrl" id="pag-ctrl"></div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+<div class="tc" id="tc"></div>
+<script>
+const SURL='https://adbskoverysjohhwadln.supabase.co'
+const AKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+const POR_PAG=30
+let SESSION=null,PERFIL='Consulta'
+const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const fdt=iso=>{if(!iso)return'&#8212;';const d=new Date(iso);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+const fazerLogin=async()=>{
+  const email=document.getElementById('l-email').value.trim(),senha=document.getElementById('l-senha').value
+  const btn=document.getElementById('btn-login'),msg=document.getElementById('login-msg')
+  if(!email||!senha){toast('Preencha email e senha.','err');return}
+  btn.textContent='Entrando...';btn.disabled=true;msg.innerHTML=''
+  try{
+    const r=await fetch(`${SURL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})})
+    const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.message)
+    SESSION={access_token:d.access_token,user:d.user};sessionStorage.setItem('ax_sess',JSON.stringify(SESSION));await posLogin()
+  }catch(e){msg.innerHTML=`<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`}
+  finally{btn.textContent='Entrar';btn.disabled=false}
+}
+const posLogin=async()=>{
+  const r=await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${SESSION.user.id}`,{headers:hAuth()})
+  const d=await r.json();PERFIL=d[0]?.perfil||'Consulta'
+  const nome=d[0]?.nome||SESSION.user.email?.split('@')[0]||'?'
+  document.getElementById('avatar').textContent=nome[0].toUpperCase()
+  document.getElementById('perfil-chip').textContent=PERFIL
+  document.getElementById('login-screen').style.display='none'
+  document.getElementById('app').style.display='block'
+  carregar(true)
+}
+let QS={busca:'',tipo:'',de:'',ate:'',sortCol:'data_movimentacao',sortAsc:false,pagina:0,total:0}
+const buildQ=()=>{
+  const from=QS.pagina*POR_PAG,to=from+POR_PAG-1
+  let q='vw_movimentacoes_completo?select=*'
+  if(QS.tipo)q+=`&tipo_movimentacao=eq.${encodeURIComponent(QS.tipo)}`
+  if(QS.de)q+=`&data_movimentacao=gte.${QS.de}T00:00:00`
+  if(QS.ate)q+=`&data_movimentacao=lte.${QS.ate}T23:59:59`
+  if(QS.busca){const b=encodeURIComponent(`%${QS.busca}%`);q+=`&or=(codigo_interno_snapshot.ilike.${b},serial_snapshot.ilike.${b},item_modelo.ilike.${b},responsavel_novo_snapshot.ilike.${b},cliente_novo_snapshot.ilike.${b})`}
+  q+=`&order=${QS.sortCol}.${QS.sortAsc?'asc':'desc'}.nullslast`
+  return{q,range:`${from}-${to}`}
+}
+let loading=false
+const carregar=async(reset=false)=>{
+  if(loading)return;if(reset)QS.pagina=0;loading=true;renderSkel()
+  try{
+    const{q,range}=buildQ()
+    const r=await fetch(`${SURL}/rest/v1/${q}`,{headers:{...hAuth(),'Prefer':'count=exact','Range':range,'Range-Unit':'items'}})
+    if(!r.ok)throw new Error((await r.json())?.message||'Erro')
+    const data=await r.json();const cr=r.headers.get('content-range')
+    QS.total=cr?parseInt(cr.split('/')[1]):data.length
+    renderTabela(data);renderPag()
+    document.getElementById('page-sub').textContent=`${QS.total.toLocaleString('pt-BR')} movimentações registradas`
+    document.getElementById('cbadge').textContent=QS.total.toLocaleString('pt-BR')
+    document.getElementById('pag-info').textContent=QS.total?`${QS.pagina*POR_PAG+1}–${Math.min((QS.pagina+1)*POR_PAG,QS.total)} de ${QS.total}`:'Nenhum resultado'
+  }catch(e){document.getElementById('tbody').innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--tx3)">${esc(e.message)}</td></tr>`;toast(e.message,'err')}
+  finally{loading=false}
+}
+let qt=null
+const onQ=v=>{clearTimeout(qt);qt=setTimeout(()=>{QS.busca=v.trim();QS.pagina=0;carregar()},280)}
+const onF=()=>{
+  QS.tipo=document.getElementById('f-tipo').value
+  QS.de=document.getElementById('f-de').value
+  QS.ate=document.getElementById('f-ate').value
+  QS.pagina=0;carregar()
+  const temF=QS.tipo||QS.de||QS.ate
+  document.getElementById('btn-clear').style.display=temF?'':'none'
+  document.getElementById('f-tipo').classList.toggle('on',!!QS.tipo)
+}
+const limparF=()=>{
+  QS.tipo='';QS.de='';QS.ate='';QS.busca='';QS.pagina=0
+  document.getElementById('q').value=''
+  document.getElementById('f-tipo').value=''
+  document.getElementById('f-de').value=''
+  document.getElementById('f-ate').value=''
+  document.getElementById('btn-clear').style.display='none'
+  document.getElementById('f-tipo').classList.remove('on')
+  carregar()
+}
+const srt=col=>{if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc;else{QS.sortCol=col;QS.sortAsc=false};QS.pagina=0;carregar()}
+const TIPO_ICONS={'Entrada estoque':'📦','Reserva':'🔒','Envio cliente':'🚚','Retorno cliente':'↩️','Envio técnico':'🔧','Retorno técnico':'↩️','Envio inspeção':'🔬','Resultado inspeção':'📋','Envio RMA':'⚠️','Retorno RMA':'✅','Substituição RMA':'🔄','Baixa':'🗑️','Ajuste administrativo':'⚙️'}
+const SM={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Aguardando Inspeção':'#EA580C','Em Inspeção':'#CA8A04','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
+const sbadge=(s,label)=>{const c=SM[s]||'#71717A';const l=label||s||'&#8212;';return`<span class="badge" style="background:${c}18;color:${c}">${esc(l)}</span>`}
+const renderSkel=()=>{document.getElementById('tbody').innerHTML=Array(8).fill(0).map(()=>`<tr>${Array(7).fill(0).map(()=>`<td><span class="sk" style="width:${40+Math.random()*60}px"></span></td>`).join('')}<td></td></tr>`).join('')}
+const renderTabela=rows=>{
+  if(!rows.length){document.getElementById('tbody').innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-icon">&#128203;</div><div class="empty-t">Nenhuma movimentação encontrada</div><div>Ajuste os filtros ou o período</div></div></td></tr>';return}
+  document.getElementById('tbody').innerHTML=rows.map(m=>{
+    const icon=TIPO_ICONS[m.tipo_movimentacao]||'•'
+    const statusChange=m.status_anterior&&m.status_anterior!==m.status_novo
+      ?`${sbadge(m.status_anterior,'')}<span class="arrow">→</span>${sbadge(m.status_novo,'')}`
+      :sbadge(m.status_novo,'')
+    return`<tr style="cursor:pointer" onclick="location.href='detalhe-item.html#${m.item_id}'">
+      <td class="dim" style="white-space:nowrap">${fdt(m.data_movimentacao)}</td>
+      <td><span class="tipo-icon">${icon}</span>${esc(m.tipo_movimentacao)}</td>
+      <td>
+        <div class="mono">${esc(m.codigo_interno_snapshot||'')}</div>
+        <div style="font-size:11px;color:var(--tx3)">${esc(m.item_modelo||'')}</div>
+      </td>
+      <td class="col-status">${statusChange}</td>
+      <td class="col-resp dim">${esc(m.responsavel_novo_snapshot||'&#8212;')}</td>
+      <td class="col-cli dim">${esc(m.cliente_novo_snapshot||'&#8212;')}</td>
+      <td class="col-local dim">${esc(m.localizacao_nova||'&#8212;')}</td>
+      <td class="dim">${esc(m.usuario_nome||'&#8212;')}</td>
+    </tr>`
+  }).join('')
+}
+const renderPag=()=>{
+  const total=Math.ceil(QS.total/POR_PAG);if(total<=1){document.getElementById('pag-ctrl').innerHTML='';return}
+  const p=[];p.push(`<button class="pb" onclick="irP(${QS.pagina-1})" ${QS.pagina===0?'disabled':''}>‹</button>`)
+  for(let i=0;i<total;i++){if(i===0||i===total-1||Math.abs(i-QS.pagina)<=2)p.push(`<button class="pb ${i===QS.pagina?'on':''}" onclick="irP(${i})">${i+1}</button>`);else if(Math.abs(i-QS.pagina)===3)p.push(`<span style="color:var(--tx3);font-size:11px;padding:0 2px">…</span>`)}
+  p.push(`<button class="pb" onclick="irP(${QS.pagina+1})" ${QS.pagina>=total-1?'disabled':''}>›</button>`)
+  document.getElementById('pag-ctrl').innerHTML=p.join('')
+}
+window.irP=p=>{const t=Math.ceil(QS.total/POR_PAG);if(p<0||p>=t)return;QS.pagina=p;carregar()}
+const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
+const init=async()=>{
+  const saved=sessionStorage.getItem('ax_sess')
+  if(saved){try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}sessionStorage.removeItem('ax_sess');SESSION=null}
+  document.getElementById('login-screen').style.display='block'
+}
+init()
+</script>
+</body>
+</html>
