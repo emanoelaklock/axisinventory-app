@@ -278,9 +278,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
           <div class="info-label">Última movimentação</div>
           <div class="info-val dim" id="h-ultima">—</div>
         </div>
-        <div class="info-cell" id="h-vms-cell" style="display:none">
-          <div class="info-label">Nome VMS</div>
-          <div class="info-val mono" id="h-vms">—</div>
+        <div class="info-cell" id="h-vms-cell">
+          <div class="info-label" style="display:flex;align-items:center;justify-content:space-between">
+            Nome VMS
+            <button id="btn-vms-edit" onclick="editarVMS()" style="font-size:10px;font-weight:600;color:var(--ac);background:none;border:none;cursor:pointer;padding:0">Editar</button>
+          </div>
+          <div class="info-val mono" id="h-vms" style="color:var(--tx3)">—</div>
+          <div id="h-vms-edit-wrap" style="display:none;margin-top:4px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <input id="h-vms-input" style="flex:1;padding:6px 9px;border:1.5px solid var(--ac);border-radius:7px;font-family:var(--mono);font-size:13px;color:var(--tx);background:var(--sur);outline:none;box-shadow:0 0 0 3px var(--acl)"
+                placeholder="Nome no VMS..."
+                onkeydown="if(event.key==='Enter')salvarVMS();if(event.key==='Escape')cancelarVMS()"/>
+              <button onclick="salvarVMS()" style="padding:6px 10px;border-radius:7px;border:none;background:var(--ac);color:#fff;font-size:12px;font-weight:600;cursor:pointer">OK</button>
+              <button onclick="cancelarVMS()" style="padding:6px 8px;border-radius:7px;border:1px solid var(--bd);background:var(--sur2);color:var(--tx3);font-size:12px;cursor:pointer">&#x2715;</button>
+            </div>
+          </div>
         </div>
         <div class="info-cell">
           <div class="info-label">Cadastro</div>
@@ -611,9 +623,14 @@ const renderHero = (i) => {
   set('h-cat', i.categoria)
   set('h-ultima', frel(i.data_ultima_movimentacao))
   set('h-cadastro', fdt(i.data_cadastro))
+  // VMS sempre visível, mostra valor ou placeholder
+  const vmsEl = document.getElementById('h-vms')
   if (i.nome_vms) {
-    document.getElementById('h-vms-cell').style.display = ''
-    set('h-vms', i.nome_vms)
+    vmsEl.textContent = i.nome_vms
+    vmsEl.style.color = 'var(--tx)'
+  } else {
+    vmsEl.textContent = '— não informado'
+    vmsEl.style.color = 'var(--tx3)'
   }
 
   // Botão movimentação só aparece para quem pode mover
@@ -967,6 +984,52 @@ const imprimirQR = () => {
     window.print()
     setTimeout(() => { area.style.display = 'none' }, 400)
   }, 300)
+}
+
+// ════════════════════════════════════════════════════════════
+// VMS INLINE EDIT
+// ════════════════════════════════════════════════════════════
+const editarVMS = () => {
+  const atual = document.getElementById('h-vms').textContent
+  const input = document.getElementById('h-vms-input')
+  input.value = (atual === '— não informado') ? '' : atual
+  document.getElementById('h-vms').style.display = 'none'
+  document.getElementById('btn-vms-edit').style.display = 'none'
+  document.getElementById('h-vms-edit-wrap').style.display = 'block'
+  input.focus()
+  input.select()
+}
+
+const cancelarVMS = () => {
+  document.getElementById('h-vms').style.display = ''
+  document.getElementById('btn-vms-edit').style.display = ''
+  document.getElementById('h-vms-edit-wrap').style.display = 'none'
+}
+
+const salvarVMS = async () => {
+  const novo = document.getElementById('h-vms-input').value.trim()
+  try {
+    const r = await fetch(`${SURL}/rest/v1/itens?id=eq.${ITEM_ID}`, {
+      method: 'PATCH',
+      headers: { ...hAuth(), 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ nome_vms: novo || null })
+    })
+    if (!r.ok) throw new Error((await r.json())?.message || 'Erro ao salvar')
+
+    // Atualiza display
+    const vmsEl = document.getElementById('h-vms')
+    if (novo) {
+      vmsEl.textContent = novo
+      vmsEl.style.color = 'var(--tx)'
+    } else {
+      vmsEl.textContent = '— não informado'
+      vmsEl.style.color = 'var(--tx3)'
+    }
+    cancelarVMS()
+    toast('Nome VMS atualizado ✓', 'ok')
+  } catch(e) {
+    toast(e.message, 'err')
+  }
 }
 
 // ════════════════════════════════════════════════════════════
