@@ -1020,7 +1020,8 @@ const registrar = async () => {
     else { for (const id of respIds) await regUm(id) }
     closeM('m-mov')
     toast('Movimentação registrada ✓', 'ok')
-    // Recarrega item e timeline
+    // Aguarda trigger do banco processar antes de recarregar
+    await new Promise(r => setTimeout(r, 600))
     await carregarItem(ITEM_ID)
   } catch(e) {
     err.textContent = e.message
