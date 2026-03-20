@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clientes — Axis Inventory</title>
+<title>Empresas — Axis Inventory</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -100,10 +100,7 @@ tr:hover .acts{opacity:1}
     <button class="nav-btn" onclick="location.href='lista-itens.html'">Equipamentos</button>
     <button class="nav-btn" onclick="location.href='movimentacoes.html'">Movimentacoes</button>
     <button class="nav-btn" onclick="location.href='checklists.html'">Checklists</button>
-    <button class="nav-btn" onclick="location.href='modelos.html'">Modelos</button>
-    <button class="nav-btn on" onclick="location.href='clientes.html'">Clientes</button>
-    <button class="nav-btn" onclick="location.href='responsaveis.html'">Responsaveis</button>
-    <button class="nav-btn" onclick="location.href='configuracoes.html'">Configuracoes</button>
+    <button class="nav-btn on" onclick="location.href='configuracoes.html'">Configuracoes</button>
   </nav>
   <div class="topbar-r">
     <span class="perfil-chip" id="perfil-chip">&#8212;</span>
@@ -125,12 +122,12 @@ tr:hover .acts{opacity:1}
   <div id="app" style="display:none">
     <div class="page-head">
       <div>
-        <div class="page-title">Clientes</div>
+        <div class="page-title">Empresas</div>
         <div class="page-sub" id="page-sub">Carregando...</div>
       </div>
       <button class="btn btn-p btn-sm" id="btn-novo" onclick="abrirNovo()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Novo cliente
+        Nova empresa
       </button>
     </div>
     <div class="toolbar">
@@ -172,7 +169,7 @@ tr:hover .acts{opacity:1}
 <div class="mback" id="m-form" onclick="if(event.target===this)closeM('m-form')">
   <div class="modal">
     <div class="mh">
-      <div class="mt" id="m-title">Novo cliente</div>
+      <div class="mt" id="m-title">Nova empresa</div>
       <button class="mx" onclick="closeM('m-form')">&#x2715;</button>
     </div>
     <div class="mb">
@@ -345,7 +342,7 @@ const carregar = async (reset=false) => {
     const cr = r.headers.get('content-range')
     QS.total = cr ? parseInt(cr.split('/')[1]) : data.length
     renderTabela(data); renderPag()
-    document.getElementById('page-sub').textContent = `${QS.total} cliente(s) cadastrado(s)`
+    document.getElementById('page-sub').textContent = `${QS.total} empresa(s) cadastrada(s)`
     document.getElementById('cbadge').textContent = `${QS.total}`
     document.getElementById('pag-info').textContent = QS.total
       ? `${QS.pagina*POR_PAG+1}-${Math.min((QS.pagina+1)*POR_PAG,QS.total)} de ${QS.total}`
@@ -403,14 +400,14 @@ const resetModal = () => {
 
 const abrirNovo = () => {
   editId = null
-  document.getElementById('m-title').textContent = 'Novo cliente'
+  document.getElementById('m-title').textContent = 'Nova empresa'
   resetModal()
   document.getElementById('m-form').classList.add('open')
 }
 
 window.editar = c => {
   editId = c.id
-  document.getElementById('m-title').textContent = 'Editar cliente'
+  document.getElementById('m-title').textContent = 'Editar empresa'
   resetModal()
   document.getElementById('f-cnpj').value = c.cnpj || ''
   document.getElementById('f-nome').value = c.nome || ''
@@ -437,7 +434,7 @@ const salvar = async () => {
     const d = await r.json()
     if (!r.ok) throw new Error(d?.message || JSON.stringify(d))
     closeM('m-form')
-    toast(editId ? 'Cliente atualizado' : 'Cliente cadastrado','ok')
+    toast(editId ? 'Empresa atualizada' : 'Empresa cadastrada','ok')
     carregar(true)
   } catch(e) {
     err.textContent = e.message.includes('unique') ? 'CNPJ ja cadastrado.' : e.message

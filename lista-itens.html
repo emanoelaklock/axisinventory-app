@@ -171,9 +171,6 @@ tr:hover .acts{opacity:1}
     <button class="nav-btn on" onclick="location.href='lista-itens.html'">Equipamentos</button>
     <button class="nav-btn" onclick="location.href='movimentacoes.html'">Movimentacoes</button>
     <button class="nav-btn" onclick="location.href='checklists.html'">Checklists</button>
-    <button class="nav-btn" onclick="location.href='modelos.html'">Modelos</button>
-    <button class="nav-btn" onclick="location.href='clientes.html'">Clientes</button>
-    <button class="nav-btn" onclick="location.href='responsaveis.html'">Responsaveis</button>
     <button class="nav-btn" onclick="location.href='configuracoes.html'">Configuracoes</button>
   </nav>
   <div class="topbar-r">
@@ -410,7 +407,7 @@ const TIPOS_PERFIL = {
 
 const hAuth = () => ({
   'apikey': AKEY,
-  'Authorization': `Bearer ${SESSION?.access_token || AKEY}`,
+  'Authorization': `Bearer ${SESSION.access_token}`,
   'Content-Type': 'application/json',
 })
 
@@ -807,8 +804,10 @@ const registrar = async () => {
           p_motivo:         motivo,
         })
       })
-      const d = await r.json()
-      if (!r.ok) throw new Error(d?.message || d?.hint || JSON.stringify(d))
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}))
+        throw new Error(d?.message || d?.hint || `Erro ${r.status}`)
+      }
     }
 
     if (respIds.length <= 1) { await regUm(respIds[0] || null) }
