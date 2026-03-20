@@ -505,6 +505,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 
 <div id="qr-print-area" style="display:none"></div>
 
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="closeLB()">
+  <button class="lb-close" onclick="closeLB()">✕</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
 <script>
 // ════════════════════════════════════════════════════════════
 // CONFIG
@@ -519,7 +525,7 @@ let SESSION   = null
 let PERFIL    = 'Consulta'
 
 // ════════════════════════════════════════════════════════════
-// AUTH (lê sessão do sessionStorage — compartilhada com lista-itens)
+// AUTH
 // ════════════════════════════════════════════════════════════
 const hAuth = () => ({
   'apikey': AKEY,
@@ -527,23 +533,16 @@ const hAuth = () => ({
   'Content-Type': 'application/json',
 })
 
-// carregarSessao — exige login obrigatório.
-// Sem JWT válido, retorna false e init() redireciona para acesso negado.
-// Não existe modo anon: todas as queries usam SESSION.access_token.
 const carregarSessao = async () => {
   const saved = sessionStorage.getItem('ax_sess')
   if (!saved) return false
-
   try {
     SESSION = JSON.parse(saved)
-    // Valida token com Supabase Auth
     const r = await fetch(`${SURL}/auth/v1/user`, {
       headers: { 'apikey': AKEY, 'Authorization': `Bearer ${SESSION.access_token}` }
     })
     if (!r.ok) { SESSION = null; return false }
-
     const u = await r.json()
-    // Carrega perfil da tabela usuarios (exige token válido)
     const p = await fetch(
       `${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${u.id}`,
       { headers: hAuth() }
@@ -575,7 +574,6 @@ const rpc = async (fn, params) => {
     const d = await r.json().catch(() => ({}))
     throw new Error(d?.message || d?.hint || JSON.stringify(d))
   }
-  // Handle VOID responses (empty body)
   const text = await r.text()
   return text ? JSON.parse(text) : null
 }
@@ -622,13 +620,10 @@ const fhora = iso => {
 }
 
 // ════════════════════════════════════════════════════════════
-// CARREGAR ITEM — usa buscar_item_por_qr (RPC)
+// CARREGAR ITEM
 // ════════════════════════════════════════════════════════════
 const carregarItem = async (id) => {
   try {
-    // Carrega item por UUID via vw_itens_completo (query direta, autenticada).
-    // Não usa buscar_item_por_qr — essa RPC é para leitura por codigo_interno
-    // ou serial no contexto do scanner QR. Aqui o ID já é UUID.
     let item = null
     try {
       const rows = await get(`vw_itens_completo?id=eq.${id}&select=*`)
@@ -642,7 +637,6 @@ const carregarItem = async (id) => {
     document.getElementById('state-loading').style.display = 'none'
     document.getElementById('state-content').style.display = 'block'
 
-    // Carrega seções em paralelo
     await Promise.all([
       carregarTimeline(id),
       carregarChecklists(id),
@@ -662,7 +656,6 @@ const mostrarAcessoNegado = () => {
   el.querySelector('h2').textContent = 'Acesso restrito'
   document.getElementById('err-msg').textContent =
     'Faça login no sistema para visualizar este item.'
-  // Botão vira link para lista de itens (onde há login)
   el.querySelector('button').textContent = '← Ir para o sistema'
   el.querySelector('button').onclick = () => window.location.href = 'lista-itens.html'
 }
@@ -692,7 +685,6 @@ const renderHero = (i) => {
   set('h-cat', i.categoria)
   set('h-ultima', frel(i.data_ultima_movimentacao))
   set('h-cadastro', fdt(i.data_cadastro))
-  // VMS sempre visível, mostra valor ou placeholder
   const vmsEl = document.getElementById('h-vms')
   if (i.nome_vms) {
     vmsEl.textContent = i.nome_vms
@@ -702,16 +694,14 @@ const renderHero = (i) => {
     vmsEl.style.color = 'var(--tx3)'
   }
 
-  // Botão movimentação só aparece para quem pode mover
   if (['Consulta'].includes(PERFIL))
     document.querySelector('button[onclick="openMov()"]').style.display = 'none'
-  // Botão excluir só para Administrador
   const btnExcluir = document.getElementById('btn-excluir-item')
   if (btnExcluir && PERFIL === 'Administrador') btnExcluir.style.display = ''
 }
 
 // ════════════════════════════════════════════════════════════
-// TIMELINE — usa vw_movimentacoes_completo
+// TIMELINE
 // ════════════════════════════════════════════════════════════
 const TL_ICONS = {
   'Entrada estoque':'📦','Reserva':'🔒','Envio cliente':'🚚','Retorno cliente':'↩️',
@@ -724,7 +714,6 @@ const carregarTimeline = async (id) => {
   const el = document.getElementById('tl-content')
   el.innerHTML = '<div class="card" style="padding:20px;text-align:center;color:var(--tx3)">Carregando...</div>'
   try {
-    // vw_movimentacoes_completo — view consolidada com JOIN de item + modelo + responsáveis + cliente + usuário
     const movs = await get(
       `vw_movimentacoes_completo?item_id=eq.${id}&order=data_movimentacao.desc&limit=100`
     )
@@ -864,7 +853,6 @@ const carregarAnexos = async (id) => {
   }
 }
 
-// Upload de anexos
 const uploadAnexos = async (files) => {
   if (!files || !files.length) return
   if (!ITEM_ID) return
@@ -872,7 +860,6 @@ const uploadAnexos = async (files) => {
   let ok = 0, erros = 0
   for (const file of files) {
     try {
-      // Converte para base64
       const base64 = await new Promise((res, rej) => {
         const reader = new FileReader()
         reader.onload  = e => res(e.target.result)
@@ -906,13 +893,10 @@ const uploadAnexos = async (files) => {
     toast(`${ok} anexo(s) incluído(s) ✓`, 'ok')
     await carregarAnexos(ITEM_ID)
   }
-  // Reset input
   document.getElementById('anx-file-input').value = ''
 }
 
-// Abrir anexo não-imagem em nova aba
 const abrirAnexo = (id) => {
-  // Busca o arquivo pelo id e abre
   get(`anexos?id=eq.${id}&select=arquivo,tipo`).then(rows => {
     if (!rows.length) return
     const a = rows[0]
@@ -924,7 +908,6 @@ const abrirAnexo = (id) => {
   }).catch(e => toast(e.message, 'err'))
 }
 
-// Excluir anexo
 const excluirAnexo = async (id) => {
   if (!confirm('Excluir este anexo? Esta ação não pode ser desfeita.')) return
   try {
@@ -941,7 +924,7 @@ const excluirAnexo = async (id) => {
 }
 
 // ════════════════════════════════════════════════════════════
-// DROPDOWNS para modal movimentação
+// DROPDOWNS
 // ════════════════════════════════════════════════════════════
 const carregarDropdowns = async () => {
   try {
@@ -953,7 +936,6 @@ const carregarDropdowns = async () => {
     const mC = document.getElementById('m-cli')
     if (mR) rs.forEach(r => mR.innerHTML += `<option value="${r.id}">${esc(r.nome)}${r.cargo?' · '+esc(r.cargo):''}</option>`)
     if (mC) cs.forEach(c => mC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`)
-    // Edit modal dropdowns
     const eR = document.getElementById('edit-mov-resp')
     const eC = document.getElementById('edit-mov-cli')
     if (eR) rs.forEach(r => eR.innerHTML += `<option value="${r.id}">${esc(r.nome)}</option>`)
@@ -962,9 +944,8 @@ const carregarDropdowns = async () => {
 }
 
 // ════════════════════════════════════════════════════════════
-// MOVIMENTAÇÃO — RPC registrar_movimentacao_mobile
+// MOVIMENTAÇÃO
 // ════════════════════════════════════════════════════════════
-
 const openMov = () => {
   if (!ITEM) return
   document.getElementById('m-ref').textContent =
@@ -977,8 +958,6 @@ const openMov = () => {
   if (mRS) Array.from(mRS.options).forEach(o => o.selected = false)
   document.getElementById('m-mov').classList.add('open')
 }
-
-
 
 const registrar = async () => {
   const status = document.getElementById('m-status').value
@@ -1014,13 +993,11 @@ const registrar = async () => {
         const d = await r.json().catch(() => ({}))
         throw new Error(d?.message || d?.hint || `HTTP ${r.status}`)
       }
-      // RETURNS VOID — sem body para parsear
     }
     if (respIds.length <= 1) { await regUm(respIds[0] || null) }
     else { for (const id of respIds) await regUm(id) }
     closeM('m-mov')
     toast('Movimentação registrada ✓', 'ok')
-    // Aguarda trigger do banco processar antes de recarregar
     await new Promise(r => setTimeout(r, 600))
     await carregarItem(ITEM_ID)
   } catch(e) {
@@ -1104,8 +1081,6 @@ const salvarVMS = async () => {
       body: JSON.stringify({ nome_vms: novo || null })
     })
     if (!r.ok) throw new Error((await r.json())?.message || 'Erro ao salvar')
-
-    // Atualiza display
     const vmsEl = document.getElementById('h-vms')
     if (novo) {
       vmsEl.textContent = novo
@@ -1154,25 +1129,16 @@ const toast = (msg, tipo='info', dur=4000) => {
 }
 
 // ════════════════════════════════════════════════════════════
-// INIT — lê ID do hash e carrega
+// INIT
 // ════════════════════════════════════════════════════════════
 const init = async () => {
   const autenticado = await carregarSessao()
-
-  // Sem sessão válida: para aqui — nenhuma query é feita.
-  // Item, timeline, checklists e anexos só carregam com JWT real.
   if (!autenticado) {
     mostrarAcessoNegado()
     return
   }
-
-  // Suporta: detalhe-item.html#<uuid>
-  //          axis-inventory.html#detalhe-<uuid>
-  // Usa query direta em vw_itens_completo — não usa buscar_item_por_qr,
-  // pois aqui o identificador é sempre um UUID, não codigo_interno ou serial.
   let id = location.hash.replace('#', '').trim()
   if (id.startsWith('detalhe-')) id = id.replace('detalhe-', '')
-
   if (!id || id.length < 32) {
     mostrarErro('ID do item não informado na URL. Verifique o link.')
     return
@@ -1181,22 +1147,35 @@ const init = async () => {
   await carregarItem(id)
 }
 
-// ── EDITAR / EXCLUIR MOVIMENTAÇÃO ─────────────────────────────
+// ════════════════════════════════════════════════════════════
+// EDITAR MOVIMENTAÇÃO — FIX: pré-popula todos os campos ao abrir
+// ════════════════════════════════════════════════════════════
 let editMovId = null
 
 window.editarMov = async (id) => {
   editMovId = id
   try {
-    const rows = await get(`movimentacoes?id=eq.${id}&select=tipo_movimentacao,status_novo,motivo`)
+    // Busca todos os campos relevantes da movimentação
+    const rows = await get(
+      `movimentacoes?id=eq.${id}&select=tipo_movimentacao,status_novo,motivo,localizacao_nova,responsavel_novo_id,cliente_novo_id`
+    )
     const m = rows[0] || {}
-    document.getElementById('edit-mov-tipo').value   = m.tipo_movimentacao || ''
-    document.getElementById('edit-mov-motivo').value = m.motivo || ''
+    document.getElementById('edit-mov-tipo').value    = m.tipo_movimentacao || ''
+    document.getElementById('edit-mov-status').value  = m.status_novo || ''
+    document.getElementById('edit-mov-motivo').value  = m.motivo || ''
+    document.getElementById('edit-mov-local').value   = m.localizacao_nova || ''
+    // Pré-seleciona responsável e empresa com os valores atuais da movimentação
+    document.getElementById('edit-mov-resp').value    = m.responsavel_novo_id || ''
+    document.getElementById('edit-mov-cli').value     = m.cliente_novo_id || ''
     document.getElementById('edit-mov-err').style.display = 'none'
     document.getElementById('m-edit-mov').classList.add('open')
     setTimeout(() => document.getElementById('edit-mov-motivo').focus(), 100)
   } catch(e) { toast('Erro ao abrir: ' + e.message, 'err') }
 }
 
+// ════════════════════════════════════════════════════════════
+// SALVAR EDIÇÃO — FIX: só envia cliente/responsável se selecionado
+// ════════════════════════════════════════════════════════════
 const salvarEditMov = async () => {
   const err = document.getElementById('edit-mov-err')
   const btn = document.getElementById('btn-salvar-mov')
@@ -1204,14 +1183,21 @@ const salvarEditMov = async () => {
   btn.textContent = 'Salvando...'; btn.disabled = true
 
   try {
-    const body = {
-      motivo:            document.getElementById('edit-mov-motivo').value.trim() || null,
-      localizacao_nova:  document.getElementById('edit-mov-local').value.trim()  || null,
-      responsavel_novo_id: document.getElementById('edit-mov-resp').value || null,
-      cliente_novo_id:   document.getElementById('edit-mov-cli').value  || null,
-    }
+    const motivo     = document.getElementById('edit-mov-motivo').value.trim()
+    const local      = document.getElementById('edit-mov-local').value.trim()
+    const respId     = document.getElementById('edit-mov-resp').value
+    const cliId      = document.getElementById('edit-mov-cli').value
     const novoStatus = document.getElementById('edit-mov-status').value
-    if (novoStatus) body.status_novo = novoStatus
+
+    const body = {}
+    body.motivo           = motivo || null
+    body.localizacao_nova = local  || null
+    // Só inclui responsável/empresa no PATCH se o usuário escolheu um valor.
+    // Quando "— Manter —" (valor vazio), NÃO envia o campo — assim o valor
+    // existente no banco não é sobrescrito com null.
+    if (respId) body.responsavel_novo_id = respId
+    if (cliId)  body.cliente_novo_id     = cliId
+    if (novoStatus) body.status_novo     = novoStatus
 
     const r = await fetch(`${SURL}/rest/v1/movimentacoes?id=eq.${editMovId}`, {
       method: 'PATCH',
@@ -1220,7 +1206,6 @@ const salvarEditMov = async () => {
     })
     if (!r.ok) throw new Error((await r.json().catch(()=>({})))?.message || 'Erro ao salvar')
 
-    // Se status mudou, atualiza o item também
     if (novoStatus) {
       await fetch(`${SURL}/rest/v1/rpc/fn_corrigir_estado_item`, {
         method: 'POST', headers: hAuth(),
@@ -1236,7 +1221,7 @@ const salvarEditMov = async () => {
 
     closeM('m-edit-mov')
     toast('Movimentação atualizada ✓', 'ok')
-    await Promise.all([carregarItem(ITEM_ID)])
+    await carregarItem(ITEM_ID)
   } catch(e) {
     err.textContent = e.message
     err.style.display = 'block'
@@ -1263,7 +1248,6 @@ window.excluirMov = async (id) => {
   }
 }
 
-
 // ── EXCLUIR ITEM ──────────────────────────────────────────────
 const excluirItem = async () => {
   if (!ITEM) return
@@ -1288,7 +1272,6 @@ const excluirItem = async () => {
     toast('Erro ao excluir: ' + e.message, 'err', 6000)
   }
 }
-
 
 init()
 </script>
