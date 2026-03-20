@@ -309,16 +309,16 @@ async function buscarSerial(){
   if(q.length<2){res.style.display='none';return;}
   stimer=setTimeout(async()=>{
     try{
-      const data=await api('equipamentos?or=(numero_serie.ilike.*'+encodeURIComponent(q)+'*,codigo_interno.ilike.*'+encodeURIComponent(q)+'*)&select=id,numero_serie,codigo_interno,modelos(modelo,part_number)&limit=10');
+      const data=await api('vw_itens_completo?or=(serial.ilike.*'+encodeURIComponent(q)+'*,codigo_interno.ilike.*'+encodeURIComponent(q)+'*)&select=id,serial,codigo_interno,modelo,part_number&limit=10');
       if(!data.length){res.innerHTML='<div class="ac-item"><small>Nenhum equipamento encontrado</small></div>';res.style.display='block';return;}
       res.innerHTML='';
       data.forEach(e=>{
-        const m=e.modelos?.modelo||'',pn=e.modelos?.part_number||'';
+        const m=e.modelo||'',pn=e.part_number||'';
         const div=document.createElement('div');
         div.className='ac-item';
-        div.innerHTML='<strong>'+e.numero_serie+(e.codigo_interno?' · '+e.codigo_interno:'')+'</strong>'+(m?'<small>'+m+(pn?' · PN:'+pn:'')+'</small>':'');
+        div.innerHTML='<strong>'+(e.serial||e.codigo_interno)+(e.serial&&e.codigo_interno?' · '+e.codigo_interno:'')+'</strong>'+(m?'<small>'+m+(pn?' · PN:'+pn:'')+'</small>':'');
         div.onclick=()=>{
-          document.getElementById('f-serial').value=e.numero_serie;
+          document.getElementById('f-serial').value=e.serial||e.codigo_interno;
           document.getElementById('f-eq-id').value=e.id;
           document.getElementById('f-modelo').value=m+(pn?' (PN: '+pn+')':'');
           res.style.display='none';
