@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurações — Axis Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;--bd:#E2E6F0;--bd2:#C8CEDF;--tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;--ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;--gr:#059669;--am:#D97706;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
+.page{display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.brand{font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto}.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:6px 11px;border-radius:7px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border:none;background:transparent;font-family:inherit;white-space:nowrap;transition:all .15s}
+.nav-btn:hover{background:var(--sur2);color:var(--tx)}.nav-btn.on{background:var(--acl);color:var(--ac);font-weight:600}
+.topbar-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--acl);color:var(--ac);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.perfil-chip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--sur2);color:var(--tx3)}
+.content{flex:1;padding:24px 20px 60px;max-width:900px;margin:0 auto;width:100%}
+.page-title{font-size:19px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--tx3);margin-bottom:24px}
+.card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-body{padding:0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--sur2)}
+th{padding:9px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bd)}
+td{padding:12px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(37,99,235,.015)}
+.badge-perfil{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.p-admin{background:rgba(220,38,38,.1);color:#DC2626}
+.p-almo{background:rgba(5,150,105,.1);color:#059669}
+.p-lab{background:rgba(124,58,237,.1);color:#7C3AED}
+.p-tec{background:rgba(8,145,178,.1);color:#0891B2}
+.p-cons{background:var(--sur2);color:var(--tx3)}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+.dot-on{background:var(--gr)}.dot-off{background:var(--tx3)}
+.acts{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+tr:hover .acts{opacity:1}
+.ab{padding:4px 9px;border-radius:6px;border:1px solid transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.ab-e{color:var(--ac);background:var(--acl);border-color:var(--acm)}.ab-e:hover{background:var(--ac);color:#fff}
+.ab-pwd{color:var(--am);background:rgba(217,119,6,.08);border-color:rgba(217,119,6,.2)}.ab-pwd:hover{background:var(--am);color:#fff}
+.ab-d{color:var(--tx3);background:var(--sur2);border-color:var(--bd)}.ab-d:hover{background:var(--re);color:#fff;border-color:var(--re)}
+.btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn:hover{background:var(--sur2);color:var(--tx)}
+.btn-p{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}.btn-p:hover{background:#1D4ED8;color:#fff}
+.btn-sm{padding:5px 10px;font-size:12px}
+.sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bd) 50%,var(--sur2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;height:13px;display:inline-block}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Modal */
+.mback{display:none;position:fixed;inset:0;background:rgba(15,21,35,.5);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px}
+.mback.open{display:flex}
+.modal{background:var(--sur);border-radius:14px;border:1px solid var(--bd);width:100%;max-width:440px;box-shadow:var(--shl);animation:mi .18s ease}
+@keyframes mi{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.mh{padding:16px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.mt{font-size:15px;font-weight:700}
+.mx{width:26px;height:26px;border-radius:6px;border:1px solid var(--bd);background:var(--sur2);color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
+.mb{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.mf{padding:12px 18px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.fg input,.fg select{padding:9px 12px;border:1.5px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx);outline:none;transition:border .15s}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.fg input:focus,.fg select:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acl)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.merr{padding:9px 12px;border-radius:7px;font-size:13px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;display:none}
+.mok{padding:9px 12px;border-radius:7px;font-size:13px;background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;display:none}
+.pwd-wrap{position:relative}
+.pwd-wrap input{width:100%;padding-right:40px}
+.pwd-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--tx3);font-size:16px}
+.acesso-negado{text-align:center;padding:60px 20px;color:var(--tx3)}
+.acesso-negado h2{font-size:18px;font-weight:700;color:var(--tx2);margin-bottom:6px}
+/* Login */
+.login-wrap{max-width:360px;margin:60px auto}
+/* Toast */
+.tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
+.toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
+@keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
+.toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
+.toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
+@media(max-width:600px){.frow{grid-template-columns:1fr}.nav{display:none}.acts{opacity:1}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="topbar">
+  <div class="brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    Axis Inventory
+  </div>
+  <nav class="nav">
+    <button class="nav-btn" onclick="location.href='lista-itens.html'">Equipamentos</button>
+    <button class="nav-btn" onclick="location.href='movimentacoes.html'">Movimentacoes</button>
+    <button class="nav-btn" onclick="location.href='checklists.html'">Checklists</button>
+    <button class="nav-btn" onclick="location.href='modelos.html'">Modelos</button>
+    <button class="nav-btn" onclick="location.href='clientes.html'">Clientes</button>
+    <button class="nav-btn" onclick="location.href='responsaveis.html'">Responsaveis</button>
+    <button class="nav-btn on" onclick="location.href='configuracoes.html'">Configuracoes</button>
+  </nav>
+  <div class="topbar-r">
+    <span class="perfil-chip" id="perfil-chip">&#8212;</span>
+    <div class="avatar" id="avatar">&#8212;</div>
+  </div>
+</header>
+
+<main class="content">
+
+  <!-- LOGIN -->
+  <div id="login-screen" style="display:none" class="login-wrap">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">&#9881;</div>
+      <div style="font-size:18px;font-weight:700">Axis Inventory</div>
+    </div>
+    <div id="login-msg" style="margin-bottom:10px"></div>
+    <div class="fg" style="margin-bottom:10px"><label>Email</label><input type="email" id="l-email" placeholder="seu@email.com"/></div>
+    <div class="fg" style="margin-bottom:16px"><label>Senha</label><input type="password" id="l-senha" onkeydown="if(event.key==='Enter')fazerLogin()"/></div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;padding:10px" id="btn-login" onclick="fazerLogin()">Entrar</button>
+  </div>
+
+  <!-- ACESSO NEGADO -->
+  <div id="screen-negado" style="display:none" class="acesso-negado">
+    <div style="font-size:40px;margin-bottom:12px">&#128274;</div>
+    <h2>Acesso restrito</h2>
+    <p style="font-size:13px;margin-bottom:16px">Apenas Administradores podem acessar as configurações.</p>
+    <button class="btn" onclick="location.href='lista-itens.html'">&#8592; Voltar</button>
+  </div>
+
+  <!-- APP -->
+  <div id="app" style="display:none">
+    <div class="page-title">&#9881; Configurações</div>
+    <div class="page-sub">Gerenciamento de usuários e acessos do sistema</div>
+
+    <!-- USUÁRIOS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Usuários do sistema
+          <span id="usr-count" style="font-size:11px;font-weight:600;padding:1px 7px;border-radius:20px;background:var(--sur2);color:var(--tx3)">0</span>
+        </div>
+        <button class="btn btn-p btn-sm" onclick="abrirNovo()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Novo usuário
+        </button>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead><tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Perfil</th>
+            <th>Status</th>
+            <th style="width:140px"></th>
+          </tr></thead>
+          <tbody id="usr-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+<div class="tc" id="tc"></div>
+
+<!-- MODAL: NOVO / EDITAR USUÁRIO -->
+<div class="mback" id="m-usr" onclick="if(event.target===this)closeM('m-usr')">
+  <div class="modal">
+    <div class="mh">
+      <div class="mt" id="m-usr-title">Novo usuário</div>
+      <button class="mx" onclick="closeM('m-usr')">&#x2715;</button>
+    </div>
+    <div class="mb">
+      <div class="merr" id="m-err"></div>
+      <div class="mok" id="m-ok"></div>
+      <div class="fg"><label>Nome *</label><input id="f-nome" placeholder="Ex: João Silva"/></div>
+      <div class="fg"><label>Email *</label><input type="email" id="f-email" placeholder="joao@empresa.com"/></div>
+      <div class="fg"><label>Perfil *</label>
+        <select id="f-perfil">
+          <option value="">Selecione...</option>
+          <option value="Administrador">Administrador — acesso total</option>
+          <option value="Almoxarifado">Almoxarifado — cadastro e movimentação</option>
+          <option value="Técnico">Técnico — movimentação técnica</option>
+          <option value="Laboratório">Laboratório — inspeção e RMA</option>
+          <option value="Consulta">Consulta — somente leitura</option>
+        </select>
+      </div>
+      <div class="fg" id="f-senha-wrap">
+        <label>Senha inicial *</label>
+        <div class="pwd-wrap">
+          <input type="password" id="f-senha" placeholder="Mínimo 6 caracteres"/>
+          <button class="pwd-eye" onclick="togglePwd('f-senha',this)" tabindex="-1">&#128065;</button>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-usr')">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-salvar-usr" onclick="salvarUsuario()">Criar usuário</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: REDEFINIR SENHA -->
+<div class="mback" id="m-pwd" onclick="if(event.target===this)closeM('m-pwd')">
+  <div class="modal" style="max-width:380px">
+    <div class="mh">
+      <div class="mt">Redefinir senha</div>
+      <button class="mx" onclick="closeM('m-pwd')">&#x2715;</button>
+    </div>
+    <div class="mb">
+      <div class="merr" id="pwd-err"></div>
+      <div style="font-size:13px;color:var(--tx2);padding:4px 0" id="pwd-ref">—</div>
+      <div class="fg">
+        <label>Nova senha *</label>
+        <div class="pwd-wrap">
+          <input type="password" id="f-nova-pwd" placeholder="Mínimo 6 caracteres"/>
+          <button class="pwd-eye" onclick="togglePwd('f-nova-pwd',this)" tabindex="-1">&#128065;</button>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-pwd')">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-salvar-pwd" onclick="salvarSenha()">Salvar senha</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SURL  = 'https://adbskoverysjohhwadln.supabase.co'
+const AKEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+const SKEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY4MTc0MiwiZXhwIjoyMDg5MjU3NzQyfQ.2pgi0lruJn5cDJMGs7gyX95AGintUx6oYjNRW9gg0Hw'
+
+let SESSION = null, PERFIL = null, MEU_ID = null
+let editUsrId = null, pwdUsrId = null
+
+// Headers
+const hAuth  = () => ({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
+const hAdmin = () => ({'apikey':SKEY,'Authorization':`Bearer ${SKEY}`,'Content-Type':'application/json'})
+
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+
+// ── AUTH ──────────────────────────────────────────────────────
+const fazerLogin = async () => {
+  const email = document.getElementById('l-email').value.trim()
+  const senha = document.getElementById('l-senha').value
+  const btn   = document.getElementById('btn-login')
+  const msg   = document.getElementById('login-msg')
+  if (!email || !senha) { toast('Preencha email e senha.','err'); return }
+  btn.textContent = 'Entrando...'; btn.disabled = true; msg.innerHTML = ''
+  try {
+    const r = await fetch(`${SURL}/auth/v1/token?grant_type=password`,{
+      method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:senha})
+    })
+    const d = await r.json()
+    if (!r.ok) throw new Error(d.error_description || d.message)
+    SESSION = {access_token:d.access_token,user:d.user}
+    sessionStorage.setItem('ax_sess',JSON.stringify(SESSION))
+    await posLogin()
+  } catch(e) {
+    msg.innerHTML = `<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`
+  } finally { btn.textContent = 'Entrar'; btn.disabled = false }
+}
+
+const posLogin = async () => {
+  MEU_ID = SESSION.user.id
+  const r = await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${MEU_ID}`,{headers:hAuth()})
+  const d = await r.json()
+  PERFIL   = d[0]?.perfil || 'Consulta'
+  const nome = d[0]?.nome || SESSION.user.email?.split('@')[0] || '?'
+  document.getElementById('avatar').textContent       = nome[0].toUpperCase()
+  document.getElementById('perfil-chip').textContent  = PERFIL
+  document.getElementById('login-screen').style.display = 'none'
+
+  if (PERFIL !== 'Administrador') {
+    document.getElementById('screen-negado').style.display = 'block'
+    return
+  }
+  document.getElementById('app').style.display = 'block'
+  await carregarUsuarios()
+}
+
+// ── CARREGAR USUÁRIOS ─────────────────────────────────────────
+const carregarUsuarios = async () => {
+  const tbody = document.getElementById('usr-tbody')
+  tbody.innerHTML = Array(3).fill(0).map(() =>
+    `<tr>${Array(4).fill(0).map(() => `<td><span class="sk" style="width:${50+Math.random()*80}px"></span></td>`).join('')}<td></td></tr>`
+  ).join('')
+
+  try {
+    // Busca usuários da tabela pública (tem perfil, nome, ativo)
+    const r = await fetch(`${SURL}/rest/v1/usuarios?select=*&order=nome.asc`,{headers:hAuth()})
+    const users = await r.json()
+    if (!r.ok) throw new Error(users?.message || 'Erro')
+
+    document.getElementById('usr-count').textContent = users.length
+
+    if (!users.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--tx3)">Nenhum usuário cadastrado</td></tr>'
+      return
+    }
+
+    const PCLS = {
+      'Administrador':'p-admin','Almoxarifado':'p-almo',
+      'Técnico':'p-tec','Laboratório':'p-lab','Consulta':'p-cons'
+    }
+
+    tbody.innerHTML = users.map(u => `<tr>
+      <td style="font-weight:500;color:var(--tx)">${esc(u.nome||'—')}</td>
+      <td style="font-size:12px;color:var(--tx3)">${esc(u.email||'—')}</td>
+      <td><span class="badge-perfil ${PCLS[u.perfil]||'p-cons'}">${esc(u.perfil||'—')}</span></td>
+      <td><span class="dot ${u.ativo?'dot-on':'dot-off'}"></span>${u.ativo?'Ativo':'Inativo'}</td>
+      <td><div class="acts">
+        <button class="ab ab-e" onclick='editarUsuario(${JSON.stringify(u)})'>Editar</button>
+        <button class="ab ab-pwd" onclick='abrirRedefinirSenha("${u.id}","${esc(u.nome||u.email||'')}")'>Senha</button>
+        ${u.id !== MEU_ID ? `<button class="ab ab-d" onclick='toggleAtivo("${u.id}",${u.ativo})'>${u.ativo?'Desativar':'Ativar'}</button>` : ''}
+      </div></td>
+    </tr>`).join('')
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--re)">${esc(e.message)}</td></tr>`
+    toast(e.message,'err')
+  }
+}
+
+// ── NOVO USUÁRIO ──────────────────────────────────────────────
+const abrirNovo = () => {
+  editUsrId = null
+  document.getElementById('m-usr-title').textContent = 'Novo usuário'
+  document.getElementById('btn-salvar-usr').textContent = 'Criar usuário'
+  ;['f-nome','f-email','f-senha'].forEach(id => document.getElementById(id).value = '')
+  document.getElementById('f-perfil').value = ''
+  document.getElementById('f-senha-wrap').style.display = ''
+  document.getElementById('m-err').style.display = 'none'
+  document.getElementById('m-ok').style.display  = 'none'
+  document.getElementById('m-usr').classList.add('open')
+  setTimeout(() => document.getElementById('f-nome').focus(), 100)
+}
+
+window.editarUsuario = u => {
+  editUsrId = u.id
+  document.getElementById('m-usr-title').textContent = 'Editar usuário'
+  document.getElementById('btn-salvar-usr').textContent = 'Salvar alterações'
+  document.getElementById('f-nome').value   = u.nome  || ''
+  document.getElementById('f-email').value  = u.email || ''
+  document.getElementById('f-perfil').value = u.perfil|| ''
+  document.getElementById('f-senha-wrap').style.display = 'none' // senha em modal separado
+  document.getElementById('m-err').style.display = 'none'
+  document.getElementById('m-ok').style.display  = 'none'
+  document.getElementById('m-usr').classList.add('open')
+}
+
+const salvarUsuario = async () => {
+  const nome   = document.getElementById('f-nome').value.trim()
+  const email  = document.getElementById('f-email').value.trim()
+  const perfil = document.getElementById('f-perfil').value
+  const senha  = document.getElementById('f-senha').value
+  const err    = document.getElementById('m-err')
+  const ok     = document.getElementById('m-ok')
+
+  if (!nome || !email || !perfil) {
+    err.textContent = 'Nome, email e perfil são obrigatórios.'
+    err.style.display = 'block'; ok.style.display = 'none'; return
+  }
+  if (!editUsrId && senha.length < 6) {
+    err.textContent = 'A senha deve ter no mínimo 6 caracteres.'
+    err.style.display = 'block'; ok.style.display = 'none'; return
+  }
+
+  err.style.display = 'none'; ok.style.display = 'none'
+  const btn = document.getElementById('btn-salvar-usr')
+  btn.disabled = true; btn.textContent = 'Salvando...'
+
+  try {
+    if (editUsrId) {
+      // Apenas atualiza tabela usuarios (nome, perfil)
+      const r = await fetch(`${SURL}/rest/v1/usuarios?id=eq.${editUsrId}`, {
+        method: 'PATCH',
+        headers: {...hAuth(),'Prefer':'return=minimal'},
+        body: JSON.stringify({ nome, perfil })
+      })
+      if (!r.ok) throw new Error((await r.json())?.message || 'Erro ao atualizar')
+      toast('Usuário atualizado ✓','ok')
+      closeM('m-usr')
+    } else {
+      // 1. Cria usuário no Auth via Admin API (service role)
+      const rAuth = await fetch(`${SURL}/auth/v1/admin/users`, {
+        method: 'POST',
+        headers: hAdmin(),
+        body: JSON.stringify({
+          email,
+          password: senha,
+          email_confirm: true, // confirma email automaticamente
+          user_metadata: { nome }
+        })
+      })
+      const dAuth = await rAuth.json()
+      if (!rAuth.ok) throw new Error(dAuth?.message || dAuth?.msg || JSON.stringify(dAuth))
+
+      const newId = dAuth.id
+      if (!newId) throw new Error('ID do usuário não retornado')
+
+      // 2. Insere/atualiza na tabela usuarios
+      const rUsr = await fetch(`${SURL}/rest/v1/usuarios`, {
+        method: 'POST',
+        headers: {...hAuth(),'Prefer':'resolution=merge-duplicates,return=minimal'},
+        body: JSON.stringify({ id:newId, nome, email, perfil, ativo:true })
+      })
+      if (!rUsr.ok) {
+        const e = await rUsr.json()
+        throw new Error(e?.message || 'Erro ao salvar perfil')
+      }
+
+      ok.textContent = `Usuário ${nome} criado com sucesso!`
+      ok.style.display = 'block'
+      toast(`Usuário ${nome} criado ✓`,'ok')
+      setTimeout(() => closeM('m-usr'), 1500)
+    }
+    await carregarUsuarios()
+  } catch(e) {
+    err.textContent = e.message.includes('already') ? 'Este email já está cadastrado.' : e.message
+    err.style.display = 'block'
+  } finally { btn.disabled = false; btn.textContent = editUsrId ? 'Salvar alterações' : 'Criar usuário' }
+}
+
+// ── REDEFINIR SENHA ───────────────────────────────────────────
+window.abrirRedefinirSenha = (id, nome) => {
+  pwdUsrId = id
+  document.getElementById('pwd-ref').textContent = `Usuário: ${nome}`
+  document.getElementById('f-nova-pwd').value = ''
+  document.getElementById('pwd-err').style.display = 'none'
+  document.getElementById('m-pwd').classList.add('open')
+}
+
+const salvarSenha = async () => {
+  const nova = document.getElementById('f-nova-pwd').value
+  const err  = document.getElementById('pwd-err')
+  if (nova.length < 6) {
+    err.textContent = 'Senha deve ter no mínimo 6 caracteres.'
+    err.style.display = 'block'; return
+  }
+  err.style.display = 'none'
+  const btn = document.getElementById('btn-salvar-pwd')
+  btn.disabled = true; btn.textContent = 'Salvando...'
+  try {
+    const r = await fetch(`${SURL}/auth/v1/admin/users/${pwdUsrId}`, {
+      method: 'PUT',
+      headers: hAdmin(),
+      body: JSON.stringify({ password: nova })
+    })
+    if (!r.ok) {
+      const d = await r.json()
+      throw new Error(d?.message || 'Erro ao redefinir senha')
+    }
+    toast('Senha redefinida ✓','ok')
+    closeM('m-pwd')
+  } catch(e) {
+    err.textContent = e.message
+    err.style.display = 'block'
+  } finally { btn.disabled = false; btn.textContent = 'Salvar senha' }
+}
+
+// ── ATIVAR / DESATIVAR ────────────────────────────────────────
+window.toggleAtivo = async (id, atual) => {
+  try {
+    // Atualiza tabela usuarios
+    const r1 = await fetch(`${SURL}/rest/v1/usuarios?id=eq.${id}`,{
+      method:'PATCH', headers:{...hAuth(),'Prefer':'return=minimal'},
+      body:JSON.stringify({ativo:!atual})
+    })
+    if (!r1.ok) throw new Error('Erro ao atualizar')
+
+    // Bloqueia/desbloqueia no Auth
+    const r2 = await fetch(`${SURL}/auth/v1/admin/users/${id}`,{
+      method:'PUT', headers:hAdmin(),
+      body:JSON.stringify({ban_duration: atual ? '87600h' : 'none'})
+    })
+    if (!r2.ok) console.warn('Auth ban não aplicado')
+
+    toast(atual ? 'Usuário desativado' : 'Usuário ativado','ok')
+    await carregarUsuarios()
+  } catch(e) { toast(e.message,'err') }
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+const togglePwd = (inputId, btn) => {
+  const input = document.getElementById(inputId)
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈' }
+  else { input.type = 'password'; btn.innerHTML = '&#128065;' }
+}
+
+const closeM = id => document.getElementById(id).classList.remove('open')
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.mback.open').forEach(m => m.classList.remove('open'))
+})
+
+const toast = (msg, tipo='info', dur=4000) => {
+  const el = document.createElement('div')
+  el.className = `toast ${tipo}`; el.textContent = msg
+  document.getElementById('tc').appendChild(el)
+  setTimeout(() => el.remove(), dur)
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+const init = async () => {
+  const saved = sessionStorage.getItem('ax_sess')
+  if (saved) {
+    try {
+      SESSION = JSON.parse(saved)
+      const r = await fetch(`${SURL}/auth/v1/user`,{
+        headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}
+      })
+      if (r.ok) { await posLogin(); return }
+    } catch {}
+    sessionStorage.removeItem('ax_sess'); SESSION = null
+  }
+  document.getElementById('login-screen').style.display = 'block'
+}
+init()
+</script>
+</body>
+</html>

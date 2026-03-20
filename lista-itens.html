@@ -174,6 +174,7 @@ tr:hover .acts{opacity:1}
     <button class="nav-btn" onclick="location.href='modelos.html'">Modelos</button>
     <button class="nav-btn" onclick="location.href='clientes.html'">Clientes</button>
     <button class="nav-btn" onclick="location.href='responsaveis.html'">Responsaveis</button>
+    <button class="nav-btn" onclick="location.href='configuracoes.html'">Configuracoes</button>
   </nav>
   <div class="topbar-r">
     <span class="perfil-chip" id="perfil-chip">—</span>
@@ -284,6 +285,8 @@ tr:hover .acts{opacity:1}
 
 <div class="toast-c" id="tc"></div>
 
+
+
 <!-- MODAL MOVIMENTAÇÃO -->
 <div class="mback" id="m-mov" onclick="if(event.target===this)closeM('m-mov')">
   <div class="modal">
@@ -293,23 +296,11 @@ tr:hover .acts{opacity:1}
     </div>
     <div class="mb">
       <div class="msg-box" id="m-msg"></div>
-      <div class="fg">
-        <label>Tipo *</label>
-        <select id="m-tipo" onchange="onTipo()">
-          <option value="">Selecione…</option>
-          <option>Entrada estoque</option><option>Reserva</option>
-          <option>Envio cliente</option><option>Retorno cliente</option>
-          <option>Envio técnico</option><option>Retorno técnico</option>
-          <option>Envio inspeção</option><option>Resultado inspeção</option>
-          <option>Envio RMA</option><option>Retorno RMA</option>
-          <option>Substituição RMA</option><option>Baixa</option>
-          <option>Ajuste administrativo</option>
-        </select>
-      </div>
+
       <div class="fg">
         <label>Novo status *</label>
         <select id="m-status">
-          <option value="">Selecione…</option>
+          <option value="">Selecione o status…</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
           <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
           <option>Aguardando Inspeção</option><option>Em Inspeção</option>
@@ -317,19 +308,29 @@ tr:hover .acts{opacity:1}
           <option>Sucata</option>
         </select>
       </div>
-      <div class="frow">
-        <div class="fg"><label>Localização</label><input id="m-local" placeholder="Ex: Almoxarifado"/></div>
-        <div class="fg"><label>Responsável</label><select id="m-resp"><option value="">— Manter —</option></select></div>
+
+      <div class="fg">
+        <label>Responsáveis</label>
+        <div style="position:relative">
+          <div id="resp-chips" onclick="toggleRespDropdown()"
+            style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);min-height:38px;background:var(--surface);cursor:pointer">
+            <span id="resp-placeholder" style="color:var(--text3);font-size:13px">— Selecione os responsáveis —</span>
+          </div>
+          <div id="resp-dropdown"
+            style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1.5px solid var(--accent);border-top:none;border-radius:0 0 var(--radius) var(--radius);max-height:180px;overflow-y:auto;z-index:20;box-shadow:0 8px 24px rgba(15,21,35,.1)">
+          </div>
+        </div>
       </div>
-      <div class="frow">
-        <div class="fg"><label>Cliente</label><select id="m-cli"><option value="">— Manter —</option></select></div>
-        <div class="fg" id="m-emp-w" style="display:none"><label>Empresa destino</label><input id="m-emp-dest" placeholder="Ex: Axis AB"/></div>
+
+      <div class="fg">
+        <label>Cliente</label>
+        <select id="m-cli"><option value="">— Manter atual —</option></select>
       </div>
-      <div class="frow" id="m-emp-orig-row" style="display:none">
-        <div class="fg"><label>Empresa origem</label><input id="m-emp-orig" placeholder="Ex: Traders Service"/></div>
+
+      <div class="fg">
+        <label>Motivo</label>
+        <textarea id="m-motivo" placeholder="Descreva o motivo…" style="min-height:72px"></textarea>
       </div>
-      <div class="fg"><label>Motivo</label><textarea id="m-motivo" placeholder="Descreva o motivo…"></textarea></div>
-      <div class="fg"><label>Observação</label><input id="m-obs" placeholder="Informações adicionais (opcional)"/></div>
     </div>
     <div class="mf">
       <button class="btn btn-sm" onclick="closeM('m-mov')">Cancelar</button>
@@ -717,39 +718,25 @@ window.openMov = id => {
       if (!itemMov) { toast('Item não encontrado','err'); return }
       document.getElementById('m-ref').textContent =
         `${itemMov.codigo_interno}${itemMov.serial ? ' · '+itemMov.serial : ''}`
-      ;['m-tipo','m-status','m-resp','m-cli'].forEach(e => document.getElementById(e).value='')
-      ;['m-local','m-motivo','m-emp-dest','m-emp-orig','m-obs'].forEach(e => document.getElementById(e).value='')
-      document.getElementById('m-emp-w').style.display = 'none'
+      document.getElementById('m-status').value = ''
+      document.getElementById('m-cli').value = ''
+      document.getElementById('m-motivo').value = ''
       document.getElementById('m-msg').className = 'msg-box'
-
-      // Filtra tipos do select conforme perfil
-      const tipos = TIPOS_PERFIL[PERFIL]
-      document.querySelectorAll('#m-tipo option').forEach(opt => {
-        if (!opt.value) return
-        opt.style.display = (!tipos || tipos.includes(opt.value)) ? '' : 'none'
-      })
+      limparRespSelecionados()
 
       document.getElementById('m-mov').classList.add('open')
     })
 }
 
-const TIPOS_EMP = ['Envio RMA','Retorno RMA','Substituição RMA','Envio cliente','Retorno cliente','Envio técnico','Retorno técnico']
-window.onTipo = () => {
-  const t = document.getElementById('m-tipo').value
-  const show = TIPOS_EMP.includes(t)
-  document.getElementById('m-emp-w').style.display      = show ? '' : 'none'
-  document.getElementById('m-emp-orig-row').style.display = show ? '' : 'none'
-}
+
 
 // registrar — usa RPC registrar_movimentacao_mobile
 // Usuário_registro preenchido no banco com auth.uid() — não vem do frontend
 const registrar = async () => {
-  const tipo   = document.getElementById('m-tipo').value
   const status = document.getElementById('m-status').value
   const msg    = document.getElementById('m-msg')
-
-  if (!tipo || !status) {
-    msg.textContent = 'Tipo e status são obrigatórios.'
+  if (!status) {
+    msg.textContent = 'Selecione o novo status.'
     msg.className = 'msg-box err'
     return
   }
@@ -761,24 +748,28 @@ const registrar = async () => {
     // Valida perfil e tipo no banco — não apenas no frontend
     // usuario_registro = auth.uid() preenchido pelo banco
     // Triggers: fn_validar → fn_snapshot → INSERT → fn_atualiza_estado_item
-    const r = await fetch(`${SURL}/rest/v1/rpc/registrar_movimentacao_mobile`, {
-      method: 'POST',
-      headers: hAuth(),
-      body: JSON.stringify({
-        p_item_id:          itemMov.id,
-        p_tipo:             tipo,
-        p_status_novo:      status,
-        p_localizacao_nova: document.getElementById('m-local').value.trim()    || null,
-        p_responsavel_id:   document.getElementById('m-resp').value            || null,
-        p_cliente_id:       document.getElementById('m-cli').value             || null,
-        p_empresa_origem:   document.getElementById('m-emp-orig').value.trim() || null,
-        p_empresa_destino:  document.getElementById('m-emp-dest').value.trim() || null,
-        p_motivo:           document.getElementById('m-motivo').value.trim()   || null,
-        p_observacao:       document.getElementById('m-obs').value.trim()      || null,
+    const respIds = getRespSelecionados()
+    const motivo  = document.getElementById('m-motivo').value.trim() || null
+    const cliId   = document.getElementById('m-cli').value || null
+
+    const regUm = async (respId) => {
+      const r = await fetch(`${SURL}/rest/v1/rpc/registrar_movimentacao_mobile`, {
+        method: 'POST', headers: hAuth(),
+        body: JSON.stringify({
+          p_item_id:        itemMov.id,
+          p_tipo:           'Ajuste administrativo',
+          p_status_novo:    status,
+          p_responsavel_id: respId || null,
+          p_cliente_id:     cliId,
+          p_motivo:         motivo,
+        })
       })
-    })
-    const d = await r.json()
-    if (!r.ok) throw new Error(d?.message || d?.hint || JSON.stringify(d))
+      const d = await r.json()
+      if (!r.ok) throw new Error(d?.message || d?.hint || JSON.stringify(d))
+    }
+
+    if (respIds.length <= 1) { await regUm(respIds[0] || null) }
+    else { for (const id of respIds) await regUm(id) }
 
     closeM('m-mov')
     toast('Movimentação registrada ✓', 'ok')
@@ -1079,6 +1070,62 @@ const exportarItens = async () => {
     toast('Erro ao exportar: ' + err.message, 'error')
   } finally { btn.textContent = 'Exportar'; btn.disabled = false }
 }
+
+
+// ── MULTI-SELECT RESPONSÁVEIS ──────────────────────────────────
+let _resps = []
+
+const toggleRespDropdown = () => {
+  const dd = document.getElementById('resp-dropdown')
+  if (!dd) return
+  dd.style.display = dd.style.display === 'none' ? 'block' : 'none'
+}
+
+const toggleResp = (id, nome) => {
+  const idx = _resps.findIndex(r => r.id === id)
+  if (idx >= 0) _resps.splice(idx, 1)
+  else _resps.push({ id, nome })
+  _renderResps()
+}
+
+const _renderResps = () => {
+  document.querySelectorAll('[id^="resp-chk-"]').forEach(el => {
+    const id = el.id.replace('resp-chk-', '')
+    el.innerHTML = _resps.some(r => r.id === id) ? '&#9745;' : '&#9744;'
+  })
+  const box = document.getElementById('resp-chips')
+  const ph  = document.getElementById('resp-placeholder')
+  if (!box) return
+  box.querySelectorAll('.rchip').forEach(c => c.remove())
+  if (_resps.length) {
+    if (ph) ph.style.display = 'none'
+    _resps.forEach(r => {
+      const s = document.createElement('span')
+      s.className = 'rchip'
+      s.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:2px 8px 2px 10px;border-radius:20px;font-size:12px;font-weight:500;background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-mid)'
+      s.innerHTML = r.nome + `<button onclick="event.stopPropagation();toggleResp('${r.id}',${JSON.stringify(r.nome)})" style="width:14px;height:14px;border-radius:50%;border:none;background:var(--accent-mid);color:var(--accent);cursor:pointer;font-size:9px;padding:0;display:flex;align-items:center;justify-content:center">&#x2715;</button>`
+      box.appendChild(s)
+    })
+  } else {
+    if (ph) ph.style.display = ''
+  }
+}
+
+const limparRespSelecionados = () => {
+  _resps = []
+  _renderResps()
+  const dd = document.getElementById('resp-dropdown')
+  if (dd) dd.style.display = 'none'
+}
+
+const getRespSelecionados = () => _resps.map(r => r.id)
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#resp-chips') && !e.target.closest('#resp-dropdown')) {
+    const dd = document.getElementById('resp-dropdown')
+    if (dd) dd.style.display = 'none'
+  }
+})
 
 
 init()
