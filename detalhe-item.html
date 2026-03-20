@@ -944,7 +944,6 @@ const openMov = () => {
   if (!ITEM) return
   document.getElementById('m-ref').textContent =
     `${ITEM.codigo_interno}${ITEM.serial ? ' · ' + ITEM.serial : ''}`
-  ;['m-tipo','m-status','m-resp','m-cli'].forEach(id => document.getElementById(id).value = '')
   document.getElementById('m-status').value = ''
   document.getElementById('m-cli').value = ''
   document.getElementById('m-motivo').value = ''
@@ -954,12 +953,7 @@ const openMov = () => {
   document.getElementById('m-mov').classList.add('open')
 }
 
-window.onTipo = () => {
-  const t = document.getElementById('m-tipo').value
-  const show = TIPOS_EMP.includes(t)
-  document.getElementById('m-emp-w').style.display = show ? '' : 'none'
-  document.getElementById('m-emp-orig-row').style.display = show ? '' : 'none'
-}
+
 
 const registrar = async () => {
   const status = document.getElementById('m-status').value
