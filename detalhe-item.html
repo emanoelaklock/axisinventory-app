@@ -554,9 +554,13 @@ const rpc = async (fn, params) => {
   const r = await fetch(`${SURL}/rest/v1/rpc/${fn}`, {
     method: 'POST', headers: hAuth(), body: JSON.stringify(params)
   })
-  const d = await r.json()
-  if (!r.ok) throw new Error(d?.message || d?.hint || JSON.stringify(d))
-  return d
+  if (!r.ok) {
+    const d = await r.json().catch(() => ({}))
+    throw new Error(d?.message || d?.hint || JSON.stringify(d))
+  }
+  // Handle VOID responses (empty body)
+  const text = await r.text()
+  return text ? JSON.parse(text) : null
 }
 
 // ════════════════════════════════════════════════════════════
@@ -971,14 +975,25 @@ const registrar = async () => {
     const respIds = mRS ? Array.from(mRS.selectedOptions).map(o => o.value) : []
     const motivo  = document.getElementById('m-motivo').value.trim() || null
     const cliId   = document.getElementById('m-cli').value || null
-    const regUm   = (respId) => rpc('registrar_movimentacao_mobile', {
-      p_item_id:        ITEM.id,
-      p_tipo:           'Ajuste administrativo',
-      p_status_novo:    status,
-      p_responsavel_id: respId || null,
-      p_cliente_id:     cliId,
-      p_motivo:         motivo,
-    })
+    const regUm = async (respId) => {
+      const r = await fetch(`${SURL}/rest/v1/rpc/registrar_movimentacao_mobile`, {
+        method: 'POST',
+        headers: hAuth(),
+        body: JSON.stringify({
+          p_item_id:        ITEM.id,
+          p_tipo:           'Ajuste administrativo',
+          p_status_novo:    status,
+          p_responsavel_id: respId || null,
+          p_cliente_id:     cliId,
+          p_motivo:         motivo,
+        })
+      })
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}))
+        throw new Error(d?.message || d?.hint || `HTTP ${r.status}`)
+      }
+      // RETURNS VOID — sem body para parsear
+    }
     if (respIds.length <= 1) { await regUm(respIds[0] || null) }
     else { for (const id of respIds) await regUm(id) }
     closeM('m-mov')
