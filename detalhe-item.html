@@ -926,7 +926,11 @@ const excluirAnexo = async (id) => {
 // ════════════════════════════════════════════════════════════
 // DROPDOWNS
 // ════════════════════════════════════════════════════════════
+// Flag para garantir que os dropdowns só sejam carregados uma vez
+let _dropdownsCarregados = false
+
 const carregarDropdowns = async () => {
+  if (_dropdownsCarregados) return
   try {
     const [rs, cs] = await Promise.all([
       get('responsaveis?select=id,nome,cargo&ativo=eq.true&order=nome'),
@@ -934,12 +938,13 @@ const carregarDropdowns = async () => {
     ])
     const mR = document.getElementById('m-resp')
     const mC = document.getElementById('m-cli')
-    if (mR) rs.forEach(r => mR.innerHTML += `<option value="${r.id}">${esc(r.nome)}${r.cargo?' · '+esc(r.cargo):''}</option>`)
-    if (mC) cs.forEach(c => mC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`)
+    if (mR) { mR.innerHTML = ''; rs.forEach(r => mR.innerHTML += `<option value="${r.id}">${esc(r.nome)}${r.cargo?' · '+esc(r.cargo):''}</option>`) }
+    if (mC) { mC.innerHTML = '<option value="">— Manter atual —</option>'; cs.forEach(c => mC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`) }
     const eR = document.getElementById('edit-mov-resp')
     const eC = document.getElementById('edit-mov-cli')
-    if (eR) rs.forEach(r => eR.innerHTML += `<option value="${r.id}">${esc(r.nome)}</option>`)
-    if (eC) cs.forEach(c => eC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`)
+    if (eR) { eR.innerHTML = '<option value="">— Manter —</option>'; rs.forEach(r => eR.innerHTML += `<option value="${r.id}">${esc(r.nome)}</option>`) }
+    if (eC) { eC.innerHTML = '<option value="">— Manter —</option>'; cs.forEach(c => eC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`) }
+    _dropdownsCarregados = true
   } catch {}
 }
 
