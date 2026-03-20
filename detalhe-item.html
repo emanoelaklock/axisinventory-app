@@ -1206,18 +1206,11 @@ const salvarEditMov = async () => {
     })
     if (!r.ok) throw new Error((await r.json().catch(()=>({})))?.message || 'Erro ao salvar')
 
-    if (novoStatus) {
-      await fetch(`${SURL}/rest/v1/rpc/fn_corrigir_estado_item`, {
-        method: 'POST', headers: hAuth(),
-        body: JSON.stringify({
-          p_item_id: ITEM_ID,
-          p_campo: 'status_atual',
-          p_valor_novo: novoStatus,
-          p_motivo: 'Correção via edição de movimentação',
-          p_usuario_id: SESSION?.user?.id || null,
-        })
-      })
-    }
+    // Recalcula o estado do item a partir da última movimentação (sempre, não só quando muda status)
+    await fetch(`${SURL}/rest/v1/rpc/fn_recalcular_estado_item`, {
+      method: 'POST', headers: hAuth(),
+      body: JSON.stringify({ p_item_id: ITEM_ID })
+    })
 
     closeM('m-edit-mov')
     toast('Movimentação atualizada ✓', 'ok')
