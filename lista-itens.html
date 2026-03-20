@@ -289,51 +289,92 @@ tr:hover .acts{opacity:1}
 
 <!-- MODAL MOVIMENTAÇÃO -->
 <div class="mback" id="m-mov" onclick="if(event.target===this)closeM('m-mov')">
-  <div class="modal">
-    <div class="mh">
-      <div><div class="mt">Registrar movimentação</div><div class="ms" id="m-ref">—</div></div>
-      <button class="mx" onclick="closeM('m-mov')">✕</button>
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(15,21,35,.4);animation:min .18s ease;overflow:hidden">
+
+    <!-- Header -->
+    <div style="padding:18px 22px 16px;border-bottom:1px solid #E2E6F0;display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#0F1523">Registrar movimentação</div>
+        <div style="font-size:12px;color:#8892AA;margin-top:3px;font-family:'IBM Plex Mono',monospace" id="m-ref">—</div>
+      </div>
+      <button onclick="closeM('m-mov')" style="width:28px;height:28px;border-radius:8px;border:1px solid #E2E6F0;background:#F0F2F8;color:#8892AA;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">✕</button>
     </div>
-    <div class="mb" style="overflow:visible">
+
+    <!-- Body -->
+    <div style="padding:20px 22px;display:flex;flex-direction:column;gap:16px">
+
+      <!-- Erro -->
       <div class="msg-box" id="m-msg"></div>
 
-      <div class="fg">
-        <label>Novo status *</label>
-        <select id="m-status">
+      <!-- Novo status -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Novo status *</label>
+        <select id="m-status" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
           <option value="">Selecione o status…</option>
-          <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
-          <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
-          <option>Aguardando Inspeção</option><option>Em Inspeção</option>
-          <option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option>
+          <option>Estoque Novo</option>
+          <option>Estoque Usado</option>
+          <option>Reservado</option>
+          <option>Vendido</option>
+          <option>Com Técnico</option>
+          <option>Locado</option>
+          <option>Aguardando Inspeção</option>
+          <option>Em Inspeção</option>
+          <option>Finalizada Inspeção</option>
+          <option>Em RMA / Assistência Técnica</option>
           <option>Sucata</option>
         </select>
       </div>
 
-      <div class="fg">
-        <label>Novo Responsável <span style="font-size:10px;color:var(--tx3);font-weight:400">(Ctrl/Cmd para múltiplos)</span></label>
+      <!-- Novo Responsável -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">
+          Novo Responsável
+          <span style="font-size:10px;color:#C8CEDF;font-weight:400;text-transform:none;letter-spacing:0"> · Ctrl/Cmd para múltiplos</span>
+        </label>
         <select id="m-resp-select" multiple
-          style="width:100%;padding:6px 10px;border:1.5px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx);outline:none;min-height:96px;transition:border .15s"
-          onfocus="this.style.borderColor='var(--ac)';this.style.boxShadow='0 0 0 3px var(--acl)'"
-          onblur="this.style.borderColor='var(--bd)';this.style.boxShadow=''">
+          style="width:100%;padding:6px 4px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;min-height:100px;max-height:130px;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+        </select>
+        <div style="font-size:11px;color:#C8CEDF">Deixe vazio para manter o responsável atual</div>
+      </div>
+
+      <!-- Cliente -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Cliente</label>
+        <select id="m-cli" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+          <option value="">— Manter atual —</option>
         </select>
       </div>
 
-      <div class="fg">
-        <label>Cliente</label>
-        <select id="m-cli"><option value="">— Manter atual —</option></select>
+      <!-- Motivo -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Motivo</label>
+        <textarea id="m-motivo" placeholder="Descreva o motivo da movimentação…"
+          style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;resize:vertical;min-height:80px;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></textarea>
       </div>
+    </div>
 
-      <div class="fg">
-        <label>Motivo</label>
-        <textarea id="m-motivo" placeholder="Descreva o motivo…" style="min-height:72px"></textarea>
-      </div>
+    <!-- Footer -->
+    <div style="padding:14px 22px;border-top:1px solid #E2E6F0;display:flex;gap:8px;justify-content:flex-end;background:#FAFBFD">
+      <button onclick="closeM('m-mov')" style="padding:9px 18px;border-radius:10px;border:1px solid #E2E6F0;background:#fff;color:#4A5470;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s"
+        onmouseover="this.style.background='#F0F2F8'" onmouseout="this.style.background='#fff'">Cancelar</button>
+      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#2563EB;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s"
+        onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Registrar
+      </button>
     </div>
-    <div class="mf">
-      <button class="btn btn-sm" onclick="closeM('m-mov')">Cancelar</button>
-      <button class="btn btn-p btn-sm" id="btn-reg" onclick="registrar()">Registrar</button>
-    </div>
+
   </div>
 </div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
