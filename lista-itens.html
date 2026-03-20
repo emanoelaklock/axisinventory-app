@@ -294,7 +294,7 @@ tr:hover .acts{opacity:1}
       <div><div class="mt">Registrar movimentação</div><div class="ms" id="m-ref">—</div></div>
       <button class="mx" onclick="closeM('m-mov')">✕</button>
     </div>
-    <div class="mb">
+    <div class="mb" style="overflow:visible">
       <div class="msg-box" id="m-msg"></div>
 
       <div class="fg">
@@ -310,16 +310,12 @@ tr:hover .acts{opacity:1}
       </div>
 
       <div class="fg">
-        <label>Responsáveis</label>
-        <div style="position:relative" onclick="event.stopPropagation()">
-          <div id="resp-chips" onclick="event.stopPropagation();toggleRespDropdown()"
-            style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:7px 10px;border:1px solid var(--bd);border-radius:var(--r);min-height:38px;background:var(--sur);cursor:pointer">
-            <span id="resp-placeholder" style="color:var(--tx3);font-size:13px">— Selecione os responsáveis —</span>
-          </div>
-          <div id="resp-dropdown" onclick="event.stopPropagation()"
-            style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--sur);border:1.5px solid var(--ac);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:180px;overflow-y:auto;z-index:20;box-shadow:0 8px 24px rgba(15,21,35,.1)">
-          </div>
-        </div>
+        <label>Responsáveis <span style="font-size:10px;color:var(--tx3);font-weight:400">(Ctrl/Cmd para múltiplos)</span></label>
+        <select id="m-resp-select" multiple
+          style="width:100%;padding:6px 10px;border:1.5px solid var(--bd);border-radius:var(--r);background:var(--sur);font-family:inherit;font-size:13px;color:var(--tx);outline:none;min-height:96px;transition:border .15s"
+          onfocus="this.style.borderColor='var(--ac)';this.style.boxShadow='0 0 0 3px var(--acl)'"
+          onblur="this.style.borderColor='var(--bd)';this.style.boxShadow=''">
+        </select>
       </div>
 
       <div class="fg">
@@ -499,17 +495,14 @@ const carregarDropdowns = async () => {
     // Modal — cliente
     const mC = document.getElementById('m-cli')
     if (mC) clis.forEach(x => mC.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
-    // Modal — responsáveis multi-select dropdown
-    const dd = document.getElementById('resp-dropdown')
-    if (dd) dd.innerHTML = resps.map(r =>
-      `<div class="resp-option" data-id="${r.id}"
-        style="padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;transition:background .1s"
-        onmouseover="this.style.background='var(--acl)'" onmouseout="this.style.background=''"
-        onclick="toggleResp('${r.id}',${JSON.stringify(r.nome)})">
-        <span id="resp-chk-${r.id}" style="font-size:15px;width:18px;flex-shrink:0">&#9744;</span>
-        <span style="color:var(--tx)">${esc(r.nome)}</span>
-      </div>`
-    ).join('')
+    // Modal — responsáveis multi-select nativo
+    const mRS = document.getElementById('m-resp-select')
+    if (mRS) resps.forEach(r => {
+      const opt = document.createElement('option')
+      opt.value = r.id
+      opt.textContent = r.nome + (r.cargo ? ' · ' + r.cargo : '')
+      mRS.appendChild(opt)
+    })
   } catch {}
 }
 
@@ -731,7 +724,7 @@ window.openMov = id => {
       document.getElementById('m-cli').value = ''
       document.getElementById('m-motivo').value = ''
       document.getElementById('m-msg').className = 'msg-box'
-      limparRespSelecionados()
+      const mRS2=document.getElementById("m-resp-select");if(mRS2)Array.from(mRS2.options).forEach(o=>o.selected=false)
 
       document.getElementById('m-mov').classList.add('open')
     })
@@ -1081,60 +1074,13 @@ const exportarItens = async () => {
 }
 
 
-// ── MULTI-SELECT RESPONSÁVEIS ──────────────────────────────────
-let _resps = []
-
-const toggleRespDropdown = () => {
-  const dd = document.getElementById('resp-dropdown')
-  if (!dd) return
-  dd.style.display = dd.style.display === 'none' ? 'block' : 'none'
+// ── RESPONSÁVEIS — select nativo múltiplo ────────────────────
+const getRespSelecionados = () => {
+  const sel = document.getElementById('m-resp-select')
+  if (!sel) return []
+  return Array.from(sel.selectedOptions).map(o => o.value)
 }
 
-const toggleResp = (id, nome) => {
-  const idx = _resps.findIndex(r => r.id === id)
-  if (idx >= 0) _resps.splice(idx, 1)
-  else _resps.push({ id, nome })
-  _renderResps()
-}
-
-const _renderResps = () => {
-  document.querySelectorAll('[id^="resp-chk-"]').forEach(el => {
-    const id = el.id.replace('resp-chk-', '')
-    el.innerHTML = _resps.some(r => r.id === id) ? '&#9745;' : '&#9744;'
-  })
-  const box = document.getElementById('resp-chips')
-  const ph  = document.getElementById('resp-placeholder')
-  if (!box) return
-  box.querySelectorAll('.rchip').forEach(c => c.remove())
-  if (_resps.length) {
-    if (ph) ph.style.display = 'none'
-    _resps.forEach(r => {
-      const s = document.createElement('span')
-      s.className = 'rchip'
-      s.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:2px 8px 2px 10px;border-radius:20px;font-size:12px;font-weight:500;background:var(--acl);color:var(--ac);border:1px solid var(--acm)'
-      s.innerHTML = r.nome + `<button onclick="event.stopPropagation();toggleResp('${r.id}',${JSON.stringify(r.nome)})" style="width:14px;height:14px;border-radius:50%;border:none;background:var(--acm);color:var(--ac);cursor:pointer;font-size:9px;padding:0;display:flex;align-items:center;justify-content:center">&#x2715;</button>`
-      box.appendChild(s)
-    })
-  } else {
-    if (ph) ph.style.display = ''
-  }
-}
-
-const limparRespSelecionados = () => {
-  _resps = []
-  _renderResps()
-  const dd = document.getElementById('resp-dropdown')
-  if (dd) dd.style.display = 'none'
-}
-
-const getRespSelecionados = () => _resps.map(r => r.id)
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('#resp-chips') && !e.target.closest('#resp-dropdown')) {
-    const dd = document.getElementById('resp-dropdown')
-    if (dd) dd.style.display = 'none'
-  }
-})
 
 
 init()
