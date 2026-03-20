@@ -458,6 +458,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
         </select>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Localização</label>
+        <input id="m-local" placeholder="Ex: Almoxarifado Central"
+          style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"/>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Motivo</label>
         <textarea id="m-motivo" placeholder="Descreva o motivo da movimentação…"
           style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;resize:vertical;min-height:80px;transition:border .15s"
@@ -957,6 +964,7 @@ const openMov = () => {
     `${ITEM.codigo_interno}${ITEM.serial ? ' · ' + ITEM.serial : ''}`
   document.getElementById('m-status').value = ''
   document.getElementById('m-cli').value = ''
+  document.getElementById('m-local').value = ''
   document.getElementById('m-motivo').value = ''
   document.getElementById('m-err').style.display = 'none'
   const mRS = document.getElementById('m-resp')
@@ -981,6 +989,7 @@ const registrar = async () => {
     const respIds = mRS ? Array.from(mRS.selectedOptions).map(o => o.value) : []
     const motivo  = document.getElementById('m-motivo').value.trim() || null
     const cliId   = document.getElementById('m-cli').value || null
+    const localizacao = document.getElementById('m-local').value.trim() || null
     const regUm = async (respId) => {
       const r = await fetch(`${SURL}/rest/v1/rpc/registrar_movimentacao_mobile`, {
         method: 'POST',
@@ -992,6 +1001,7 @@ const registrar = async () => {
           p_responsavel_id: respId || null,
           p_cliente_id:     cliId,
           p_motivo:         motivo,
+          p_localizacao_nova: localizacao,
         })
       })
       if (!r.ok) {
