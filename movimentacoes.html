@@ -81,14 +81,14 @@ tr:hover td{background:rgba(37,99,235,.015)}
     <button class="nav-btn" onclick="location.href='configuracoes.html'">Configuracoes</button>
   </nav>
   <div class="topbar-r">
-    <span class="perfil-chip" id="perfil-chip">&#8212;</span>
-    <div class="avatar" id="avatar">&#8212;</div>
+    <span class="perfil-chip" id="perfil-chip">—</span>
+    <div class="avatar" id="avatar">—</div>
   </div>
 </header>
 <main class="content">
   <div id="login-screen" style="display:none;max-width:360px;margin:60px auto">
     <div style="text-align:center;margin-bottom:24px">
-      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">&#9202;</div>
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">🕐</div>
       <div style="font-size:18px;font-weight:700">Axis Inventory</div>
     </div>
     <div id="login-msg" style="margin-bottom:10px"></div>
@@ -124,7 +124,7 @@ tr:hover td{background:rgba(37,99,235,.015)}
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         Limpar
       </button>
-      <span class="cbadge" id="cbadge">&#8212;</span>
+      <span class="cbadge" id="cbadge">—</span>
     </div>
     <div class="tcard">
       <div class="twrap">
@@ -143,7 +143,7 @@ tr:hover td{background:rgba(37,99,235,.015)}
         </table>
       </div>
       <div class="pag">
-        <span class="pag-info" id="pag-info">&#8212;</span>
+        <span class="pag-info" id="pag-info">—</span>
         <div class="pag-ctrl" id="pag-ctrl"></div>
       </div>
     </div>
@@ -158,7 +158,11 @@ const POR_PAG=30
 let SESSION=null,PERFIL='Consulta'
 const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-const fdt=iso=>{if(!iso)return'&#8212;';const d=new Date(iso);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+
+// FIX: helper que nunca passa entidade HTML pelo esc() — usa caractere UTF-8 diretamente
+const fval=v=>v ? esc(v) : '<span style="color:var(--tx3)">—</span>'
+
+const fdt=iso=>{if(!iso)return'—';const d=new Date(iso);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
 const fazerLogin=async()=>{
   const email=document.getElementById('l-email').value.trim(),senha=document.getElementById('l-senha').value
   const btn=document.getElementById('btn-login'),msg=document.getElementById('login-msg')
@@ -232,15 +236,16 @@ const limparF=()=>{
 const srt=col=>{if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc;else{QS.sortCol=col;QS.sortAsc=false};QS.pagina=0;carregar()}
 const TIPO_ICONS={'Entrada estoque':'📦','Reserva':'🔒','Envio cliente':'🚚','Retorno cliente':'↩️','Envio técnico':'🔧','Retorno técnico':'↩️','Envio inspeção':'🔬','Resultado inspeção':'📋','Envio RMA':'⚠️','Retorno RMA':'✅','Substituição RMA':'🔄','Baixa':'🗑️','Ajuste administrativo':'⚙️'}
 const SM={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Aguardando Inspeção':'#EA580C','Em Inspeção':'#CA8A04','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
-const sbadge=(s,label)=>{const c=SM[s]||'#71717A';const l=label||s||'&#8212;';return`<span class="badge" style="background:${c}18;color:${c}">${esc(l)}</span>`}
+const sbadge=(s)=>{const c=SM[s]||'#71717A';return`<span class="badge" style="background:${c}18;color:${c}">${esc(s||'—')}</span>`}
 const renderSkel=()=>{document.getElementById('tbody').innerHTML=Array(8).fill(0).map(()=>`<tr>${Array(7).fill(0).map(()=>`<td><span class="sk" style="width:${40+Math.random()*60}px"></span></td>`).join('')}<td></td></tr>`).join('')}
 const renderTabela=rows=>{
-  if(!rows.length){document.getElementById('tbody').innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-icon">&#128203;</div><div class="empty-t">Nenhuma movimentação encontrada</div><div>Ajuste os filtros ou o período</div></div></td></tr>';return}
+  if(!rows.length){document.getElementById('tbody').innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-t">Nenhuma movimentação encontrada</div><div>Ajuste os filtros ou o período</div></div></td></tr>';return}
   document.getElementById('tbody').innerHTML=rows.map(m=>{
     const icon=TIPO_ICONS[m.tipo_movimentacao]||'•'
     const statusChange=m.status_anterior&&m.status_anterior!==m.status_novo
-      ?`${sbadge(m.status_anterior,'')}<span class="arrow">→</span>${sbadge(m.status_novo,'')}`
-      :sbadge(m.status_novo,'')
+      ?`${sbadge(m.status_anterior)}<span class="arrow">→</span>${sbadge(m.status_novo)}`
+      :sbadge(m.status_novo)
+    // FIX: usar fval() em vez de esc(valor||'&#8212;') — evita entidade HTML escapada
     return`<tr style="cursor:pointer" onclick="location.href='detalhe-item.html#${m.item_id}'">
       <td class="dim" style="white-space:nowrap">${fdt(m.data_movimentacao)}</td>
       <td><span class="tipo-icon">${icon}</span>${esc(m.tipo_movimentacao)}</td>
@@ -249,10 +254,10 @@ const renderTabela=rows=>{
         <div style="font-size:11px;color:var(--tx3)">${esc(m.item_modelo||'')}</div>
       </td>
       <td class="col-status">${statusChange}</td>
-      <td class="col-resp dim">${esc(m.responsavel_novo_snapshot||'&#8212;')}</td>
-      <td class="col-cli dim">${esc(m.cliente_novo_snapshot||'&#8212;')}</td>
-      <td class="col-local dim">${esc(m.localizacao_nova||'&#8212;')}</td>
-      <td class="dim">${esc(m.usuario_nome||'&#8212;')}</td>
+      <td class="col-resp dim">${fval(m.responsavel_novo_snapshot)}</td>
+      <td class="col-cli dim">${fval(m.cliente_novo_snapshot)}</td>
+      <td class="col-local dim">${fval(m.localizacao_nova)}</td>
+      <td class="dim">${fval(m.usuario_nome)}</td>
     </tr>`
   }).join('')
 }
