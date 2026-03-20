@@ -251,6 +251,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             <span>QR Code</span>
           </button>
+          <button class="btn" id="btn-excluir-item" onclick="excluirItem()" style="border-color:#FECACA;color:#DC2626;display:none">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            <span>Excluir</span>
+          </button>
         </div>
       </div>
 
@@ -680,6 +684,9 @@ const renderHero = (i) => {
   // Botão movimentação só aparece para quem pode mover
   if (['Consulta'].includes(PERFIL))
     document.querySelector('button[onclick="openMov()"]').style.display = 'none'
+  // Botão excluir só para Administrador
+  const btnExcluir = document.getElementById('btn-excluir-item')
+  if (btnExcluir && PERFIL === 'Administrador') btnExcluir.style.display = ''
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1194,6 +1201,32 @@ window.excluirMov = async (id) => {
   } catch(e) {
     toast('Erro: ' + e.message, 'err', 6000)
     console.error('excluirMov error:', e)
+  }
+}
+
+
+// ── EXCLUIR ITEM ──────────────────────────────────────────────
+const excluirItem = async () => {
+  if (!ITEM) return
+  const confirmMsg = `Excluir permanentemente o item ${ITEM.codigo_interno}?\n\n` +
+    `Modelo: ${ITEM.modelo || '—'}\n` +
+    `Serial: ${ITEM.serial || 'Sem serial'}\n\n` +
+    `⚠️ Esta ação não pode ser desfeita. Todo o histórico de movimentações será perdido.`
+  if (!window.confirm(confirmMsg)) return
+
+  try {
+    const r = await fetch(`${SURL}/rest/v1/itens?id=eq.${ITEM_ID}`, {
+      method: 'DELETE',
+      headers: { ...hAuth(), 'Prefer': 'return=minimal' }
+    })
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({}))
+      throw new Error(d?.message || d?.hint || `HTTP ${r.status}`)
+    }
+    toast('Item excluído ✓', 'ok')
+    setTimeout(() => location.href = 'lista-itens.html', 1200)
+  } catch(e) {
+    toast('Erro ao excluir: ' + e.message, 'err', 6000)
   }
 }
 
