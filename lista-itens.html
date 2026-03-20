@@ -496,11 +496,20 @@ const carregarDropdowns = async () => {
     const fC = document.getElementById('f-cli')
     resps.forEach(x => fR.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
     clis.forEach(x  => fC.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
-    // Modal
-    const mR = document.getElementById('m-resp')
+    // Modal — cliente
     const mC = document.getElementById('m-cli')
-    resps.forEach(x => mR.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
-    clis.forEach(x  => mC.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
+    if (mC) clis.forEach(x => mC.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
+    // Modal — responsáveis multi-select dropdown
+    const dd = document.getElementById('resp-dropdown')
+    if (dd) dd.innerHTML = resps.map(r =>
+      `<div class="resp-option" data-id="${r.id}"
+        style="padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;transition:background .1s"
+        onmouseover="this.style.background='var(--accent-light)'" onmouseout="this.style.background=''"
+        onclick="toggleResp('${r.id}',${JSON.stringify(r.nome)})">
+        <span id="resp-chk-${r.id}" style="font-size:15px;width:18px;flex-shrink:0">&#9744;</span>
+        <span style="color:var(--text)">${esc(r.nome)}</span>
+      </div>`
+    ).join('')
   } catch {}
 }
 
