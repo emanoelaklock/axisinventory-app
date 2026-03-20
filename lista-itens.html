@@ -311,12 +311,12 @@ tr:hover .acts{opacity:1}
 
       <div class="fg">
         <label>Responsáveis</label>
-        <div style="position:relative">
-          <div id="resp-chips" onclick="toggleRespDropdown()"
+        <div style="position:relative" onclick="event.stopPropagation()">
+          <div id="resp-chips" onclick="event.stopPropagation();toggleRespDropdown()"
             style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:7px 10px;border:1px solid var(--bd);border-radius:var(--r);min-height:38px;background:var(--sur);cursor:pointer">
             <span id="resp-placeholder" style="color:var(--tx3);font-size:13px">— Selecione os responsáveis —</span>
           </div>
-          <div id="resp-dropdown"
+          <div id="resp-dropdown" onclick="event.stopPropagation()"
             style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--sur);border:1.5px solid var(--ac);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:180px;overflow-y:auto;z-index:20;box-shadow:0 8px 24px rgba(15,21,35,.1)">
           </div>
         </div>
