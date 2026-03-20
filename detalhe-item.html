@@ -773,7 +773,7 @@ const carregarTimeline = async (id) => {
             ${meta ? `<div class="tl-meta">${meta}</div>` : ''}
             ${motivo}
             ${PERFIL === 'Administrador' ? `<div class="tl-acts">
-              <button class="tl-btn tl-btn-e" onclick="editarMov('${m.id}','${esc(m.tipo_movimentacao)}','${esc(m.status_novo||'')}','${m.responsavel_novo_id||''}','${m.cliente_novo_id||''}','${esc(m.localizacao_nova||'')}','${esc(m.motivo||'')}')">Editar</button>
+              <button class="tl-btn tl-btn-e" onclick="editarMov('${m.id}')">Editar</button>
               <button class="tl-btn tl-btn-d" onclick="excluirMov('${m.id}')">Excluir</button>
             </div>` : ''}
           </div>
@@ -1184,17 +1184,17 @@ const init = async () => {
 // ── EDITAR / EXCLUIR MOVIMENTAÇÃO ─────────────────────────────
 let editMovId = null
 
-window.editarMov = (id, tipo, status, respId, cliId, local, motivo) => {
+window.editarMov = async (id) => {
   editMovId = id
-  document.getElementById('edit-mov-tipo').value    = tipo || ''
-  document.getElementById('edit-mov-status').value  = status || ''
-  document.getElementById('edit-mov-local').value   = local || ''
-  document.getElementById('edit-mov-motivo').value  = motivo || ''
-  document.getElementById('edit-mov-resp').value    = respId || ''
-  document.getElementById('edit-mov-cli').value     = cliId  || ''
-  document.getElementById('edit-mov-err').style.display = 'none'
-  document.getElementById('m-edit-mov').classList.add('open')
-  setTimeout(() => document.getElementById('edit-mov-motivo').focus(), 100)
+  try {
+    const rows = await get(`movimentacoes?id=eq.${id}&select=tipo_movimentacao,status_novo,motivo`)
+    const m = rows[0] || {}
+    document.getElementById('edit-mov-tipo').value   = m.tipo_movimentacao || ''
+    document.getElementById('edit-mov-motivo').value = m.motivo || ''
+    document.getElementById('edit-mov-err').style.display = 'none'
+    document.getElementById('m-edit-mov').classList.add('open')
+    setTimeout(() => document.getElementById('edit-mov-motivo').focus(), 100)
+  } catch(e) { toast('Erro ao abrir: ' + e.message, 'err') }
 }
 
 const salvarEditMov = async () => {
