@@ -385,28 +385,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 
 <!-- MODAL: MOVIMENTAÇÃO -->
 <div class="mback" id="m-mov" onclick="if(event.target===this)closeM('m-mov')">
-  <div class="modal">
-    <div class="mh">
-      <div><div class="mt">Registrar movimentação</div><div class="ms" id="m-ref">—</div></div>
-      <button class="mx" onclick="closeM('m-mov')">✕</button>
-    </div>
-    <div class="mb">
-      <div class="merr" id="m-err"></div>
-      <div class="fg"><label>Tipo *</label>
-        <select id="m-tipo" onchange="onTipo()">
-          <option value="">Selecione…</option>
-          <option>Entrada estoque</option><option>Reserva</option>
-          <option>Envio cliente</option><option>Retorno cliente</option>
-          <option>Envio técnico</option><option>Retorno técnico</option>
-          <option>Envio inspeção</option><option>Resultado inspeção</option>
-          <option>Envio RMA</option><option>Retorno RMA</option>
-          <option>Substituição RMA</option><option>Baixa</option>
-          <option>Ajuste administrativo</option>
-        </select>
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(15,21,35,.4);animation:modalIn .18s ease;overflow:hidden">
+    <div style="padding:18px 22px 16px;border-bottom:1px solid #E2E6F0;display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#0F1523">Registrar movimentação</div>
+        <div style="font-size:12px;color:#8892AA;margin-top:3px;font-family:'IBM Plex Mono',monospace" id="m-ref">—</div>
       </div>
-      <div class="fg"><label>Novo status *</label>
-        <select id="m-status">
-          <option value="">Selecione…</option>
+      <button onclick="closeM('m-mov')" style="width:28px;height:28px;border-radius:8px;border:1px solid #E2E6F0;background:#F0F2F8;color:#8892AA;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">✕</button>
+    </div>
+    <div style="padding:20px 22px;display:flex;flex-direction:column;gap:16px">
+      <div class="merr" id="m-err"></div>
+
+      <!-- Novo status -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Novo status *</label>
+        <select id="m-status" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+          <option value="">Selecione o status…</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
           <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
           <option>Aguardando Inspeção</option><option>Em Inspeção</option>
@@ -414,23 +410,48 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
           <option>Sucata</option>
         </select>
       </div>
-      <div class="frow">
-        <div class="fg"><label>Localização</label><input id="m-local" placeholder="Ex: Almoxarifado"/></div>
-        <div class="fg"><label>Responsável</label><select id="m-resp"><option value="">— Manter —</option></select></div>
+
+      <!-- Novo Responsável -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">
+          Novo Responsável
+          <span style="font-size:10px;color:#C8CEDF;font-weight:400;text-transform:none;letter-spacing:0"> · Ctrl/Cmd para múltiplos</span>
+        </label>
+        <select id="m-resp" multiple
+          style="width:100%;padding:6px 4px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;min-height:100px;max-height:130px;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+        </select>
+        <div style="font-size:11px;color:#C8CEDF">Deixe vazio para manter o responsável atual</div>
       </div>
-      <div class="frow">
-        <div class="fg"><label>Cliente</label><select id="m-cli"><option value="">— Manter —</option></select></div>
-        <div class="fg" id="m-emp-w" style="display:none"><label>Empresa destino</label><input id="m-emp-dest" placeholder="Ex: Axis AB"/></div>
+
+      <!-- Cliente -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Cliente</label>
+        <select id="m-cli" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+          <option value="">— Manter atual —</option>
+        </select>
       </div>
-      <div class="frow" id="m-emp-orig-row" style="display:none">
-        <div class="fg"><label>Empresa origem</label><input id="m-emp-orig" placeholder="Ex: Traders Service"/></div>
+
+      <!-- Motivo -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Motivo</label>
+        <textarea id="m-motivo" placeholder="Descreva o motivo da movimentação…"
+          style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;resize:vertical;min-height:80px;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></textarea>
       </div>
-      <div class="fg"><label>Motivo</label><textarea id="m-motivo" placeholder="Descreva o motivo…"></textarea></div>
-      <div class="fg"><label>Observação</label><input id="m-obs" placeholder="Informações adicionais (opcional)"/></div>
     </div>
-    <div class="mf">
-      <button class="btn btn-sm" onclick="closeM('m-mov')">Cancelar</button>
-      <button class="btn btn-p btn-sm" id="btn-reg" onclick="registrar()">Registrar</button>
+    <div style="padding:14px 22px;border-top:1px solid #E2E6F0;display:flex;gap:8px;justify-content:flex-end;background:#FAFBFD">
+      <button onclick="closeM('m-mov')" style="padding:9px 18px;border-radius:10px;border:1px solid #E2E6F0;background:#fff;color:#4A5470;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer"
+        onmouseover="this.style.background='#F0F2F8'" onmouseout="this.style.background='#fff'">Cancelar</button>
+      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#2563EB;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px"
+        onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Registrar
+      </button>
     </div>
   </div>
 </div>
@@ -902,8 +923,8 @@ const carregarDropdowns = async () => {
     ])
     const mR = document.getElementById('m-resp')
     const mC = document.getElementById('m-cli')
-    rs.forEach(r => mR.innerHTML += `<option value="${r.id}">${esc(r.nome)}${r.cargo?' · '+esc(r.cargo):''}</option>`)
-    cs.forEach(c => mC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`)
+    if (mR) rs.forEach(r => mR.innerHTML += `<option value="${r.id}">${esc(r.nome)}${r.cargo?' · '+esc(r.cargo):''}</option>`)
+    if (mC) cs.forEach(c => mC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`)
   } catch {}
 }
 
@@ -917,10 +938,12 @@ const openMov = () => {
   document.getElementById('m-ref').textContent =
     `${ITEM.codigo_interno}${ITEM.serial ? ' · ' + ITEM.serial : ''}`
   ;['m-tipo','m-status','m-resp','m-cli'].forEach(id => document.getElementById(id).value = '')
-  ;['m-local','m-motivo','m-obs','m-emp-dest','m-emp-orig'].forEach(id => document.getElementById(id).value = '')
-  document.getElementById('m-emp-w').style.display = 'none'
-  document.getElementById('m-emp-orig-row').style.display = 'none'
+  document.getElementById('m-status').value = ''
+  document.getElementById('m-cli').value = ''
+  document.getElementById('m-motivo').value = ''
   document.getElementById('m-err').style.display = 'none'
+  const mRS = document.getElementById('m-resp')
+  if (mRS) Array.from(mRS.options).forEach(o => o.selected = false)
   document.getElementById('m-mov').classList.add('open')
 }
 
@@ -932,12 +955,11 @@ window.onTipo = () => {
 }
 
 const registrar = async () => {
-  const tipo   = document.getElementById('m-tipo').value
   const status = document.getElementById('m-status').value
   const err    = document.getElementById('m-err')
 
-  if (!tipo || !status) {
-    err.textContent = 'Tipo e status são obrigatórios.'
+  if (!status) {
+    err.textContent = 'Selecione o novo status.'
     err.style.display = 'block'; return
   }
   err.style.display = 'none'
@@ -945,18 +967,20 @@ const registrar = async () => {
   btn.textContent = 'Registrando…'; btn.disabled = true
 
   try {
-    await rpc('registrar_movimentacao_mobile', {
-      p_item_id:          ITEM.id,
-      p_tipo:             tipo,
-      p_status_novo:      status,
-      p_localizacao_nova: document.getElementById('m-local').value.trim()    || null,
-      p_responsavel_id:   document.getElementById('m-resp').value            || null,
-      p_cliente_id:       document.getElementById('m-cli').value             || null,
-      p_empresa_origem:   document.getElementById('m-emp-orig').value.trim() || null,
-      p_empresa_destino:  document.getElementById('m-emp-dest').value.trim() || null,
-      p_motivo:           document.getElementById('m-motivo').value.trim()   || null,
-      p_observacao:       document.getElementById('m-obs').value.trim()      || null,
+    const mRS    = document.getElementById('m-resp')
+    const respIds = mRS ? Array.from(mRS.selectedOptions).map(o => o.value) : []
+    const motivo  = document.getElementById('m-motivo').value.trim() || null
+    const cliId   = document.getElementById('m-cli').value || null
+    const regUm   = (respId) => rpc('registrar_movimentacao_mobile', {
+      p_item_id:        ITEM.id,
+      p_tipo:           'Ajuste administrativo',
+      p_status_novo:    status,
+      p_responsavel_id: respId || null,
+      p_cliente_id:     cliId,
+      p_motivo:         motivo,
     })
+    if (respIds.length <= 1) { await regUm(respIds[0] || null) }
+    else { for (const id of respIds) await regUm(id) }
     closeM('m-mov')
     toast('Movimentação registrada ✓', 'ok')
     // Recarrega item e timeline
@@ -1154,18 +1178,23 @@ const salvarEditMov = async () => {
 }
 
 window.excluirMov = async (id) => {
-  if (!confirm('Excluir esta movimentação? Esta ação não pode ser desfeita e o status do item NÃO será revertido automaticamente.')) return
+  if (!window.confirm('Excluir esta movimentação?\n\nO status do item NÃO será revertido automaticamente.')) return
+  toast('Excluindo...', 'info', 2000)
   try {
     const r = await fetch(`${SURL}/rest/v1/movimentacoes?id=eq.${id}`, {
       method: 'DELETE',
-      headers: hAuth()
+      headers: { ...hAuth(), 'Prefer': 'return=minimal' }
     })
-    if (!r.ok) throw new Error((await r.json())?.message || 'Erro ao excluir')
-    toast('Movimentação excluída', 'ok')
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({}))
+      throw new Error(d?.message || d?.hint || `HTTP ${r.status}`)
+    }
+    toast('Movimentação excluída ✓', 'ok')
     await carregarTimeline(ITEM_ID)
-    document.getElementById('tl-count').textContent =
-      parseInt(document.getElementById('tl-count').textContent) - 1
-  } catch(e) { toast(e.message, 'err') }
+  } catch(e) {
+    toast('Erro: ' + e.message, 'err', 6000)
+    console.error('excluirMov error:', e)
+  }
 }
 
 
