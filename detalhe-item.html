@@ -82,6 +82,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .tl-arr{color:var(--tx3);font-size:11px}
 .tl-meta{font-size:12px;color:var(--tx3);margin-top:6px;display:flex;flex-wrap:wrap;gap:10px}
 .tl-motivo{font-size:12px;color:var(--tx2);margin-top:6px;padding:7px 10px;background:var(--sur2);border-radius:7px;border-left:3px solid var(--bd2);font-style:italic}
+.tl-acts{display:flex;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
+.tl-btn{padding:3px 9px;border-radius:6px;border:1px solid transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.tl-btn-e{color:var(--ac);background:var(--acl);border-color:var(--acm)}.tl-btn-e:hover{background:var(--ac);color:#fff}
+.tl-btn-d{color:var(--re);background:rgba(220,38,38,.06);border-color:rgba(220,38,38,.2)}.tl-btn-d:hover{background:var(--re);color:#fff}
 
 /* checklists */
 .chk-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:8px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
@@ -353,6 +357,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 </div><!-- /page -->
 
 <div class="tc" id="tc"></div>
+
+<!-- MODAL EDITAR MOVIMENTAÇÃO -->
+<div class="mback" id="m-edit-mov" onclick="if(event.target===this)closeM('m-edit-mov')">
+  <div class="modal" style="max-width:420px">
+    <div class="mh">
+      <div class="mt">Editar movimentação</div>
+      <button class="mx" onclick="closeM('m-edit-mov')">✕</button>
+    </div>
+    <div class="mb">
+      <div class="merr" id="edit-mov-err"></div>
+      <div class="fg"><label>Tipo</label><input id="edit-mov-tipo" style="background:var(--sur2);color:var(--tx3)" readonly/></div>
+      <div class="fg"><label>Motivo</label><textarea id="edit-mov-motivo" style="min-height:80px" placeholder="Motivo da movimentação..."></textarea></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-edit-mov')">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-salvar-mov" onclick="salvarEditMov()">Salvar</button>
+    </div>
+  </div>
+</div>
 
 <!-- LIGHTBOX -->
 <div class="lb" id="lb" onclick="closeLB()">
@@ -700,6 +723,10 @@ const carregarTimeline = async (id) => {
             ${statusChange}
             ${meta ? `<div class="tl-meta">${meta}</div>` : ''}
             ${motivo}
+            ${PERFIL === 'Administrador' ? `<div class="tl-acts">
+              <button class="tl-btn tl-btn-e" onclick="editarMov('${m.id}','${esc(m.tipo_movimentacao)}','${esc(m.motivo||'')}')">Editar</button>
+              <button class="tl-btn tl-btn-d" onclick="excluirMov('${m.id}')">Excluir</button>
+            </div>` : ''}
           </div>
         </div>
       </div>`
@@ -1091,6 +1118,56 @@ const init = async () => {
   ITEM_ID = id
   await carregarItem(id)
 }
+
+// ── EDITAR / EXCLUIR MOVIMENTAÇÃO ─────────────────────────────
+let editMovId = null
+
+window.editarMov = (id, tipo, motivo) => {
+  editMovId = id
+  document.getElementById('edit-mov-tipo').value   = tipo
+  document.getElementById('edit-mov-motivo').value = motivo
+  document.getElementById('edit-mov-err').style.display = 'none'
+  document.getElementById('m-edit-mov').classList.add('open')
+  setTimeout(() => document.getElementById('edit-mov-motivo').focus(), 100)
+}
+
+const salvarEditMov = async () => {
+  const motivo = document.getElementById('edit-mov-motivo').value.trim()
+  const err    = document.getElementById('edit-mov-err')
+  const btn    = document.getElementById('btn-salvar-mov')
+  err.style.display = 'none'
+  btn.textContent = 'Salvando...'; btn.disabled = true
+  try {
+    const r = await fetch(`${SURL}/rest/v1/movimentacoes?id=eq.${editMovId}`, {
+      method: 'PATCH',
+      headers: { ...hAuth(), 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ motivo: motivo || null })
+    })
+    if (!r.ok) throw new Error((await r.json())?.message || 'Erro ao salvar')
+    closeM('m-edit-mov')
+    toast('Movimentação atualizada ✓', 'ok')
+    await carregarTimeline(ITEM_ID)
+  } catch(e) {
+    err.textContent = e.message
+    err.style.display = 'block'
+  } finally { btn.textContent = 'Salvar'; btn.disabled = false }
+}
+
+window.excluirMov = async (id) => {
+  if (!confirm('Excluir esta movimentação? Esta ação não pode ser desfeita e o status do item NÃO será revertido automaticamente.')) return
+  try {
+    const r = await fetch(`${SURL}/rest/v1/movimentacoes?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: hAuth()
+    })
+    if (!r.ok) throw new Error((await r.json())?.message || 'Erro ao excluir')
+    toast('Movimentação excluída', 'ok')
+    await carregarTimeline(ITEM_ID)
+    document.getElementById('tl-count').textContent =
+      parseInt(document.getElementById('tl-count').textContent) - 1
+  } catch(e) { toast(e.message, 'err') }
+}
+
 
 init()
 </script>
