@@ -23,8 +23,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .back-btn{padding:6px 12px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
 .back-btn:hover{background:var(--sur2);color:var(--tx)}
 .page-title{font-size:19px;font-weight:700;letter-spacing:-.02em}
-
-/* Form card */
 .form-card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);overflow:hidden;margin-bottom:12px}
 .form-section{padding:20px 24px}
 .form-section + .form-section{border-top:1px solid var(--bd)}
@@ -44,8 +42,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .field-hint{font-size:11px;color:var(--tx3);margin-top:3px}
 .field-error{font-size:11px;color:var(--re);margin-top:3px;display:none}
 .ftextarea{resize:vertical;min-height:80px}
-
-/* Modelo search */
 .modelo-search-wrap{position:relative}
 .modelo-results{position:absolute;top:100%;left:0;right:0;background:var(--sur);border:1.5px solid var(--ac);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:200px;overflow-y:auto;z-index:50;box-shadow:var(--shl);display:none}
 .modelo-results.open{display:block}
@@ -61,16 +57,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .modelo-selected-info span{font-size:11px;color:var(--tx3);font-family:var(--mono)}
 .modelo-clear{border:none;background:none;color:var(--tx3);cursor:pointer;font-size:13px;padding:2px}
 .modelo-clear:hover{color:var(--re)}
-
-/* Serial toggle */
 .serial-toggle{display:flex;align-items:center;gap:8px;padding:8px 0}
 .toggle-switch{width:36px;height:20px;border-radius:10px;background:var(--bd2);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none}
 .toggle-switch.on{background:var(--ac)}
 .toggle-switch::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .toggle-switch.on::after{transform:translateX(16px)}
 .toggle-label{font-size:13px;color:var(--tx2)}
-
-/* Actions bar */
 .actions-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .btn{padding:10px 20px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s}
 .btn:hover{background:var(--sur2);color:var(--tx)}
@@ -79,27 +71,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .btn-p:disabled{opacity:.5;cursor:default}
 .btn-g{background:var(--gr);border-color:var(--gr);color:#fff;font-weight:600}
 .btn-g:hover{background:#047857;color:#fff}
-
-/* Status badge preview */
-.status-preview{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:6px;display:none}
+.status-preview{display:none;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:6px}
 .status-preview.show{display:inline-flex}
-
-/* Alert */
 .alert{padding:12px 16px;border-radius:var(--r);font-size:13px;font-weight:500;margin-bottom:16px;display:none;align-items:center;gap:8px}
 .alert.err{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;display:flex}
 .alert.ok{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;display:flex}
-
-/* Login */
 .login-wrap{max-width:360px;margin:60px auto;padding:0 16px}
-
-/* Toast */
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
 @keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
 .toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
-
 @media(max-width:640px){.fgrid{grid-template-columns:1fr}.fgrid.three{grid-template-columns:1fr}.nav{display:none}.content{padding:16px 12px 60px}}
 </style>
 </head>
@@ -117,17 +100,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
     <button class="nav-btn" onclick="location.href='configuracoes.html'">Configuracoes</button>
   </nav>
   <div class="topbar-r">
-    <span class="perfil-chip" id="perfil-chip">&#8212;</span>
-    <div class="avatar" id="avatar">&#8212;</div>
+    <span class="perfil-chip" id="perfil-chip">—</span>
+    <div class="avatar" id="avatar">—</div>
   </div>
 </header>
 
 <main class="content">
-
-  <!-- LOGIN -->
   <div id="login-screen" style="display:none" class="login-wrap">
     <div style="text-align:center;margin-bottom:24px">
-      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">&#128225;</div>
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">📡</div>
       <div style="font-size:18px;font-weight:700">Axis Inventory</div>
     </div>
     <div id="login-msg" style="margin-bottom:10px"></div>
@@ -136,9 +117,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
     <button class="btn btn-p" style="width:100%;justify-content:center" id="btn-login" onclick="fazerLogin()">Entrar</button>
   </div>
 
-  <!-- APP -->
   <div id="app" style="display:none">
-
     <div class="page-head">
       <button class="back-btn" onclick="location.href='lista-itens.html'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -149,56 +128,49 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 
     <div class="alert" id="alert-err"></div>
     <div class="alert ok" id="alert-ok" style="display:none">
-      &#10003; Item cadastrado com sucesso!
-      <a href="lista-itens.html" style="color:var(--gr);margin-left:8px;font-weight:600">Ver inventario</a>
+      ✓ Item cadastrado com sucesso!
+      <a href="lista-itens.html" style="color:var(--gr);margin-left:8px;font-weight:600">Ver inventário</a>
     </div>
 
-    <!-- SECAO 1: IDENTIFICACAO -->
     <div class="form-card">
       <div class="form-section">
-        <div class="section-label"><span>&#128246;</span> Identificacao</div>
-        
-        <!-- Busca de modelo -->
+        <div class="section-label"><span>📻</span> Identificação</div>
         <div class="fg" style="margin-bottom:14px">
-          <label class="flabel">Modelo * <span style="color:var(--re)"></span></label>
+          <label class="flabel">Modelo *</label>
           <div class="modelo-search-wrap">
             <input class="finput" id="modelo-search" placeholder="Buscar por nome ou part number..."
-              autocomplete="off"
-              oninput="buscarModelo(this.value)"
-              onfocus="buscarModelo(this.value)"
+              autocomplete="off" oninput="buscarModelo(this.value)" onfocus="buscarModelo(this.value)"
               onkeydown="navModeloResults(event)"/>
             <div class="modelo-results" id="modelo-results"></div>
           </div>
           <div class="modelo-selected" id="modelo-selected">
             <div class="modelo-selected-info">
-              <strong id="ms-nome">&#8212;</strong><br>
-              <span id="ms-pn">&#8212;</span>
+              <strong id="ms-nome">—</strong><br>
+              <span id="ms-pn">—</span>
               <span id="ms-cat" style="margin-left:8px;padding:1px 6px;border-radius:10px;background:var(--acm);color:var(--ac);font-size:10px;font-weight:600"></span>
             </div>
-            <button class="modelo-clear" onclick="limparModelo()" title="Remover">&#x2715;</button>
+            <button class="modelo-clear" onclick="limparModelo()" title="Remover">✕</button>
           </div>
           <div class="field-error" id="err-modelo">Selecione um modelo</div>
         </div>
-
-        <!-- Serial -->
         <div class="serial-toggle">
           <button class="toggle-switch on" id="toggle-serial" onclick="toggleSerial()"></button>
-          <span class="toggle-label">Item possui numero de serie (serial)</span>
+          <span class="toggle-label">Item possui número de série (serial)</span>
         </div>
-
         <div id="serial-field" style="margin-top:10px">
           <div class="fg">
-            <label class="flabel">Numero de serie *</label>
-            <input class="finput" id="f-serial" placeholder="Ex: ACCC8E37C247" style="font-family:var(--mono);text-transform:uppercase"
+            <label class="flabel">Número de série *</label>
+            <input class="finput" id="f-serial" placeholder="Ex: ACCC8E37C247"
+              style="font-family:var(--mono);text-transform:uppercase"
               oninput="this.value=this.value.toUpperCase()"/>
-            <div class="field-error" id="err-serial">Serial e obrigatorio para itens com numero de serie</div>
+            <div class="field-error" id="err-serial">Serial é obrigatório para itens com número de série</div>
           </div>
         </div>
       </div>
 
-      <!-- SECAO 2: STATUS E LOCALIZACAO -->
+      <!-- FIX: status com acentos corretos + Vendido adicionado -->
       <div class="form-section">
-        <div class="section-label"><span>&#128205;</span> Status e localizacao</div>
+        <div class="section-label"><span>📍</span> Status e localização</div>
         <div class="fgrid">
           <div class="fg">
             <label class="flabel">Status inicial *</label>
@@ -207,69 +179,63 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
               <option>Estoque Novo</option>
               <option>Estoque Usado</option>
               <option>Reservado</option>
+              <option>Vendido</option>
               <option>Locado</option>
-              <option>Com Tecnico</option>
-              <option>Aguardando Inspecao</option>
-              <option>Em Inspecao</option>
-              <option>Finalizada Inspecao</option>
-              <option>Em RMA / Assistencia Tecnica</option>
+              <option>Com Técnico</option>
+              <option>Aguardando Inspeção</option>
+              <option>Em Inspeção</option>
+              <option>Finalizada Inspeção</option>
+              <option>Em RMA / Assistência Técnica</option>
               <option>Sucata</option>
             </select>
             <div id="status-preview" class="status-preview"></div>
             <div class="field-error" id="err-status">Selecione um status</div>
           </div>
           <div class="fg">
-            <label class="flabel">Localizacao</label>
+            <label class="flabel">Localização</label>
             <input class="finput" id="f-local" placeholder="Ex: Almoxarifado Central"/>
           </div>
         </div>
       </div>
 
-      <!-- SECAO 3: RESPONSAVEL E CLIENTE -->
       <div class="form-section">
-        <div class="section-label"><span>&#128101;</span> Responsavel e cliente</div>
+        <div class="section-label"><span>👥</span> Responsável e cliente</div>
         <div class="fgrid">
           <div class="fg">
-            <label class="flabel">Responsavel</label>
-            <select class="fselect" id="f-resp">
-              <option value="">&#8212; Nenhum &#8212;</option>
-            </select>
+            <label class="flabel">Responsável</label>
+            <select class="fselect" id="f-resp"><option value="">— Nenhum —</option></select>
           </div>
           <div class="fg">
             <label class="flabel">Cliente</label>
-            <select class="fselect" id="f-cliente">
-              <option value="">&#8212; Nenhum &#8212;</option>
-            </select>
+            <select class="fselect" id="f-cliente"><option value="">— Nenhum —</option></select>
           </div>
         </div>
       </div>
 
-      <!-- SECAO 4: INFORMACOES EXTRAS -->
       <div class="form-section">
-        <div class="section-label"><span>&#128196;</span> Informacoes adicionais</div>
+        <div class="section-label"><span>📄</span> Informações adicionais</div>
         <div class="fgrid">
           <div class="fg">
             <label class="flabel">Nome VMS</label>
             <input class="finput" id="f-vms" placeholder="Nome no sistema VMS (opcional)"/>
-            <div class="field-hint">Identificador no sistema de video</div>
+            <div class="field-hint">Identificador no sistema de vídeo</div>
           </div>
           <div class="fg">
-            <label class="flabel">Valor de aquisicao (R$)</label>
+            <label class="flabel">Valor de aquisição (R$)</label>
             <input class="finput" id="f-valor" type="number" step="0.01" min="0" placeholder="0,00"/>
           </div>
           <div class="fg">
-            <label class="flabel">Data de aquisicao</label>
+            <label class="flabel">Data de aquisição</label>
             <input class="finput" id="f-data-aq" type="date"/>
           </div>
         </div>
         <div class="fg" style="margin-top:14px">
-          <label class="flabel">Observacoes</label>
-          <textarea class="ftextarea" id="f-obs" placeholder="Informacoes adicionais sobre o item..."></textarea>
+          <label class="flabel">Observações</label>
+          <textarea class="ftextarea" id="f-obs" placeholder="Informações adicionais sobre o item..."></textarea>
         </div>
       </div>
     </div>
 
-    <!-- ACOES -->
     <div class="actions-bar">
       <button class="btn" onclick="location.href='lista-itens.html'">Cancelar</button>
       <div style="display:flex;gap:8px">
@@ -283,8 +249,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
         </button>
       </div>
     </div>
-
-  </div><!-- /app -->
+  </div>
 </main>
 </div>
 <div class="tc" id="tc"></div>
@@ -301,7 +266,6 @@ let todosModelos = []
 const hAuth = () => ({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
 const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
-// ── AUTH ──────────────────────────────────────────────────────
 const fazerLogin = async () => {
   const email = document.getElementById('l-email').value.trim()
   const senha = document.getElementById('l-senha').value
@@ -327,11 +291,10 @@ const posLogin = async () => {
   const nome = d[0]?.nome || SESSION.user.email?.split('@')[0] || '?'
   document.getElementById('avatar').textContent = nome[0].toUpperCase()
   document.getElementById('perfil-chip').textContent = PERFIL
-  // Apenas Admin e Almoxarifado podem cadastrar
   if (!['Administrador','Almoxarifado'].includes(PERFIL)) {
     document.getElementById('login-screen').style.display = 'none'
     document.getElementById('app').style.display = 'block'
-    document.querySelector('.actions-bar').innerHTML = '<div style="color:var(--re);font-size:13px">Voce nao tem permissao para cadastrar itens.</div>'
+    document.querySelector('.actions-bar').innerHTML = '<div style="color:var(--re);font-size:13px">Você não tem permissão para cadastrar itens.</div>'
     return
   }
   document.getElementById('login-screen').style.display = 'none'
@@ -339,7 +302,6 @@ const posLogin = async () => {
   await Promise.all([carregarModelos(), carregarResponsaveis(), carregarClientes()])
 }
 
-// ── CARREGAR LISTAS ───────────────────────────────────────────
 const carregarModelos = async () => {
   const r = await fetch(`${SURL}/rest/v1/modelos?select=id,part_number,modelo,categoria&ativo=eq.true&order=modelo.asc`,{headers:hAuth()})
   todosModelos = await r.json()
@@ -359,7 +321,6 @@ const carregarClientes = async () => {
   data.forEach(x => sel.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
 }
 
-// ── BUSCA DE MODELO ───────────────────────────────────────────
 let modeloSearchTimer = null
 const buscarModelo = (q) => {
   if (modeloSelecionado) return
@@ -380,7 +341,7 @@ const buscarModelo = (q) => {
         <div class="modelo-option" tabindex="0" data-idx="${i}"
           onclick="selecionarModelo(${JSON.stringify(m).replace(/"/g,'&quot;')})"
           onkeydown="if(event.key==='Enter')selecionarModelo(${JSON.stringify(m).replace(/"/g,'&quot;')})">
-          <div class="modelo-option-pn">${esc(m.part_number)} &bull; <span class="modelo-option-cat">${esc(m.categoria||'')}</span></div>
+          <div class="modelo-option-pn">${esc(m.part_number)} · <span class="modelo-option-cat">${esc(m.categoria||'')}</span></div>
           <div class="modelo-option-nome">${esc(m.modelo)}</div>
         </div>`).join('')
     }
@@ -418,37 +379,35 @@ const navModeloResults = (e) => {
 }
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.modelo-search-wrap')) {
+  if (!e.target.closest('.modelo-search-wrap'))
     document.getElementById('modelo-results').classList.remove('open')
-  }
 })
 
-// ── TOGGLE SERIAL ─────────────────────────────────────────────
 const toggleSerial = () => {
   temSerial = !temSerial
-  const btn = document.getElementById('toggle-serial')
-  const field = document.getElementById('serial-field')
-  btn.classList.toggle('on', temSerial)
-  field.style.display = temSerial ? '' : 'none'
+  document.getElementById('toggle-serial').classList.toggle('on', temSerial)
+  document.getElementById('serial-field').style.display = temSerial ? '' : 'none'
   if (!temSerial) {
     document.getElementById('f-serial').value = ''
     document.getElementById('err-serial').style.display = 'none'
   }
 }
 
-// ── STATUS PREVIEW ────────────────────────────────────────────
+// FIX: STATUS_COLORS com nomes corretos (com acentos) para bater com o <select>
 const STATUS_COLORS = {
-  'Estoque Novo':{'b':'rgba(5,150,105,.1)','c':'#059669'},
-  'Estoque Usado':{'b':'rgba(217,119,6,.1)','c':'#D97706'},
-  'Reservado':{'b':'rgba(124,58,237,.1)','c':'#7C3AED'},
-  'Locado':{'b':'rgba(8,145,178,.1)','c':'#0891B2'},
-  'Com Tecnico':{'b':'rgba(109,40,217,.1)','c':'#6D28D9'},
-  'Aguardando Inspecao':{'b':'rgba(234,88,12,.1)','c':'#EA580C'},
-  'Em Inspecao':{'b':'rgba(202,138,4,.1)','c':'#CA8A04'},
-  'Finalizada Inspecao':{'b':'rgba(22,163,74,.1)','c':'#16A34A'},
-  'Em RMA / Assistencia Tecnica':{'b':'rgba(220,38,38,.1)','c':'#DC2626'},
-  'Sucata':{'b':'rgba(113,113,122,.1)','c':'#71717A'},
+  'Estoque Novo':               {b:'rgba(5,150,105,.1)',   c:'#059669'},
+  'Estoque Usado':              {b:'rgba(217,119,6,.1)',   c:'#D97706'},
+  'Reservado':                  {b:'rgba(124,58,237,.1)',  c:'#7C3AED'},
+  'Vendido':                    {b:'rgba(2,132,199,.1)',   c:'#0284C7'},
+  'Locado':                     {b:'rgba(8,145,178,.1)',   c:'#0891B2'},
+  'Com Técnico':                {b:'rgba(109,40,217,.1)',  c:'#6D28D9'},
+  'Aguardando Inspeção':        {b:'rgba(234,88,12,.1)',   c:'#EA580C'},
+  'Em Inspeção':                {b:'rgba(202,138,4,.1)',   c:'#CA8A04'},
+  'Finalizada Inspeção':        {b:'rgba(22,163,74,.1)',   c:'#16A34A'},
+  'Em RMA / Assistência Técnica':{b:'rgba(220,38,38,.1)', c:'#DC2626'},
+  'Sucata':                     {b:'rgba(113,113,122,.1)', c:'#71717A'},
 }
+
 const atualizarStatusPreview = () => {
   const status = document.getElementById('f-status').value
   const prev   = document.getElementById('status-preview')
@@ -463,71 +422,51 @@ const atualizarStatusPreview = () => {
   }
 }
 
-// ── VALIDAR ───────────────────────────────────────────────────
 const validar = () => {
   let ok = true
-  if (!modeloSelecionado) {
-    document.getElementById('err-modelo').style.display = 'block'
-    ok = false
-  }
+  if (!modeloSelecionado) { document.getElementById('err-modelo').style.display = 'block'; ok = false }
   if (temSerial && !document.getElementById('f-serial').value.trim()) {
     document.getElementById('err-serial').style.display = 'block'
-    document.getElementById('f-serial').classList.add('error')
-    ok = false
+    document.getElementById('f-serial').classList.add('error'); ok = false
   }
   if (!document.getElementById('f-status').value) {
     document.getElementById('err-status').style.display = 'block'
-    document.getElementById('f-status').classList.add('error')
-    ok = false
+    document.getElementById('f-status').classList.add('error'); ok = false
   }
   return ok
 }
 
-// ── SALVAR ────────────────────────────────────────────────────
 const salvar = async (salvarECadastrarOutro) => {
-  // Limpa erros anteriores
   document.querySelectorAll('.field-error').forEach(el => el.style.display='none')
   document.querySelectorAll('.finput,.fselect').forEach(el => el.classList.remove('error'))
   document.getElementById('alert-err').style.display = 'none'
-
   if (!validar()) return
 
-  const btnId  = salvarECadastrarOutro ? 'btn-salvar-novo' : 'btn-salvar'
-  const btn    = document.getElementById(btnId)
-  btn.disabled = true
-  btn.textContent = 'Salvando...'
+  const btnId = salvarECadastrarOutro ? 'btn-salvar-novo' : 'btn-salvar'
+  const btn   = document.getElementById(btnId)
+  btn.disabled = true; btn.textContent = 'Salvando...'
 
   try {
-    const serial  = temSerial ? document.getElementById('f-serial').value.trim() : null
-    const respId  = document.getElementById('f-resp').value    || null
-    const cliId   = document.getElementById('f-cliente').value || null
-    const valor   = document.getElementById('f-valor').value
-    const dataAq  = document.getElementById('f-data-aq').value
-
-    // Mapeia status para valor oficial do banco (com acentos)
-    const STATUS_MAP = {
-      'Estoque Novo':'Estoque Novo','Estoque Usado':'Estoque Usado',
-      'Reservado':'Reservado','Locado':'Locado',
-      'Com Tecnico':'Com Técnico',
-      'Aguardando Inspecao':'Aguardando Inspeção',
-      'Em Inspecao':'Em Inspeção',
-      'Finalizada Inspecao':'Finalizada Inspeção',
-      'Em RMA / Assistencia Tecnica':'Em RMA / Assistência Técnica',
-      'Sucata':'Sucata',
-    }
+    const serial = temSerial ? document.getElementById('f-serial').value.trim() : null
+    const respId = document.getElementById('f-resp').value    || null
+    const cliId  = document.getElementById('f-cliente').value || null
+    const valor  = document.getElementById('f-valor').value
+    const dataAq = document.getElementById('f-data-aq').value
+    // FIX: status já vem com acento correto do <select>, não precisa mais de mapeamento
+    const statusVal = document.getElementById('f-status').value
 
     const body = {
-      modelo_id:        modeloSelecionado.id,
-      serial:           serial || null,
-      status_atual:     STATUS_MAP[document.getElementById('f-status').value] || document.getElementById('f-status').value,
+      modelo_id:         modeloSelecionado.id,
+      serial:            serial || null,
+      status_atual:      statusVal,
       localizacao_atual: document.getElementById('f-local').value.trim() || null,
       responsavel_atual: respId,
-      cliente_atual:    cliId,
-      nome_vms:         document.getElementById('f-vms').value.trim()  || null,
-      valor_aquisicao:  valor ? parseFloat(valor) : null,
-      data_aquisicao:   dataAq || null,
-      observacoes:      document.getElementById('f-obs').value.trim()   || null,
-      ativo:            true,
+      cliente_atual:     cliId,
+      nome_vms:          document.getElementById('f-vms').value.trim()  || null,
+      valor_aquisicao:   valor ? parseFloat(valor) : null,
+      data_aquisicao:    dataAq || null,
+      observacoes:       document.getElementById('f-obs').value.trim()  || null,
+      ativo:             true,
     }
 
     const r = await fetch(`${SURL}/rest/v1/itens`, {
@@ -541,18 +480,17 @@ const salvar = async (salvarECadastrarOutro) => {
     const codigo = Array.isArray(d) ? d[0]?.codigo_interno : d?.codigo_interno
 
     if (salvarECadastrarOutro) {
-      toast(`Item ${codigo || ''} cadastrado! Cadastre o proximo.`, 'ok')
+      toast(`Item ${codigo || ''} cadastrado! Cadastre o próximo.`, 'ok')
       resetForm()
     } else {
       document.getElementById('alert-ok').style.display = 'flex'
-      document.getElementById('alert-ok').innerHTML = `&#10003; Item <strong>${esc(codigo||'')}</strong> cadastrado com sucesso! <a href="lista-itens.html" style="color:var(--gr);margin-left:8px;font-weight:600">Ver inventario</a>`
+      document.getElementById('alert-ok').innerHTML = `✓ Item <strong>${esc(codigo||'')}</strong> cadastrado com sucesso! <a href="lista-itens.html" style="color:var(--gr);margin-left:8px;font-weight:600">Ver inventário</a>`
       window.scrollTo({top:0, behavior:'smooth'})
     }
   } catch(e) {
-    const msg = e.message.includes('unique') ? 'Serial ja cadastrado para outro item.' : e.message
+    const msg = e.message.includes('unique') ? 'Serial já cadastrado para outro item.' : e.message
     const alertEl = document.getElementById('alert-err')
-    alertEl.textContent = msg
-    alertEl.style.display = 'flex'
+    alertEl.textContent = msg; alertEl.style.display = 'flex'
     window.scrollTo({top:0, behavior:'smooth'})
   } finally {
     btn.disabled = false
@@ -564,15 +502,10 @@ const salvar = async (salvarECadastrarOutro) => {
 
 const resetForm = () => {
   limparModelo()
-  document.getElementById('f-serial').value  = ''
+  ;['f-serial','f-local','f-vms','f-valor','f-data-aq','f-obs'].forEach(id => document.getElementById(id).value = '')
   document.getElementById('f-status').value  = ''
-  document.getElementById('f-local').value   = ''
   document.getElementById('f-resp').value    = ''
   document.getElementById('f-cliente').value = ''
-  document.getElementById('f-vms').value     = ''
-  document.getElementById('f-valor').value   = ''
-  document.getElementById('f-data-aq').value = ''
-  document.getElementById('f-obs').value     = ''
   document.getElementById('status-preview').classList.remove('show')
   document.getElementById('alert-err').style.display = 'none'
   document.getElementById('alert-ok').style.display  = 'none'
@@ -581,7 +514,6 @@ const resetForm = () => {
   document.getElementById('modelo-search').focus()
 }
 
-// ── TOAST ─────────────────────────────────────────────────────
 const toast = (msg, tipo='info', dur=4000) => {
   const el = document.createElement('div')
   el.className = `toast ${tipo}`; el.textContent = msg
@@ -589,7 +521,6 @@ const toast = (msg, tipo='info', dur=4000) => {
   setTimeout(() => el.remove(), dur)
 }
 
-// ── INIT ──────────────────────────────────────────────────────
 const init = async () => {
   const saved = sessionStorage.getItem('ax_sess')
   if (saved) {
