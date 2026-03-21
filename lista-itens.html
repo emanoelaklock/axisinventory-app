@@ -28,7 +28,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}
 .s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}
 .s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}
-.s-ei{--c:#CA8A04;--b:rgba(202,138,4,.1)}
 .s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}
 .s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}
 .s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
@@ -235,7 +234,7 @@ tr:hover .acts{opacity:1}
           <option value="">Status</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
           <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
-          <option>Aguardando Inspeção</option><option>Em Inspeção</option>
+          <option>Aguardando Inspeção</option>
           <option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option>
           <option>Sucata</option>
         </select>
@@ -301,7 +300,7 @@ tr:hover .acts{opacity:1}
           <option value="">Selecione o status…</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
           <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
-          <option>Aguardando Inspeção</option><option>Em Inspeção</option>
+          <option>Aguardando Inspeção</option>
           <option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option>
           <option>Sucata</option>
         </select>
@@ -591,7 +590,7 @@ const srt = col => {
 // ── STATUS MAP ────────────────────────────────────────────────
 const SM = {
   'Estoque Novo':'s-en','Estoque Usado':'s-eu','Reservado':'s-rv','Vendido':'s-vd',
-  'Com Técnico':'s-ct','Locado':'s-lc','Aguardando Inspeção':'s-ai','Em Inspeção':'s-ei',
+  'Com Técnico':'s-ct','Locado':'s-lc','Aguardando Inspeção':'s-ai',
   'Finalizada Inspeção':'s-fi','Em RMA / Assistência Técnica':'s-rm','Sucata':'s-sc',
 }
 const sbadge = s => {
@@ -776,8 +775,7 @@ const baixarModeloItens = () => {
   const ref = [
     ['Status validos (use exatamente como abaixo)'],
     ['Estoque Novo'],['Estoque Usado'],['Reservado'],['Vendido'],
-    ['Com Técnico'],['Locado'],['Aguardando Inspeção'],['Em Inspeção'],
-    ['Finalizada Inspeção'],['Em RMA / Assistência Técnica'],['Sucata'],
+    ['Com Técnico'],['Locado'],['Aguardando Inspeção'],    ['Finalizada Inspeção'],['Em RMA / Assistência Técnica'],['Sucata'],
   ]
   const wsRef = XLSX.utils.aoa_to_sheet(ref)
   XLSX.utils.book_append_sheet(wb, ws, 'Itens')
@@ -828,8 +826,7 @@ const importarItens = async file => {
       const STATUS_NORM = {
         'estoque novo':'Estoque Novo','estoque usado':'Estoque Usado','reservado':'Reservado',
         'vendido':'Vendido','com tecnico':'Com Técnico','locado':'Locado',
-        'aguardando inspecao':'Aguardando Inspeção','em inspecao':'Em Inspeção',
-        'finalizada inspecao':'Finalizada Inspeção',
+        'aguardando inspecao':'Aguardando Inspeção',        'finalizada inspecao':'Finalizada Inspeção',
         'em rma / assistencia tecnica':'Em RMA / Assistência Técnica',
         'em rma':'Em RMA / Assistência Técnica','sucata':'Sucata',
       }

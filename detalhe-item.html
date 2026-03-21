@@ -25,7 +25,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .s-en{--c:#059669;--b:rgba(5,150,105,.1)} .s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}
 .s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)} .s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}
 .s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)} .s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}
-.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}  .s-ei{--c:#CA8A04;--b:rgba(202,138,4,.1)}
+.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}
 .s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}  .s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}
 .s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--b);color:var(--c)}
@@ -381,7 +381,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
           <option value="">— Manter atual —</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
           <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
-          <option>Aguardando Inspeção</option><option>Em Inspeção</option>
+          <option>Aguardando Inspeção</option>
           <option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option>
           <option>Sucata</option>
         </select>
@@ -432,7 +432,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
           <option value="">Selecione o status…</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
           <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
-          <option>Aguardando Inspeção</option><option>Em Inspeção</option>
+          <option>Aguardando Inspeção</option>
           <option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option>
           <option>Sucata</option>
         </select>
@@ -590,7 +590,7 @@ const rpc = async (fn, params) => {
 // ════════════════════════════════════════════════════════════
 const SM = {
   'Estoque Novo':'s-en','Estoque Usado':'s-eu','Reservado':'s-rv','Vendido':'s-vd',
-  'Com Técnico':'s-ct','Locado':'s-lc','Aguardando Inspeção':'s-ai','Em Inspeção':'s-ei',
+  'Com Técnico':'s-ct','Locado':'s-lc','Aguardando Inspeção':'s-ai',
   'Finalizada Inspeção':'s-fi','Em RMA / Assistência Técnica':'s-rm','Sucata':'s-sc',
 }
 const sbadge = s => {
