@@ -82,13 +82,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="wrap">
   <div id="msg" class="msg"></div>
 
-  <!-- TOGGLE -->
   <div class="view-toggle no-print">
     <button class="btn btn-primary" id="btn-form" onclick="showView('form')">+ Novo checklist</button>
     <button class="btn" id="btn-hist" onclick="showView('hist');loadHist()">📋 Ver checklists</button>
   </div>
 
-  <!-- FORMULÁRIO -->
   <div id="view-form">
 
     <div class="section">
@@ -259,9 +257,15 @@ const AKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 let fotos={1:null,2:null,3:null};
 let histData=[];
 
+// FIX: lê a sessão no formato padrão do sistema (ax_sess), não axis_token
 function getToken(){
-  return sessionStorage.getItem('axis_token')||AKEY;
+  const saved = sessionStorage.getItem('ax_sess');
+  if (saved) {
+    try { return JSON.parse(saved).access_token || AKEY; } catch(e) {}
+  }
+  return AKEY;
 }
+
 async function api(path,method='GET',body=null){
   const token=getToken();
   const r=await fetch(SURL+'/rest/v1/'+path,{
@@ -289,7 +293,6 @@ function showView(v){
   document.getElementById('btn-hist').className='btn'+(v==='hist'?' btn-primary':'');
 }
 
-// Opções simples
 function selOpt(el,group){
   el.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
   el.classList.add('sel');
@@ -298,7 +301,6 @@ function selOpt(el,group){
 }
 function togMan(el){el.classList.toggle('sel-green');}
 
-// Autocomplete serial
 let stimer=null;
 async function buscarSerial(){
   const q=document.getElementById('f-serial').value.trim();
@@ -329,23 +331,8 @@ async function buscarSerial(){
     }catch(err){res.innerHTML='<div class="ac-item"><small>Erro: '+err.message+'</small></div>';res.style.display='block';}
   },300);
 }
-function selSerialEl(el){
-  document.getElementById('f-serial').value=el.dataset.s||'';
-  document.getElementById('f-eq-id').value=el.dataset.id||'';
-  const m=el.dataset.m||'',p=el.dataset.p||'';
-  document.getElementById('f-modelo').value=m+(p?' (PN: '+p+')':'');
-  document.getElementById('serial-results').style.display='none';
-}
-function selSerial(id,serie,modelo,pn){
-  document.getElementById('f-serial').value=serie;
-  document.getElementById('f-eq-id').value=id;
-  document.getElementById('f-modelo').value=modelo+(pn?' (PN: '+pn+')':'');
-  document.getElementById('serial-results').style.display='none';
-}
 document.addEventListener('click',e=>{if(!e.target.closest('.ac-wrap'))document.getElementById('serial-results').style.display='none';});
-function esc(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 
-// Fotos
 function carregarFoto(input,n){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -366,7 +353,6 @@ function rmFoto(n){
   document.getElementById('fi'+n).value='';
 }
 
-// Reset form
 function resetForm(){
   ['f-data','f-origem','f-rma','f-serial','f-modelo','f-eq-id','f-obs','f-acess','tipo-val','ws-val','sup-val','bb-val','bv-val','gc-val'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('.opt.sel,.opt.sel-green').forEach(el=>el.classList.remove('sel','sel-green'));
@@ -376,7 +362,6 @@ function resetForm(){
   document.getElementById('f-data').value=new Date().toISOString().split('T')[0];
 }
 
-// Salvar
 async function salvar(){
   const serial=document.getElementById('f-serial').value.trim();
   const resp=document.getElementById('f-resp').value;
@@ -412,21 +397,21 @@ async function salvar(){
   }catch(err){console.error('salvar:',err);showMsg('Erro: '+err.message,'err');}
 }
 
-// Carregar responsáveis
+// FIX: carregarResp agora usa getToken() corrigido — lê ax_sess
 async function carregarResp(){
   try{
     const data=await api('responsaveis?select=id,nome,cargo&ativo=eq.true&order=nome');
     const sel=document.getElementById('f-resp');
+    sel.innerHTML='<option value="">Selecione...</option>';
     if(!data.length){sel.innerHTML+='<option disabled>Nenhum responsável cadastrado</option>';return;}
     data.forEach(r=>sel.innerHTML+='<option value="'+r.nome+'">'+r.nome+(r.cargo?' · '+r.cargo:'')+'</option>');
   }catch(err){
     console.error('carregarResp:',err);
     const sel=document.getElementById('f-resp');
-    if(sel)sel.innerHTML+='<option disabled>Erro ao carregar: '+err.message+'</option>';
+    if(sel)sel.innerHTML='<option value="">Selecione...</option><option disabled>Erro ao carregar responsáveis</option>';
   }
 }
 
-// Histórico
 async function loadHist(){
   const el=document.getElementById('hist-lista');
   el.innerHTML='<p style="color:#8e96b0;text-align:center;padding:2rem">Carregando...</p>';
@@ -457,7 +442,6 @@ function filtrarHist(q){
   renderHist(histData.filter(c=>(c.serial||'').toLowerCase().includes(q)||(c.modelo||'').toLowerCase().includes(q)||(c.responsavel||'').toLowerCase().includes(q)));
 }
 
-// Imprimir
 function imprimir(chk){
   const dt=chk.data_checklist?new Date(chk.data_checklist+'T12:00:00').toLocaleDateString('pt-BR'):'—';
   document.getElementById('pr-sub').textContent='Data: '+dt+' · Responsável: '+(chk.responsavel||'—');
@@ -496,7 +480,6 @@ function imprimir(chk){
     document.querySelector('.header').style.display='flex';
   },500);
 }
-function imprimirSalvo(chk){imprimir(chk);}
 function imprimirIdx(i){if(histData[i])imprimir(histData[i]);}
 
 // Init

@@ -264,7 +264,6 @@ tr:hover .acts{opacity:1}
             <th onclick="srt('status_atual')">Status</th>
             <th class="col-resp">Responsável</th>
             <th onclick="srt('cliente_nome')">Cliente</th>
-            <th class="col-local">Localização</th>
             <th class="col-data" onclick="srt('data_ultima_movimentacao')">Última mov.</th>
             <th style="width:120px"></th>
           </tr></thead>
@@ -656,7 +655,6 @@ const renderTabela = rows => {
       <td>${sbadge(item.status_atual)}</td>
       <td class="col-resp">${fstr(item.responsavel_nome)}</td>
       <td>${fstr(item.cliente_nome)}</td>
-      <td class="col-local">${fstr(item.localizacao_atual,'dim')}</td>
       <td class="col-data">${fdata(item.data_ultima_movimentacao)}</td>
       <td><div class="acts">
         <button class="ab ab-v" onclick='openVer(${JSON.stringify(item.id)})'>Ver</button>
