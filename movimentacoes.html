@@ -212,8 +212,10 @@ const posLogin=async()=>{
   const r=await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${SESSION.user.id}`,{headers:hAuth()})
   const d=await r.json();PERFIL=d[0]?.perfil||'Consulta'
   const nome=d[0]?.nome||SESSION.user.email?.split('@')[0]||'?'
-  document.getElementById('avatar').textContent=nome[0].toUpperCase()
-  document.getElementById('perfil-chip').textContent=PERFIL
+  document.getElementById('sb-avatar').textContent=nome[0].toUpperCase()
+  document.getElementById('sb-user-name').textContent=nome
+  document.getElementById('sb-user-role').textContent=PERFIL
+  document.querySelector('.sidebar').style.display='flex'
   document.getElementById('login-screen').style.display='none'
   document.getElementById('app').style.display='block'
   carregar(true)
@@ -304,6 +306,7 @@ const renderPag=()=>{
 window.irP=p=>{const t=Math.ceil(QS.total/POR_PAG);if(p<0||p>=t)return;QS.pagina=p;carregar()}
 const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
 const init=async()=>{
+  document.querySelector('.sidebar').style.display='none'
   const saved=sessionStorage.getItem('ax_sess')
   if(saved){try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}sessionStorage.removeItem('ax_sess');SESSION=null}
   document.getElementById('login-screen').style.display='block'

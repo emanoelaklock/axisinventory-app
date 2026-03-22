@@ -338,14 +338,17 @@ const posLogin = async () => {
   const d = await r.json()
   PERFIL = d[0]?.perfil || 'Consulta'
   const nome = d[0]?.nome || SESSION.user.email?.split('@')[0] || '?'
-  document.getElementById('avatar').textContent = nome[0].toUpperCase()
-  document.getElementById('perfil-chip').textContent = PERFIL
+  document.getElementById('sb-avatar').textContent = nome[0].toUpperCase()
+  document.getElementById('sb-user-name').textContent = nome
+  document.getElementById('sb-user-role').textContent = PERFIL
   if (!['Administrador','Almoxarifado'].includes(PERFIL)) {
-    document.getElementById('login-screen').style.display = 'none'
+    document.querySelector('.sidebar').style.display='flex'
+  document.getElementById('login-screen').style.display = 'none'
     document.getElementById('app').style.display = 'block'
     document.querySelector('.actions-bar').innerHTML = '<div style="color:var(--re);font-size:13px">Você não tem permissão para cadastrar itens.</div>'
     return
   }
+  document.querySelector('.sidebar').style.display='flex'
   document.getElementById('login-screen').style.display = 'none'
   document.getElementById('app').style.display = 'block'
   await Promise.all([carregarModelos(), carregarResponsaveis(), carregarClientes()])
@@ -572,6 +575,7 @@ const toast = (msg, tipo='info', dur=4000) => {
 }
 
 const init = async () => {
+  document.querySelector('.sidebar').style.display='none'
   const saved = sessionStorage.getItem('ax_sess')
   if (saved) {
     try {
