@@ -184,6 +184,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
   .info-grid{grid-template-columns:1fr 1fr}
   .frow{grid-template-columns:1fr}
 }
+
+/* tabs */
+.tabs{display:flex;gap:2px;background:var(--sur2);border-radius:10px;padding:3px;margin-bottom:16px;border:1px solid var(--bd)}
+.tab-btn{flex:1;padding:7px 10px;border-radius:8px;border:none;background:none;font-family:inherit;font-size:13px;font-weight:500;color:var(--tx3);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.tab-btn:hover{color:var(--tx2);background:rgba(15,21,35,.04)}
+.tab-btn.on{background:var(--sur);color:var(--tx);box-shadow:0 1px 3px rgba(15,21,35,.08);border:1px solid var(--bd)}
+.tab-pane{display:none}.tab-pane.on{display:block}
+.tbadge{background:var(--sur2);color:var(--tx3);font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px}
+.tab-btn.on .tbadge{background:var(--acl);color:var(--ac)}
+
+/* locação card */
+.loc-card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:10px;box-shadow:var(--sh)}
+.loc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.loc-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--tx)}
+.loc-st{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.loc-ativa{background:rgba(5,150,105,.1);color:#059669}
+.loc-enc{background:var(--sur2);color:var(--tx3)}
+.loc-venc{background:rgba(220,38,38,.08);color:var(--re)}
+.loc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:600px){.loc-grid{grid-template-columns:1fr 1fr}}
+.loc-lbl{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em}
+.loc-val{font-size:13px;font-weight:500;color:var(--tx);margin-top:2px}
+.loc-obs{margin-top:12px;padding:9px 12px;background:var(--sur2);border-radius:7px;border-left:3px solid var(--bd2);font-size:12px;color:var(--tx2);font-style:italic}
+.loc-acts{display:flex;gap:5px;margin-top:12px;padding-top:10px;border-top:1px solid var(--bd)}
+.loc-alert{display:flex;align-items:center;gap:8px;padding:10px 13px;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);border-radius:8px;margin-bottom:12px;font-size:12px;color:var(--re);font-weight:500}
 </style>
 </head>
 <body>
@@ -310,45 +335,74 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
     </div>
 
     <!-- ── TIMELINE ─────────────────────────────────────── -->
-    <div class="section">
-      <div class="sec-head">
-        <div class="sec-title">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Histórico de movimentações
-          <span id="tl-count">0</span>
-        </div>
-      </div>
+    <!-- ABAS -->
+    <div class="tabs">
+      <button class="tab-btn on" id="tab-btn-timeline" onclick="showTab('timeline')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Timeline <span class="tbadge" id="tl-count">0</span>
+      </button>
+      <button class="tab-btn" id="tab-btn-locacao" onclick="showTab('locacao')" style="display:none">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Locação <span class="tbadge" id="loc-count">0</span>
+      </button>
+      <button class="tab-btn" id="tab-btn-checklists" onclick="showTab('checklists')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Checklists <span class="tbadge" id="chk-count">0</span>
+      </button>
+      <button class="tab-btn" id="tab-btn-anexos" onclick="showTab('anexos')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        Anexos <span class="tbadge" id="anx-count">0</span>
+      </button>
+    </div>
+
+    <!-- TAB: TIMELINE -->
+    <div class="tab-pane on" id="tab-timeline">
       <div id="tl-content">
         <div class="card empty"><div class="empty-icon">📋</div>Nenhuma movimentação registrada</div>
       </div>
     </div>
 
-    <!-- ── CHECKLISTS ────────────────────────────────────── -->
-    <div class="section">
-      <div class="sec-head">
-        <div class="sec-title">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          Checklists de inspeção
-          <span id="chk-count">0</span>
+    <!-- TAB: LOCAÇÃO -->
+    <div class="tab-pane" id="tab-locacao">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:12px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em">Contratos de locação</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="baixarModeloLocacao()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Modelo xlsx
+          </button>
+          <label class="btn btn-sm" style="cursor:pointer">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Importar
+            <input type="file" id="loc-import-input" accept=".xlsx,.xls" style="display:none" onchange="importarLocacoes(this.files[0])"/>
+          </label>
+          <button class="btn btn-p btn-sm" id="btn-nova-locacao" onclick="openLocacao()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nova locação
+          </button>
         </div>
-        <button class="btn btn-sm" onclick="window.open('checklist-axis.html?item='+ITEM_ID,'_blank')">+ Novo</button>
+      </div>
+      <div id="loc-content">
+        <div class="card empty"><div class="empty-icon">📋</div>Nenhum contrato de locação registrado</div>
+      </div>
+    </div>
+
+    <!-- TAB: CHECKLISTS -->
+    <div class="tab-pane" id="tab-checklists">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+        <button class="btn btn-sm" onclick="window.open('checklist-axis.html?item='+ITEM_ID,'_blank')">+ Novo checklist</button>
       </div>
       <div id="chk-content">
         <div class="card empty"><div class="empty-icon">✅</div>Nenhum checklist registrado</div>
       </div>
     </div>
 
-    <!-- ── ANEXOS ─────────────────────────────────────────── -->
-    <div class="section">
-      <div class="sec-head">
-        <div class="sec-title">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-          Anexos
-          <span id="anx-count">0</span>
-        </div>
-        <label class="btn btn-sm" style="cursor:pointer" title="Adicionar anexo">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Incluir
+    <!-- TAB: ANEXOS -->
+    <div class="tab-pane" id="tab-anexos">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+        <label class="btn btn-sm" style="cursor:pointer">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar anexo
           <input type="file" style="display:none" id="anx-file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" onchange="uploadAnexos(this.files)"/>
         </label>
       </div>
@@ -356,7 +410,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
         <div class="card empty"><div class="empty-icon">📎</div>Nenhum anexo</div>
       </div>
     </div>
-
   </div><!-- /state-content -->
 </div><!-- /page -->
 
@@ -530,6 +583,7 @@ let ITEM_ID   = null
 let ITEM      = null
 let SESSION   = null
 let PERFIL    = 'Consulta'
+let LOCACOES  = []
 
 // ════════════════════════════════════════════════════════════
 // AUTH
@@ -624,6 +678,11 @@ const frel = (iso) => {
   return fdt(iso)
 }
 
+const fmoeda = v => {
+  if (v == null || v === '') return '—'
+  return Number(v).toLocaleString('pt-BR', { style:'currency', currency:'BRL' })
+}
+
 const fhora = iso => {
   if (!iso) return ''
   return new Date(iso).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })
@@ -649,6 +708,7 @@ const carregarItem = async (id) => {
 
     await Promise.all([
       carregarTimeline(id),
+      carregarLocacoes(id),
       carregarChecklists(id),
       carregarAnexos(id),
       carregarDropdowns(),
@@ -706,6 +766,10 @@ const renderHero = (i) => {
 
   if (['Consulta'].includes(PERFIL))
     document.querySelector('button[onclick="openMov()"]').style.display = 'none'
+  if (i.status_atual === 'Locado') {
+    const tabLoc = document.getElementById('tab-btn-locacao')
+    if (tabLoc) tabLoc.style.display = ''
+  }
   const btnExcluir = document.getElementById('btn-excluir-item')
   if (btnExcluir && PERFIL === 'Administrador') btnExcluir.style.display = ''
 }
@@ -954,6 +1018,8 @@ const carregarDropdowns = async () => {
     const eC = document.getElementById('edit-mov-cli')
     if (eR) { eR.innerHTML = '<option value="">— Manter —</option>'; rs.forEach(r => eR.innerHTML += `<option value="${r.id}">${esc(r.nome)}</option>`) }
     if (eC) { eC.innerHTML = '<option value="">— Manter —</option>'; cs.forEach(c => eC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`) }
+    const lC = document.getElementById('loc-cli')
+    if (lC) { lC.innerHTML = '<option value="">— Selecione —</option>'; cs.forEach(c => lC.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`) }
     _dropdownsCarregados = true
   } catch {}
 }
@@ -1149,6 +1215,319 @@ const toast = (msg, tipo='info', dur=4000) => {
 // ════════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+// ABAS
+// ════════════════════════════════════════════════════════════
+const showTab = (tab) => {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'))
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'))
+  document.getElementById('tab-' + tab).classList.add('on')
+  document.getElementById('tab-btn-' + tab).classList.add('on')
+}
+
+// ════════════════════════════════════════════════════════════
+// LOCAÇÃO — CARREGAR
+// ════════════════════════════════════════════════════════════
+const locStatus = (loc) => {
+  if (!loc.ativo) return 'Encerrada'
+  if (loc.data_termino_prev) {
+    const hoje = new Date(); hoje.setHours(0,0,0,0)
+    const term = new Date(loc.data_termino_prev + 'T00:00:00')
+    if (term < hoje) return 'Vencida'
+  }
+  return 'Ativa'
+}
+
+const locBadgeClass = (st) => {
+  if (st === 'Ativa') return 'loc-badge-ativa'
+  if (st === 'Vencida') return 'loc-badge-vencida'
+  return 'loc-badge-encerrada'
+}
+
+const diasVencidos = (dt) => {
+  if (!dt) return 0
+  const hoje = new Date(); hoje.setHours(0,0,0,0)
+  const term = new Date(dt + 'T00:00:00')
+  const diff = Math.floor((hoje - term) / 86400000)
+  return diff > 0 ? diff : 0
+}
+
+const carregarLocacoes = async (id) => {
+  const el = document.getElementById('loc-content')
+  try {
+    const rows = await get(`vw_locacoes_completo?item_id=eq.${id}&order=criado_em.desc`)
+    LOCACOES = rows
+    document.getElementById('loc-count').textContent = rows.length
+    // Mostrar aba se tiver locações ou status = Locado
+    if (rows.length > 0 || (ITEM && ITEM.status_atual === 'Locado')) {
+      document.getElementById('tab-btn-locacao').style.display = ''
+    }
+    if (!rows.length) {
+      el.innerHTML = '<div class="card empty"><div class="empty-icon">📋</div>Nenhum contrato de locação registrado</div>'
+      return
+    }
+    const hoje = new Date().toISOString().slice(0,10)
+    const alertas = rows.filter(r => r.ativo && r.data_termino_prev && r.data_termino_prev < hoje)
+    const alertaHtml = alertas.length
+      ? `<div class="loc-alert">⚠️ ${alertas.length} contrato(s) com prazo vencido</div>` : ''
+
+    el.innerHTML = alertaHtml + rows.map(r => {
+      const inicio = r.data_inicio ? new Date(r.data_inicio + 'T12:00:00').toLocaleDateString('pt-BR') : '—'
+      const termino = r.data_termino_prev ? new Date(r.data_termino_prev + 'T12:00:00').toLocaleDateString('pt-BR') : '—'
+      const vencido = r.ativo && r.data_termino_prev && r.data_termino_prev < hoje
+      const stCls = !r.ativo ? 'loc-enc' : vencido ? 'loc-venc' : 'loc-ativa'
+      const stTxt = !r.ativo ? 'Encerrada' : vencido ? 'Vencida' : 'Ativa'
+      const valor = fmoeda(r.valor_contrato)
+      const canEdit = ['Administrador','Almoxarifado'].includes(PERFIL)
+      return `<div class="loc-card">
+        <div class="loc-header">
+          <div>
+            <div class="loc-num">${r.numero_contrato ? esc(r.numero_contrato) : 'Sem número'}</div>
+            <div style="font-size:12px;color:var(--tx3);margin-top:3px">${esc(r.cliente_nome||'—')}</div>
+          </div>
+          <span class="loc-st ${stCls}">${stTxt}</span>
+        </div>
+        <div class="loc-grid">
+          <div><div class="loc-lbl">Início</div><div class="loc-val">${inicio}</div></div>
+          <div><div class="loc-lbl">Término previsto</div><div class="loc-val">${termino}</div></div>
+          <div><div class="loc-lbl">Valor contrato</div><div class="loc-val">${valor}</div></div>
+        </div>
+        ${r.observacoes ? `<div class="loc-obs">${esc(r.observacoes)}</div>` : ''}
+        ${canEdit ? `<div class="loc-acts">
+          <button class="btn btn-sm" onclick="editarLocacao('${r.id}')">Editar</button>
+          <button class="btn btn-sm" onclick="encerrarLocacao('${r.id}',${r.ativo})" style="${r.ativo?'':'color:var(--gr)'}">
+            ${r.ativo ? 'Encerrar' : 'Reativar'}
+          </button>
+        </div>` : ''}
+      </div>`
+    }).join('')
+  } catch(e) {
+    el.innerHTML = `<div class="card empty"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// LOCAÇÃO — MODAL NOVA / EDITAR
+// ════════════════════════════════════════════════════════════
+let locEditId = null
+
+const openLocacao = (loc=null) => {
+  locEditId = loc?.id || null
+  document.getElementById('m-loc-title').textContent = loc ? 'Editar locação' : 'Nova locação'
+  document.getElementById('m-loc-ref').textContent = ITEM ? ITEM.codigo_interno : ''
+  document.getElementById('loc-inicio').value   = loc?.data_inicio || ''
+  document.getElementById('loc-termino').value  = loc?.data_termino_prev || ''
+  document.getElementById('loc-contrato').value = loc?.numero_contrato || ''
+  document.getElementById('loc-valor').value    = loc?.valor_contrato || ''
+  document.getElementById('loc-obs').value      = loc?.observacoes || ''
+  document.getElementById('loc-cli').value      = loc?.cliente_id || ''
+  document.getElementById('loc-err').style.display = 'none'
+  document.getElementById('m-loc').classList.add('open')
+}
+
+window.editarLocacao = async (id) => {
+  try {
+    const rows = await get(`locacoes?id=eq.${id}&select=*`)
+    if (rows[0]) openLocacao(rows[0])
+  } catch(e) { toast(e.message, 'err') }
+}
+
+window.encerrarLocacao = async (id, ativo) => {
+  const msg = ativo ? 'Encerrar este contrato de locação?' : 'Reativar este contrato?'
+  if (!confirm(msg)) return
+  try {
+    const r = await fetch(`${SURL}/rest/v1/locacoes?id=eq.${id}`, {
+      method:'PATCH', headers:{...hAuth(),'Prefer':'return=minimal'},
+      body: JSON.stringify({ ativo: !ativo })
+    })
+    if (!r.ok) throw new Error((await r.json())?.message || 'Erro')
+    toast(ativo ? 'Contrato encerrado' : 'Contrato reativado ✓', 'ok')
+    await carregarLocacoes(ITEM_ID)
+  } catch(e) { toast(e.message, 'err') }
+}
+
+const salvarLocacao = async () => {
+  const err = document.getElementById('loc-err')
+  const btn = document.getElementById('btn-salvar-loc')
+  const inicio  = document.getElementById('loc-inicio').value
+  const termino = document.getElementById('loc-termino').value
+  const cliId   = document.getElementById('loc-cli').value
+  if (!inicio || !termino || !cliId) {
+    err.textContent = 'Preencha data de início, data de término e empresa (obrigatórios).'
+    err.style.display = 'block'; return
+  }
+  err.style.display = 'none'; btn.textContent = 'Salvando...'; btn.disabled = true
+  try {
+    const body = {
+      item_id:          ITEM_ID,
+      cliente_id:       cliId,
+      data_inicio:      inicio,
+      data_termino_prev:termino,
+      numero_contrato:  document.getElementById('loc-contrato').value.trim() || null,
+      valor_contrato:   document.getElementById('loc-valor').value || null,
+      observacoes:      document.getElementById('loc-obs').value.trim() || null,
+      usuario_id:       SESSION?.user?.id || null,
+    }
+    const url  = locEditId ? `${SURL}/rest/v1/locacoes?id=eq.${locEditId}` : `${SURL}/rest/v1/locacoes`
+    const meth = locEditId ? 'PATCH' : 'POST'
+    const r = await fetch(url, {method:meth, headers:{...hAuth(),'Prefer':'return=minimal'}, body:JSON.stringify(body)})
+    if (!r.ok) throw new Error((await r.json().catch(()=>({})))?.message || 'Erro ao salvar')
+    closeM('m-loc')
+    toast(locEditId ? 'Locação atualizada ✓' : 'Locação registrada ✓', 'ok')
+    await carregarLocacoes(ITEM_ID)
+  } catch(e) {
+    err.textContent = e.message; err.style.display = 'block'
+  } finally { btn.textContent = 'Salvar'; btn.disabled = false }
+}
+
+// ════════════════════════════════════════════════════════════
+// LOCAÇÃO — IMPORTAR XLSX EM MASSA
+// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+// XLSX EXPORT
+// ════════════════════════════════════════════════════════════
+const exportarTimelineXlsx = () => {
+  if (!_timelineData || !_timelineData.length) { toast('Nenhuma movimentação para exportar', 'info'); return }
+  const rows = _timelineData.map(m => ({
+    'Tipo': m.tipo_movimentacao || '—',
+    'Data': m.data_movimentacao ? new Date(m.data_movimentacao).toLocaleString('pt-BR') : '—',
+    'Status anterior': m.status_anterior ? m.status_anterior : '—',
+    'Status novo': m.status_novo ? m.status_novo : '—',
+    'Responsável': m.responsavel_novo_snapshot ? m.responsavel_novo_snapshot : '—',
+    'Cliente': m.cliente_novo_snapshot ? m.cliente_novo_snapshot : '—',
+    'Localização': m.localizacao_nova ? m.localizacao_nova : '—',
+    'Motivo': m.motivo ? m.motivo : '—',
+    'Usuário': m.usuario_nome ? m.usuario_nome : '—',
+  }))
+  const ws = XLSX.utils.json_to_sheet(rows)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Movimentações')
+  XLSX.writeFile(wb, `movimentacoes_${ITEM?.codigo_interno || 'item'}.xlsx`)
+  toast('XLSX exportado ✓', 'ok')
+}
+
+const exportarChecklistsXlsx = () => {
+  if (!_checklistsData || !_checklistsData.length) { toast('Nenhum checklist para exportar', 'info'); return }
+  const rows = _checklistsData.map(c => ({
+    'Data': c.data_checklist ? fdt(c.data_checklist) : '—',
+    'Responsável': c.responsavel ? c.responsavel : '—',
+    'Origem': c.origem ? c.origem : '—',
+    'RMA': c.rma ? c.rma : '—',
+    'Tipo equipamento': c.tipo_equipamento ? c.tipo_equipamento : '—',
+    'Manutenções': (c.manutencoes||[]).join(', ') || '—',
+    'Observações': c.observacoes ? c.observacoes : '—',
+  }))
+  const ws = XLSX.utils.json_to_sheet(rows)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Checklists')
+  XLSX.writeFile(wb, `checklists_${ITEM?.codigo_interno || 'item'}.xlsx`)
+  toast('XLSX exportado ✓', 'ok')
+}
+
+const exportarLocacoesXlsx = () => {
+  if (!LOCACOES || !LOCACOES.length) { toast('Nenhuma locação para exportar', 'info'); return }
+  const rows = LOCACOES.map(loc => ({
+    'Contrato': loc.numero_contrato ? loc.numero_contrato : '—',
+    'Cliente': loc.cliente_nome ? loc.cliente_nome : '—',
+    'Data início': loc.data_inicio ? fdt(loc.data_inicio) : '—',
+    'Data término prev.': loc.data_termino_prev ? fdt(loc.data_termino_prev) : '—',
+    'Valor': loc.valor_contrato ? Number(loc.valor_contrato) : '—',
+    'Status': locStatus(loc),
+    'Observações': loc.observacoes ? loc.observacoes : '—',
+  }))
+  const ws = XLSX.utils.json_to_sheet(rows)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Locações')
+  XLSX.writeFile(wb, `locacoes_${ITEM?.codigo_interno || 'item'}.xlsx`)
+  toast('XLSX exportado ✓', 'ok')
+}
+
+const baixarModeloLocacao = () => {
+  const dados = [
+    ['codigo_interno','data_inicio','data_termino_prev','numero_contrato','valor_contrato','cliente','observacoes'],
+    ['AXI-00001','2025-01-01','2025-12-31','CTR-2025-001','1500.00','Empresa ABC','Renovação anual'],
+    ['AXI-00002','2025-03-01','','','','','Sem data de término definida'],
+  ]
+  const wb = XLSX.utils.book_new()
+  const ws = XLSX.utils.aoa_to_sheet(dados)
+  ws['!cols'] = [{wch:14},{wch:12},{wch:18},{wch:18},{wch:14},{wch:20},{wch:30}]
+  XLSX.utils.book_append_sheet(wb, ws, 'Locacoes')
+  XLSX.writeFile(wb, 'modelo_importacao_locacoes.xlsx')
+  toast('Modelo baixado', 'info')
+}
+
+const importarLocacoes = async (file) => {
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = async (e) => {
+    try {
+      const wb   = XLSX.read(e.target.result, {type:'array'})
+      const ws   = wb.Sheets[wb.SheetNames[0]]
+      const rows = XLSX.utils.sheet_to_json(ws, {defval:''})
+      if (!rows.length) { toast('Planilha vazia', 'err'); return }
+
+      // Buscar itens e clientes para resolver nomes
+      const [itens, clis] = await Promise.all([
+        get('vw_itens_completo?select=id,codigo_interno&ativo=eq.true&limit=5000'),
+        get('clientes?select=id,nome&ativo=eq.true'),
+      ])
+      const itemMap = {}; itens.forEach(i => { itemMap[i.codigo_interno.toLowerCase()] = i.id })
+      const cliMap  = {}; clis.forEach(c  => { cliMap[c.nome.toLowerCase()] = c.id })
+
+      const norm = s => String(s).toLowerCase().trim()
+      const keys = Object.keys(rows[0])
+      const kCod  = keys.find(k => norm(k).includes('codigo'))
+      const kIni  = keys.find(k => norm(k).includes('inicio'))
+      const kFim  = keys.find(k => norm(k).includes('termino') || norm(k).includes('fim'))
+      const kCtr  = keys.find(k => norm(k).includes('contrato') || norm(k).includes('numero'))
+      const kVal  = keys.find(k => norm(k).includes('valor'))
+      const kCli  = keys.find(k => norm(k).includes('cliente'))
+      const kObs  = keys.find(k => norm(k).includes('obs'))
+
+      if (!kCod || !kIni) { toast('Colunas obrigatórias não encontradas: codigo_interno, data_inicio', 'err'); return }
+
+      const lotes = []; let erros = 0
+      rows.forEach((row, i) => {
+        const cod  = String(row[kCod]||'').trim()
+        const ini  = String(row[kIni]||'').trim()
+        if (!cod || !ini) { erros++; return }
+        const itemId = itemMap[cod.toLowerCase()]
+        if (!itemId) { erros++; toast(`Linha ${i+2}: código '${cod}' não encontrado`, 'err'); return }
+        const cliNome = kCli ? String(row[kCli]||'').trim() : ''
+        const cliId   = cliNome ? (cliMap[cliNome.toLowerCase()] || null) : null
+        lotes.push({
+          item_id:          itemId,
+          data_inicio:      ini,
+          data_termino_prev:kFim  ? String(row[kFim]||'').trim()  || null : null,
+          numero_contrato:  kCtr  ? String(row[kCtr]||'').trim()  || null : null,
+          valor_contrato:   kVal  ? Number(row[kVal]||0) || null         : null,
+          cliente_id:       cliId,
+          observacoes:      kObs  ? String(row[kObs]||'').trim()  || null : null,
+          usuario_id:       SESSION?.user?.id || null,
+        })
+      })
+
+      if (!lotes.length) { toast('Nenhuma linha válida para importar', 'err'); return }
+      if (!confirm(`Importar ${lotes.length} locações? ${erros ? erros + ' linha(s) com erro serão ignoradas.' : ''}`)) return
+
+      let ok = 0
+      for (let i = 0; i < lotes.length; i += 50) {
+        const r = await fetch(`${SURL}/rest/v1/locacoes`, {
+          method:'POST', headers:{...hAuth(),'Prefer':'return=minimal'},
+          body: JSON.stringify(lotes.slice(i, i+50))
+        })
+        if (!r.ok) throw new Error((await r.json())?.message || 'Erro na importação')
+        ok += Math.min(50, lotes.length - i)
+      }
+      toast(`${ok} locações importadas ✓`, 'ok')
+      await carregarLocacoes(ITEM_ID)
+      document.getElementById('loc-import-input').value = ''
+    } catch(err) { toast('Erro: ' + err.message, 'err') }
+  }
+  reader.readAsArrayBuffer(file)
+  document.getElementById('loc-import-input').value = ''
+}
+
 const init = async () => {
   const autenticado = await carregarSessao()
   if (!autenticado) {
@@ -1286,5 +1665,52 @@ const excluirItem = async () => {
 
 init()
 </script>
+
+<!-- MODAL: NOVA / EDITAR LOCAÇÃO -->
+<div class="mback" id="m-loc" onclick="if(event.target===this)closeM('m-loc')">
+  <div class="modal" style="max-width:500px">
+    <div class="mh">
+      <div><div class="mt" id="m-loc-title">Nova locação</div><div class="ms" id="m-loc-ref">—</div></div>
+      <button class="mx" onclick="closeM('m-loc')">✕</button>
+    </div>
+    <div class="mb">
+      <div class="merr" id="loc-err"></div>
+      <div class="frow">
+        <div class="fg">
+          <label>Data de início *</label>
+          <input type="date" id="loc-inicio"/>
+        </div>
+        <div class="fg">
+          <label>Data de término prevista *</label>
+          <input type="date" id="loc-termino"/>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Empresa locatária *</label>
+        <select id="loc-cli"><option value="">— Selecione —</option></select>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label>Número do contrato</label>
+          <input type="text" id="loc-contrato" placeholder="Ex: CTR-2025-001"/>
+        </div>
+        <div class="fg">
+          <label>Valor (R$)</label>
+          <input type="number" id="loc-valor" step="0.01" min="0" placeholder="0,00"/>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Observações</label>
+        <textarea id="loc-obs" style="min-height:64px" placeholder="Detalhes do contrato, condições especiais..."></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-loc')">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-salvar-loc" onclick="salvarLocacao()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>
 </html>
