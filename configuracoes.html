@@ -42,7 +42,6 @@ tr:hover .acts{opacity:1}
 .btn-sm{padding:5px 10px;font-size:12px}
 .sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bd) 50%,var(--sur2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;height:13px;display:inline-block}
 @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
-/* Modal */
 .mback{display:none;position:fixed;inset:0;background:rgba(15,21,35,.5);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px}
 .mback.open{display:flex}
 .modal{background:var(--sur);border-radius:14px;border:1px solid var(--bd);width:100%;max-width:440px;box-shadow:var(--shl);animation:mi .18s ease}
@@ -65,20 +64,17 @@ tr:hover .acts{opacity:1}
 .pwd-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--tx3);font-size:16px}
 .acesso-negado{text-align:center;padding:60px 20px;color:var(--tx3)}
 .acesso-negado h2{font-size:18px;font-weight:700;color:var(--tx2);margin-bottom:6px}
-/* Login */
 .login-wrap{max-width:360px;margin:60px auto}
-/* Toast */
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
 @keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
 .toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
-@media(max-width:600px){.frow{grid-template-columns:1fr}.nav{display:none}.acts{opacity:1}}
+@media(max-width:600px){.frow{grid-template-columns:1fr}.acts{opacity:1}}
 .sidebar{width:var(--sb);min-width:var(--sb);height:100vh;background:var(--sur);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;z-index:100;transition:width .2s ease,min-width .2s ease;overflow:hidden}
 .sidebar.collapsed{width:var(--sb-col);min-width:var(--sb-col)}
 .sb-brand{height:56px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--bd);flex-shrink:0;white-space:nowrap;overflow:hidden}
-.sb-icon{width:28px;height:28px;border-radius:8px;background:var(--acl);color:var(--ac);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sb-brand-text{font-size:13px;font-weight:700;color:var(--ac);opacity:1;transition:opacity .15s}
 .sidebar.collapsed .sb-brand-text{opacity:0;pointer-events:none}
 .sb-toggle{position:absolute;top:14px;right:-12px;width:24px;height:24px;border-radius:50%;background:var(--sur);border:1px solid var(--bd);color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;z-index:10}
@@ -101,9 +97,6 @@ tr:hover .acts{opacity:1}
 .sb-user-name{font-size:13px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sb-user-role{font-size:11px;color:var(--tx3);white-space:nowrap}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow-y:auto}
-.sb-logo{height:32px;object-fit:contain;max-width:160px;transition:opacity .15s}
-.sidebar.collapsed .sb-logo{opacity:0;pointer-events:none}
-.sidebar.collapsed .sb-logo-sm{opacity:1!important}
 </style>
 </head>
 <body>
@@ -112,25 +105,24 @@ tr:hover .acts{opacity:1}
     <svg id="sb-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
   <div class="sb-brand">
-    <div style="font-size:13px;font-weight:700;color:var(--ac)">Axis Inventory</div>
+    <span class="sb-brand-text">Axis Inventory</span>
   </div>
   <nav class="sb-nav">
     <a class="sb-item" href="lista-itens.html">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       <span class="sb-label">Equipamentos</span>
     </a>
-    <div class="sb-section">Registros</div>
     <a class="sb-item" href="movimentacoes.html">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       <span class="sb-label">Movimentações</span>
     </a>
     <a class="sb-item" href="checklists.html">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       <span class="sb-label">Checklists</span>
     </a>
     <div class="sb-section">Configurações</div>
     <a class="sb-item on" href="configuracoes.html">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span class="sb-label">Configurações</span>
     </a>
   </nav>
@@ -145,13 +137,13 @@ tr:hover .acts{opacity:1}
   </div>
 </aside>
 <div class="main">
-
 <main class="content">
 
-  <!-- LOGIN -->
   <div id="login-screen" style="display:none" class="login-wrap">
     <div style="text-align:center;margin-bottom:24px">
-      <img src="data:image/png;base64,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" alt="Axis" style="height:38px;margin:0 auto 12px;display:block">
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">📡</div>
+      <div style="font-size:18px;font-weight:700">Axis Inventory</div>
+      <div style="font-size:13px;color:var(--tx3);margin-top:4px">Entre para continuar</div>
     </div>
     <div id="login-msg" style="margin-bottom:10px"></div>
     <div class="fg" style="margin-bottom:10px"><label>Email</label><input type="email" id="l-email" placeholder="seu@email.com"/></div>
@@ -159,20 +151,17 @@ tr:hover .acts{opacity:1}
     <button class="btn btn-p" style="width:100%;justify-content:center;padding:10px" id="btn-login" onclick="fazerLogin()">Entrar</button>
   </div>
 
-  <!-- ACESSO NEGADO -->
   <div id="screen-negado" style="display:none" class="acesso-negado">
-    <div style="font-size:40px;margin-bottom:12px">&#128274;</div>
+    <div style="font-size:40px;margin-bottom:12px">🔒</div>
     <h2>Acesso restrito</h2>
     <p style="font-size:13px;margin-bottom:16px">Apenas Administradores podem acessar as configurações.</p>
-    <button class="btn" onclick="location.href='lista-itens.html'">&#8592; Voltar</button>
+    <button class="btn" onclick="location.href='lista-itens.html'">← Voltar</button>
   </div>
 
-  <!-- APP -->
   <div id="app" style="display:none">
-    <div class="page-title">&#9881; Configurações</div>
+    <div class="page-title">⚙ Configurações</div>
     <div class="page-sub">Gerenciamento de cadastros e acessos do sistema</div>
 
-    <!-- CADASTROS -->
     <div class="card" style="margin-bottom:16px">
       <div class="card-head">
         <div class="card-title">
@@ -182,30 +171,20 @@ tr:hover .acts{opacity:1}
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd)">
         <a href="modelos.html" style="display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--sur);text-decoration:none;color:var(--tx);transition:background .15s" onmouseover="this.style.background='var(--sur2)'" onmouseout="this.style.background='var(--sur)'">
-          <div style="width:36px;height:36px;border-radius:10px;background:var(--acl);color:var(--ac);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">&#128246;</div>
-          <div>
-            <div style="font-weight:600;font-size:14px">Modelos</div>
-            <div style="font-size:12px;color:var(--tx3)">Equipamentos e categorias</div>
-          </div>
+          <div style="width:36px;height:36px;border-radius:10px;background:var(--acl);color:var(--ac);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📦</div>
+          <div><div style="font-weight:600;font-size:14px">Modelos</div><div style="font-size:12px;color:var(--tx3)">Equipamentos e categorias</div></div>
         </a>
         <a href="clientes.html" style="display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--sur);text-decoration:none;color:var(--tx);transition:background .15s" onmouseover="this.style.background='var(--sur2)'" onmouseout="this.style.background='var(--sur)'">
-          <div style="width:36px;height:36px;border-radius:10px;background:rgba(5,150,105,.1);color:#059669;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">&#127970;</div>
-          <div>
-            <div style="font-weight:600;font-size:14px">Empresas</div>
-            <div style="font-size:12px;color:var(--tx3)">Clientes e parceiros</div>
-          </div>
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(5,150,105,.1);color:#059669;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏢</div>
+          <div><div style="font-weight:600;font-size:14px">Empresas</div><div style="font-size:12px;color:var(--tx3)">Clientes e parceiros</div></div>
         </a>
         <a href="responsaveis.html" style="display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--sur);text-decoration:none;color:var(--tx);transition:background .15s" onmouseover="this.style.background='var(--sur2)'" onmouseout="this.style.background='var(--sur)'">
-          <div style="width:36px;height:36px;border-radius:10px;background:rgba(124,58,237,.1);color:#7C3AED;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">&#128101;</div>
-          <div>
-            <div style="font-weight:600;font-size:14px">Responsáveis</div>
-            <div style="font-size:12px;color:var(--tx3)">Técnicos e colaboradores</div>
-          </div>
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(124,58,237,.1);color:#7C3AED;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👥</div>
+          <div><div style="font-weight:600;font-size:14px">Responsáveis</div><div style="font-size:12px;color:var(--tx3)">Técnicos e colaboradores</div></div>
         </a>
       </div>
     </div>
 
-    <!-- USUÁRIOS -->
     <div class="card">
       <div class="card-head">
         <div class="card-title">
@@ -221,11 +200,7 @@ tr:hover .acts{opacity:1}
       <div class="card-body">
         <table>
           <thead><tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Perfil</th>
-            <th>Status</th>
-            <th style="width:140px"></th>
+            <th>Nome</th><th>Email</th><th>Perfil</th><th>Status</th><th style="width:140px"></th>
           </tr></thead>
           <tbody id="usr-tbody"></tbody>
         </table>
@@ -237,12 +212,11 @@ tr:hover .acts{opacity:1}
 </div>
 <div class="tc" id="tc"></div>
 
-<!-- MODAL: NOVO / EDITAR USUÁRIO -->
 <div class="mback" id="m-usr" onclick="if(event.target===this)closeM('m-usr')">
   <div class="modal">
     <div class="mh">
       <div class="mt" id="m-usr-title">Novo usuário</div>
-      <button class="mx" onclick="closeM('m-usr')">&#x2715;</button>
+      <button class="mx" onclick="closeM('m-usr')">✕</button>
     </div>
     <div class="mb">
       <div class="merr" id="m-err"></div>
@@ -263,7 +237,7 @@ tr:hover .acts{opacity:1}
         <label>Senha inicial *</label>
         <div class="pwd-wrap">
           <input type="password" id="f-senha" placeholder="Mínimo 6 caracteres"/>
-          <button class="pwd-eye" onclick="togglePwd('f-senha',this)" tabindex="-1">&#128065;</button>
+          <button class="pwd-eye" onclick="togglePwd('f-senha',this)" tabindex="-1">👁</button>
         </div>
       </div>
     </div>
@@ -274,12 +248,11 @@ tr:hover .acts{opacity:1}
   </div>
 </div>
 
-<!-- MODAL: REDEFINIR SENHA -->
 <div class="mback" id="m-pwd" onclick="if(event.target===this)closeM('m-pwd')">
   <div class="modal" style="max-width:380px">
     <div class="mh">
       <div class="mt">Redefinir senha</div>
-      <button class="mx" onclick="closeM('m-pwd')">&#x2715;</button>
+      <button class="mx" onclick="closeM('m-pwd')">✕</button>
     </div>
     <div class="mb">
       <div class="merr" id="pwd-err"></div>
@@ -288,7 +261,7 @@ tr:hover .acts{opacity:1}
         <label>Nova senha *</label>
         <div class="pwd-wrap">
           <input type="password" id="f-nova-pwd" placeholder="Mínimo 6 caracteres"/>
-          <button class="pwd-eye" onclick="togglePwd('f-nova-pwd',this)" tabindex="-1">&#128065;</button>
+          <button class="pwd-eye" onclick="togglePwd('f-nova-pwd',this)" tabindex="-1">👁</button>
         </div>
       </div>
     </div>
@@ -300,88 +273,55 @@ tr:hover .acts{opacity:1}
 </div>
 
 <script>
-const SURL  = 'https://adbskoverysjohhwadln.supabase.co'
-const AKEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
-const SKEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY4MTc0MiwiZXhwIjoyMDg5MjU3NzQyfQ.2pgi0lruJn5cDJMGs7gyX95AGintUx6oYjNRW9gg0Hw'
+const SURL='https://adbskoverysjohhwadln.supabase.co'
+const AKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY4MTc0MiwiZXhwIjoyMDg5MjU3NzQyfQ.2pgi0lruJn5cDJMGs7gyX95AGintUx6oYjNRW9gg0Hw'
 
-let SESSION = null, PERFIL = null, MEU_ID = null
-let editUsrId = null, pwdUsrId = null
+let SESSION=null,PERFIL=null,MEU_ID=null,editUsrId=null,pwdUsrId=null
 
-// Headers
-const hAuth  = () => ({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
-const hAdmin = () => ({'apikey':SKEY,'Authorization':`Bearer ${SKEY}`,'Content-Type':'application/json'})
+const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
+const hAdmin=()=>({'apikey':SKEY,'Authorization':`Bearer ${SKEY}`,'Content-Type':'application/json'})
+const chk401=r=>{if(r.status===401){sessionStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}return r}
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
-const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-
-// ── AUTH ──────────────────────────────────────────────────────
-const fazerLogin = async () => {
-  const email = document.getElementById('l-email').value.trim()
-  const senha = document.getElementById('l-senha').value
-  const btn   = document.getElementById('btn-login')
-  const msg   = document.getElementById('login-msg')
-  if (!email || !senha) { toast('Preencha email e senha.','err'); return }
-  btn.textContent = 'Entrando...'; btn.disabled = true; msg.innerHTML = ''
-  try {
-    const r = await fetch(`${SURL}/auth/v1/token?grant_type=password`,{
-      method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},
-      body:JSON.stringify({email,password:senha})
-    })
-    const d = await r.json()
-    if (!r.ok) throw new Error(d.error_description || d.message)
-    SESSION = {access_token:d.access_token,user:d.user}
-    sessionStorage.setItem('ax_sess',JSON.stringify(SESSION))
-    await posLogin()
-  } catch(e) {
-    msg.innerHTML = `<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`
-  } finally { btn.textContent = 'Entrar'; btn.disabled = false }
+const fazerLogin=async()=>{
+  const email=document.getElementById('l-email').value.trim(),senha=document.getElementById('l-senha').value
+  const btn=document.getElementById('btn-login'),msg=document.getElementById('login-msg')
+  if(!email||!senha){toast('Preencha email e senha.','err');return}
+  btn.textContent='Entrando...';btn.disabled=true;msg.innerHTML=''
+  try{
+    const r=await fetch(`${SURL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})})
+    const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.message)
+    SESSION={access_token:d.access_token,user:d.user};sessionStorage.setItem('ax_sess',JSON.stringify(SESSION));await posLogin()
+  }catch(e){msg.innerHTML=`<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`}
+  finally{btn.textContent='Entrar';btn.disabled=false}
 }
 
-const posLogin = async () => {
-  MEU_ID = SESSION.user.id
-  const r = await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${MEU_ID}`,{headers:hAuth()})
-  const d = await r.json()
-  PERFIL   = d[0]?.perfil || 'Consulta'
-  const nome = d[0]?.nome || SESSION.user.email?.split('@')[0] || '?'
-  document.getElementById('sb-avatar').textContent = nome[0].toUpperCase()
-  document.getElementById('sb-user-name').textContent = nome
-  document.getElementById('sb-user-role').textContent = PERFIL
+const posLogin=async()=>{
+  MEU_ID=SESSION.user.id
+  const r=await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${MEU_ID}`,{headers:hAuth()})
+  const d=await r.json();PERFIL=d[0]?.perfil||'Consulta'
+  const nome=d[0]?.nome||SESSION.user.email?.split('@')[0]||'?'
+  document.getElementById('sb-avatar').textContent=nome[0].toUpperCase()
+  document.getElementById('sb-user-name').textContent=nome
+  document.getElementById('sb-user-role').textContent=PERFIL
   document.querySelector('.sidebar').style.display='flex'
-  document.getElementById('login-screen').style.display = 'none'
-
-  if (PERFIL !== 'Administrador') {
-    document.getElementById('screen-negado').style.display = 'block'
-    return
-  }
-  document.getElementById('app').style.display = 'block'
+  document.getElementById('login-screen').style.display='none'
+  if(PERFIL!=='Administrador'){document.getElementById('screen-negado').style.display='block';return}
+  document.getElementById('app').style.display='block'
   await carregarUsuarios()
 }
 
-// ── CARREGAR USUÁRIOS ─────────────────────────────────────────
-const carregarUsuarios = async () => {
-  const tbody = document.getElementById('usr-tbody')
-  tbody.innerHTML = Array(3).fill(0).map(() =>
-    `<tr>${Array(4).fill(0).map(() => `<td><span class="sk" style="width:${50+Math.random()*80}px"></span></td>`).join('')}<td></td></tr>`
-  ).join('')
-
-  try {
-    // Busca usuários da tabela pública (tem perfil, nome, ativo)
-    const r = await fetch(`${SURL}/rest/v1/usuarios?select=*&order=nome.asc`,{headers:hAuth()})
-    const users = await r.json()
-    if (!r.ok) throw new Error(users?.message || 'Erro')
-
-    document.getElementById('usr-count').textContent = users.length
-
-    if (!users.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--tx3)">Nenhum usuário cadastrado</td></tr>'
-      return
-    }
-
-    const PCLS = {
-      'Administrador':'p-admin','Almoxarifado':'p-almo',
-      'Técnico':'p-tec','Laboratório':'p-lab','Consulta':'p-cons'
-    }
-
-    tbody.innerHTML = users.map(u => `<tr>
+const carregarUsuarios=async()=>{
+  const tbody=document.getElementById('usr-tbody')
+  tbody.innerHTML=Array(3).fill(0).map(()=>`<tr>${Array(4).fill(0).map(()=>`<td><span class="sk" style="width:${50+Math.random()*80}px"></span></td>`).join('')}<td></td></tr>`).join('')
+  try{
+    const r=await fetch(`${SURL}/rest/v1/usuarios?select=*&order=nome.asc`,{headers:hAuth()})
+    chk401(r);const users=await r.json();if(!r.ok)throw new Error(users?.message||'Erro')
+    document.getElementById('usr-count').textContent=users.length
+    if(!users.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--tx3)">Nenhum usuário cadastrado</td></tr>';return}
+    const PCLS={'Administrador':'p-admin','Almoxarifado':'p-almo','Técnico':'p-tec','Laboratório':'p-lab','Consulta':'p-cons'}
+    tbody.innerHTML=users.map(u=>`<tr>
       <td style="font-weight:500;color:var(--tx)">${esc(u.nome||'—')}</td>
       <td style="font-size:12px;color:var(--tx3)">${esc(u.email||'—')}</td>
       <td><span class="badge-perfil ${PCLS[u.perfil]||'p-cons'}">${esc(u.perfil||'—')}</span></td>
@@ -389,192 +329,106 @@ const carregarUsuarios = async () => {
       <td><div class="acts">
         <button class="ab ab-e" onclick='editarUsuario(${JSON.stringify(u)})'>Editar</button>
         <button class="ab ab-pwd" onclick='abrirRedefinirSenha("${u.id}","${esc(u.nome||u.email||'')}")'>Senha</button>
-        ${u.id !== MEU_ID ? `<button class="ab ab-d" onclick='toggleAtivo("${u.id}",${u.ativo})'>${u.ativo?'Desativar':'Ativar'}</button>` : ''}
+        ${u.id!==MEU_ID?`<button class="ab ab-d" onclick='toggleAtivo("${u.id}",${u.ativo})'>${u.ativo?'Desativar':'Ativar'}</button>`:''}
       </div></td>
     </tr>`).join('')
-  } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--re)">${esc(e.message)}</td></tr>`
-    toast(e.message,'err')
-  }
+  }catch(e){tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--re)">${esc(e.message)}</td></tr>`;toast(e.message,'err')}
 }
 
-// ── NOVO USUÁRIO ──────────────────────────────────────────────
-const abrirNovo = () => {
-  editUsrId = null
-  document.getElementById('m-usr-title').textContent = 'Novo usuário'
-  document.getElementById('btn-salvar-usr').textContent = 'Criar usuário'
-  ;['f-nome','f-email','f-senha'].forEach(id => document.getElementById(id).value = '')
-  document.getElementById('f-perfil').value = ''
-  document.getElementById('f-senha-wrap').style.display = ''
-  document.getElementById('m-err').style.display = 'none'
-  document.getElementById('m-ok').style.display  = 'none'
+const abrirNovo=()=>{
+  editUsrId=null
+  document.getElementById('m-usr-title').textContent='Novo usuário'
+  document.getElementById('btn-salvar-usr').textContent='Criar usuário'
+  ;['f-nome','f-email','f-senha'].forEach(id=>document.getElementById(id).value='')
+  document.getElementById('f-perfil').value=''
+  document.getElementById('f-senha-wrap').style.display=''
+  document.getElementById('m-err').style.display='none'
+  document.getElementById('m-ok').style.display='none'
   document.getElementById('m-usr').classList.add('open')
-  setTimeout(() => document.getElementById('f-nome').focus(), 100)
+  setTimeout(()=>document.getElementById('f-nome').focus(),100)
 }
 
-window.editarUsuario = u => {
-  editUsrId = u.id
-  document.getElementById('m-usr-title').textContent = 'Editar usuário'
-  document.getElementById('btn-salvar-usr').textContent = 'Salvar alterações'
-  document.getElementById('f-nome').value   = u.nome  || ''
-  document.getElementById('f-email').value  = u.email || ''
-  document.getElementById('f-perfil').value = u.perfil|| ''
-  document.getElementById('f-senha-wrap').style.display = 'none' // senha em modal separado
-  document.getElementById('m-err').style.display = 'none'
-  document.getElementById('m-ok').style.display  = 'none'
+window.editarUsuario=u=>{
+  editUsrId=u.id
+  document.getElementById('m-usr-title').textContent='Editar usuário'
+  document.getElementById('btn-salvar-usr').textContent='Salvar alterações'
+  document.getElementById('f-nome').value=u.nome||''
+  document.getElementById('f-email').value=u.email||''
+  document.getElementById('f-perfil').value=u.perfil||''
+  document.getElementById('f-senha-wrap').style.display='none'
+  document.getElementById('m-err').style.display='none'
+  document.getElementById('m-ok').style.display='none'
   document.getElementById('m-usr').classList.add('open')
 }
 
-const salvarUsuario = async () => {
-  const nome   = document.getElementById('f-nome').value.trim()
-  const email  = document.getElementById('f-email').value.trim()
-  const perfil = document.getElementById('f-perfil').value
-  const senha  = document.getElementById('f-senha').value
-  const err    = document.getElementById('m-err')
-  const ok     = document.getElementById('m-ok')
-
-  if (!nome || !email || !perfil) {
-    err.textContent = 'Nome, email e perfil são obrigatórios.'
-    err.style.display = 'block'; ok.style.display = 'none'; return
-  }
-  if (!editUsrId && senha.length < 6) {
-    err.textContent = 'A senha deve ter no mínimo 6 caracteres.'
-    err.style.display = 'block'; ok.style.display = 'none'; return
-  }
-
-  err.style.display = 'none'; ok.style.display = 'none'
-  const btn = document.getElementById('btn-salvar-usr')
-  btn.disabled = true; btn.textContent = 'Salvando...'
-
-  try {
-    if (editUsrId) {
-      // Apenas atualiza tabela usuarios (nome, perfil)
-      const r = await fetch(`${SURL}/rest/v1/usuarios?id=eq.${editUsrId}`, {
-        method: 'PATCH',
-        headers: {...hAuth(),'Prefer':'return=minimal'},
-        body: JSON.stringify({ nome, perfil })
-      })
-      if (!r.ok) throw new Error((await r.json())?.message || 'Erro ao atualizar')
-      toast('Usuário atualizado ✓','ok')
-      closeM('m-usr')
-    } else {
-      // 1. Cria usuário no Auth via Admin API (service role)
-      const rAuth = await fetch(`${SURL}/auth/v1/admin/users`, {
-        method: 'POST',
-        headers: hAdmin(),
-        body: JSON.stringify({
-          email,
-          password: senha,
-          email_confirm: true, // confirma email automaticamente
-          user_metadata: { nome }
-        })
-      })
-      const dAuth = await rAuth.json()
-      if (!rAuth.ok) throw new Error(dAuth?.message || dAuth?.msg || JSON.stringify(dAuth))
-
-      const newId = dAuth.id
-      if (!newId) throw new Error('ID do usuário não retornado')
-
-      // 2. Insere/atualiza na tabela usuarios
-      const rUsr = await fetch(`${SURL}/rest/v1/usuarios`, {
-        method: 'POST',
-        headers: {...hAuth(),'Prefer':'resolution=merge-duplicates,return=minimal'},
-        body: JSON.stringify({ id:newId, nome, email, perfil, ativo:true })
-      })
-      if (!rUsr.ok) {
-        const e = await rUsr.json()
-        throw new Error(e?.message || 'Erro ao salvar perfil')
-      }
-
-      ok.textContent = `Usuário ${nome} criado com sucesso!`
-      ok.style.display = 'block'
-      toast(`Usuário ${nome} criado ✓`,'ok')
-      setTimeout(() => closeM('m-usr'), 1500)
+const salvarUsuario=async()=>{
+  const nome=document.getElementById('f-nome').value.trim(),email=document.getElementById('f-email').value.trim()
+  const perfil=document.getElementById('f-perfil').value,senha=document.getElementById('f-senha').value
+  const err=document.getElementById('m-err'),ok=document.getElementById('m-ok')
+  if(!nome||!email||!perfil){err.textContent='Nome, email e perfil são obrigatórios.';err.style.display='block';ok.style.display='none';return}
+  if(!editUsrId&&senha.length<6){err.textContent='A senha deve ter no mínimo 6 caracteres.';err.style.display='block';ok.style.display='none';return}
+  err.style.display='none';ok.style.display='none'
+  const btn=document.getElementById('btn-salvar-usr');btn.disabled=true;btn.textContent='Salvando...'
+  try{
+    if(editUsrId){
+      const r=await fetch(`${SURL}/rest/v1/usuarios?id=eq.${editUsrId}`,{method:'PATCH',headers:{...hAuth(),'Prefer':'return=minimal'},body:JSON.stringify({nome,perfil})})
+      chk401(r);if(!r.ok)throw new Error((await r.json())?.message||'Erro ao atualizar')
+      toast('Usuário atualizado ✓','ok');closeM('m-usr')
+    }else{
+      const rAuth=await fetch(`${SURL}/auth/v1/admin/users`,{method:'POST',headers:hAdmin(),body:JSON.stringify({email,password:senha,email_confirm:true,user_metadata:{nome}})})
+      const dAuth=await rAuth.json();if(!rAuth.ok)throw new Error(dAuth?.message||dAuth?.msg||JSON.stringify(dAuth))
+      const newId=dAuth.id;if(!newId)throw new Error('ID do usuário não retornado')
+      const rUsr=await fetch(`${SURL}/rest/v1/usuarios`,{method:'POST',headers:{...hAuth(),'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:newId,nome,email,perfil,ativo:true})})
+      if(!rUsr.ok){const e=await rUsr.json();throw new Error(e?.message||'Erro ao salvar perfil')}
+      ok.textContent=`Usuário ${nome} criado com sucesso!`;ok.style.display='block'
+      toast(`Usuário ${nome} criado ✓`,'ok');setTimeout(()=>closeM('m-usr'),1500)
     }
     await carregarUsuarios()
-  } catch(e) {
-    err.textContent = e.message.includes('already') ? 'Este email já está cadastrado.' : e.message
-    err.style.display = 'block'
-  } finally { btn.disabled = false; btn.textContent = editUsrId ? 'Salvar alterações' : 'Criar usuário' }
+  }catch(e){err.textContent=e.message.includes('already')?'Este email já está cadastrado.':e.message;err.style.display='block'}
+  finally{btn.disabled=false;btn.textContent=editUsrId?'Salvar alterações':'Criar usuário'}
 }
 
-// ── REDEFINIR SENHA ───────────────────────────────────────────
-window.abrirRedefinirSenha = (id, nome) => {
-  pwdUsrId = id
-  document.getElementById('pwd-ref').textContent = `Usuário: ${nome}`
-  document.getElementById('f-nova-pwd').value = ''
-  document.getElementById('pwd-err').style.display = 'none'
+window.abrirRedefinirSenha=(id,nome)=>{
+  pwdUsrId=id
+  document.getElementById('pwd-ref').textContent=`Usuário: ${nome}`
+  document.getElementById('f-nova-pwd').value=''
+  document.getElementById('pwd-err').style.display='none'
   document.getElementById('m-pwd').classList.add('open')
 }
 
-const salvarSenha = async () => {
-  const nova = document.getElementById('f-nova-pwd').value
-  const err  = document.getElementById('pwd-err')
-  if (nova.length < 6) {
-    err.textContent = 'Senha deve ter no mínimo 6 caracteres.'
-    err.style.display = 'block'; return
-  }
-  err.style.display = 'none'
-  const btn = document.getElementById('btn-salvar-pwd')
-  btn.disabled = true; btn.textContent = 'Salvando...'
-  try {
-    const r = await fetch(`${SURL}/auth/v1/admin/users/${pwdUsrId}`, {
-      method: 'PUT',
-      headers: hAdmin(),
-      body: JSON.stringify({ password: nova })
-    })
-    if (!r.ok) {
-      const d = await r.json()
-      throw new Error(d?.message || 'Erro ao redefinir senha')
-    }
-    toast('Senha redefinida ✓','ok')
-    closeM('m-pwd')
-  } catch(e) {
-    err.textContent = e.message
-    err.style.display = 'block'
-  } finally { btn.disabled = false; btn.textContent = 'Salvar senha' }
+const salvarSenha=async()=>{
+  const nova=document.getElementById('f-nova-pwd').value,err=document.getElementById('pwd-err')
+  if(nova.length<6){err.textContent='Senha deve ter no mínimo 6 caracteres.';err.style.display='block';return}
+  err.style.display='none'
+  const btn=document.getElementById('btn-salvar-pwd');btn.disabled=true;btn.textContent='Salvando...'
+  try{
+    const r=await fetch(`${SURL}/auth/v1/admin/users/${pwdUsrId}`,{method:'PUT',headers:hAdmin(),body:JSON.stringify({password:nova})})
+    if(!r.ok){const d=await r.json();throw new Error(d?.message||'Erro ao redefinir senha')}
+    toast('Senha redefinida ✓','ok');closeM('m-pwd')
+  }catch(e){err.textContent=e.message;err.style.display='block'}
+  finally{btn.disabled=false;btn.textContent='Salvar senha'}
 }
 
-// ── ATIVAR / DESATIVAR ────────────────────────────────────────
-window.toggleAtivo = async (id, atual) => {
-  try {
-    // Atualiza tabela usuarios
-    const r1 = await fetch(`${SURL}/rest/v1/usuarios?id=eq.${id}`,{
-      method:'PATCH', headers:{...hAuth(),'Prefer':'return=minimal'},
-      body:JSON.stringify({ativo:!atual})
-    })
-    if (!r1.ok) throw new Error('Erro ao atualizar')
-
-    // Bloqueia/desbloqueia no Auth
-    const r2 = await fetch(`${SURL}/auth/v1/admin/users/${id}`,{
-      method:'PUT', headers:hAdmin(),
-      body:JSON.stringify({ban_duration: atual ? '87600h' : 'none'})
-    })
-    if (!r2.ok) console.warn('Auth ban não aplicado')
-
-    toast(atual ? 'Usuário desativado' : 'Usuário ativado','ok')
-    await carregarUsuarios()
-  } catch(e) { toast(e.message,'err') }
+window.toggleAtivo=async(id,atual)=>{
+  try{
+    const r1=await fetch(`${SURL}/rest/v1/usuarios?id=eq.${id}`,{method:'PATCH',headers:{...hAuth(),'Prefer':'return=minimal'},body:JSON.stringify({ativo:!atual})})
+    chk401(r1);if(!r1.ok)throw new Error('Erro ao atualizar')
+    const r2=await fetch(`${SURL}/auth/v1/admin/users/${id}`,{method:'PUT',headers:hAdmin(),body:JSON.stringify({ban_duration:atual?'87600h':'none'})})
+    if(!r2.ok)console.warn('Auth ban não aplicado')
+    toast(atual?'Usuário desativado':'Usuário ativado','ok');await carregarUsuarios()
+  }catch(e){toast(e.message,'err')}
 }
 
-// ── UTILS ─────────────────────────────────────────────────────
-const togglePwd = (inputId, btn) => {
-  const input = document.getElementById(inputId)
-  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈' }
-  else { input.type = 'password'; btn.innerHTML = '&#128065;' }
+const togglePwd=(inputId,btn)=>{
+  const input=document.getElementById(inputId)
+  if(input.type==='password'){input.type='text';btn.textContent='🙈'}
+  else{input.type='password';btn.textContent='👁'}
 }
 
-const closeM = id => document.getElementById(id).classList.remove('open')
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.mback.open').forEach(m => m.classList.remove('open'))
-})
+const closeM=id=>document.getElementById(id).classList.remove('open')
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mback.open').forEach(m=>m.classList.remove('open'))})
 
-const toast = (msg, tipo='info', dur=4000) => {
-  const el = document.createElement('div')
-  el.className = `toast ${tipo}`; el.textContent = msg
-  document.getElementById('tc').appendChild(el)
-  setTimeout(() => el.remove(), dur)
-}
+const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
 
 const fazerLogout=()=>{SESSION=null;PERFIL=null;sessionStorage.removeItem('ax_sess');location.reload()}
 let sidebarCollapsed=false
@@ -585,21 +439,14 @@ function toggleSidebar(){
   a.innerHTML=sidebarCollapsed?'<polyline points="9 18 15 12 9 6"/>':'<polyline points="15 18 9 12 15 6"/>'
 }
 
-// ── INIT ──────────────────────────────────────────────────────
-const init = async () => {
+const init=async()=>{
   document.querySelector('.sidebar').style.display='none'
-  const saved = sessionStorage.getItem('ax_sess')
-  if (saved) {
-    try {
-      SESSION = JSON.parse(saved)
-      const r = await fetch(`${SURL}/auth/v1/user`,{
-        headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}
-      })
-      if (r.ok) { await posLogin(); return }
-    } catch {}
-    sessionStorage.removeItem('ax_sess'); SESSION = null
+  const saved=sessionStorage.getItem('ax_sess')
+  if(saved){
+    try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}
+    sessionStorage.removeItem('ax_sess');SESSION=null
   }
-  document.getElementById('login-screen').style.display = 'block'
+  document.getElementById('login-screen').style.display='block'
 }
 init()
 </script>
