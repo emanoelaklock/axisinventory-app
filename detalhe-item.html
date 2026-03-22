@@ -602,6 +602,7 @@ const frel = (iso) => {
   return fdt(iso)
 }
 
+const fmoeda = (v) => {
   if (v == null || v === '') return '—'
   return Number(v).toLocaleString('pt-BR', { style:'currency', currency:'BRL' })
 }
