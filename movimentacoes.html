@@ -10,11 +10,7 @@
 :root{--bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;--bd:#E2E6F0;--bd2:#C8CEDF;--tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;--ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;--gr:#059669;--am:#D97706;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
 .page{display:flex;flex-direction:column;min-height:100vh}
-.topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
-.brand{font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;gap:6px;white-space:nowrap}
-.nav{display:flex;gap:2px;flex:1;overflow-x:auto}.nav::-webkit-scrollbar{display:none}
-.nav-btn{padding:6px 11px;border-radius:7px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border:none;background:transparent;font-family:inherit;white-space:nowrap;transition:all .15s}
-.nav-btn:hover{background:var(--sur2);color:var(--tx)}.nav-btn.on{background:var(--acl);color:var(--ac);font-weight:600}
+.nav::-webkit-scrollbar{display:none}
 .topbar-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .avatar{width:28px;height:28px;border-radius:50%;background:var(--acl);color:var(--ac);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .perfil-chip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--sur2);color:var(--tx3)}
@@ -63,7 +59,7 @@ tr:hover td{background:rgba(37,99,235,.015)}
 .toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
-@media(max-width:900px){.col-resp,.col-cli,.col-local,.col-empresa{display:none}.nav{display:none}}
+@media(max-width:900px){.col-resp,.col-cli,.col-local,.col-empresa{display:none}}
 @media(max-width:600px){.col-status{display:none}}
 
 /* ── SIDEBAR GLOBAL ─── */
@@ -121,19 +117,6 @@ body.has-sidebar{display:flex;min-height:100vh}
   </div>
 </aside>
 <div class="sb-main"><div class="page">
-<header class="topbar">
-  <div class="brand" style="font-size:13px;font-weight:700;color:var(--ac)">Axis Inventory</div>
-  <nav class="nav">
-    <button class="nav-btn" onclick="location.href='lista-itens.html'">Equipamentos</button>
-    <button class="nav-btn on" onclick="location.href='movimentacoes.html'">Movimentacoes</button>
-    <button class="nav-btn" onclick="location.href='checklists.html'">Checklists</button>
-    <button class="nav-btn" onclick="location.href='configuracoes.html'">Configuracoes</button>
-  </nav>
-  <div class="topbar-r">
-    <span class="perfil-chip" id="perfil-chip">—</span>
-    <div class="avatar" id="avatar">—</div>
-  </div>
-</header>
 <main class="content">
   <div id="login-screen" style="display:none;max-width:360px;margin:60px auto">
     <div style="text-align:center;margin-bottom:24px">
