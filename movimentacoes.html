@@ -108,10 +108,10 @@ body.has-sidebar{display:flex;min-height:100vh}
   </nav>
   <div class="sb-bottom">
     <div class="sb-user" onclick="fazerLogout()" title="Sair">
-      <div class="sb-avatar" id="avatar-btn">—</div>
+      <div class="sb-avatar" id="sb-avatar">—</div>
       <div class="sb-user-info">
-        <div class="sb-user-name" id="user-name">—</div>
-        <div class="sb-user-role" id="perfil-chip">—</div>
+        <div class="sb-user-name" id="sb-user-name">—</div>
+        <div class="sb-user-role" id="sb-user-role">—</div>
       </div>
     </div>
   </div>
@@ -305,6 +305,15 @@ const renderPag=()=>{
 }
 window.irP=p=>{const t=Math.ceil(QS.total/POR_PAG);if(p<0||p>=t)return;QS.pagina=p;carregar()}
 const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
+
+const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');location.reload()}
+let sidebarCollapsed=false
+function toggleSidebar(){
+  sidebarCollapsed=!sidebarCollapsed
+  document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed)
+  const a=document.getElementById('sb-arrow')
+  a.innerHTML=sidebarCollapsed?'<polyline points="9 18 15 12 9 6"/>':'<polyline points="15 18 9 12 15 6"/>'
+}
 const init=async()=>{
   document.querySelector('.sidebar').style.display='none'
   const saved=localStorage.getItem('ax_sess')
