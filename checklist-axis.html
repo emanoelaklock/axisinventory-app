@@ -273,6 +273,7 @@ async function api(path,method='GET',body=null){
     headers:{'apikey':AKEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=representation'},
     body:body?JSON.stringify(body):null
   });
+  if(r.status===401){sessionStorage.removeItem('ax_sess');showMsg('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}
   const txt=await r.text();let d;try{d=JSON.parse(txt);}catch(e){d=txt;}
   if(!r.ok)throw new Error(typeof d==='object'?(d.message||d.hint||JSON.stringify(d)):txt);
   return d;

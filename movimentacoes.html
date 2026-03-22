@@ -157,6 +157,7 @@ const AKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 const POR_PAG=30
 let SESSION=null,PERFIL='Consulta'
 const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
+const chk401=r=>{if(r.status===401){sessionStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}return r}
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
 // FIX: helper que nunca passa entidade HTML pelo esc() — usa caractere UTF-8 diretamente
@@ -202,7 +203,7 @@ const carregar=async(reset=false)=>{
   try{
     const{q,range}=buildQ()
     const r=await fetch(`${SURL}/rest/v1/${q}`,{headers:{...hAuth(),'Prefer':'count=exact','Range':range,'Range-Unit':'items'}})
-    if(!r.ok)throw new Error((await r.json())?.message||'Erro')
+    chk401(r);if(!r.ok)throw new Error((await r.json())?.message||'Erro')
     const data=await r.json();const cr=r.headers.get('content-range')
     QS.total=cr?parseInt(cr.split('/')[1]):data.length
     renderTabela(data);renderPag()
@@ -245,7 +246,7 @@ const renderTabela=rows=>{
     const statusChange=m.status_anterior&&m.status_anterior!==m.status_novo
       ?`${sbadge(m.status_anterior)}<span class="arrow">→</span>${sbadge(m.status_novo)}`
       :sbadge(m.status_novo)
-    // FIX: usar fval() em vez de esc(valor||'&#8212;') — evita entidade HTML escapada
+    // FIX: usar fval() em vez de esc(valor||'—') — evita entidade HTML escapada
     return`<tr style="cursor:pointer" onclick="location.href='detalhe-item.html#${m.item_id}'">
       <td class="dim" style="white-space:nowrap">${fdt(m.data_movimentacao)}</td>
       <td><span class="tipo-icon">${icon}</span>${esc(m.tipo_movimentacao)}</td>

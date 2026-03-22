@@ -384,6 +384,7 @@ const POR_PAG=25
 let SESSION=null,PERFIL=null
 const PODE={podeCadastrarItem:p=>['Administrador','Almoxarifado'].includes(p),podeMover:p=>['Administrador','Almoxarifado','Laboratório','Técnico'].includes(p),podeChecklist:p=>['Administrador','Almoxarifado','Laboratório','Técnico'].includes(p)}
 const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
+const chk401=r=>{if(r.status===401){sessionStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}return r}
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
 // SIDEBAR
@@ -478,7 +479,7 @@ function filtrarPorStatus(s){showView('itens');document.getElementById('f-status
 // QUERY
 let QS={busca:'',status:'',clienteId:'',respId:'',sortCol:'data_ultima_movimentacao',sortAsc:false,pagina:0,total:0}
 const buildQuery=()=>{const from=QS.pagina*POR_PAG,to=from+POR_PAG-1;let q=`vw_itens_completo?select=*&ativo=eq.true`;if(QS.status)q+=`&status_atual=eq.${encodeURIComponent(QS.status)}`;if(QS.clienteId)q+=`&cliente_atual=eq.${QS.clienteId}`;if(QS.respId)q+=`&responsavel_atual=eq.${QS.respId}`;if(QS.busca){const b=encodeURIComponent(`%${QS.busca}%`);q+=`&or=(codigo_interno.ilike.${b},serial.ilike.${b},modelo.ilike.${b},part_number.ilike.${b},cliente_nome.ilike.${b},responsavel_nome.ilike.${b},localizacao_atual.ilike.${b})`}q+=`&order=${QS.sortCol+(QS.sortAsc?'.asc':'.desc')}.nullslast`;return{path:q,range:`${from}-${to}`}}
-const listarItens=async()=>{const{path,range}=buildQuery();const r=await fetch(`${SURL}/rest/v1/${path}`,{headers:{...hAuth(),'Prefer':'count=exact','Range':range,'Range-Unit':'items'}});if(!r.ok){const d=await r.json();throw new Error(d?.message||d?.hint||'Erro')}const data=await r.json();const cr=r.headers.get('content-range');QS.total=cr?parseInt(cr.split('/')[1]):data.length;return data}
+const listarItens=async()=>{const{path,range}=buildQuery();const r=await fetch(`${SURL}/rest/v1/${path}`,{headers:{...hAuth(),'Prefer':'count=exact','Range':range,'Range-Unit':'items'}});chk401(r);if(!r.ok){const d=await r.json();throw new Error(d?.message||d?.hint||'Erro')}const data=await r.json();const cr=r.headers.get('content-range');QS.total=cr?parseInt(cr.split('/')[1]):data.length;return data}
 
 // DROPDOWNS
 let _dropdownsCarregados=false

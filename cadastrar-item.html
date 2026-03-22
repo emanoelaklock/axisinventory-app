@@ -263,6 +263,7 @@ let temSerial = true
 let todosModelos = []
 
 const hAuth = () => ({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
+const chk401 = r => { if(r.status===401){sessionStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')} return r }
 const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
 const fazerLogin = async () => {
@@ -310,6 +311,7 @@ const carregarResponsaveis = async () => {
   const r = await fetch(`${SURL}/rest/v1/responsaveis?select=id,nome,cargo&ativo=eq.true&order=nome.asc`,{headers:hAuth()})
   const data = await r.json()
   const sel = document.getElementById('f-resp')
+  sel.innerHTML = '<option value="">— Nenhum —</option>'
   data.forEach(x => sel.innerHTML += `<option value="${x.id}">${esc(x.nome)}${x.cargo?' - '+esc(x.cargo):''}</option>`)
 }
 
@@ -317,6 +319,7 @@ const carregarClientes = async () => {
   const r = await fetch(`${SURL}/rest/v1/clientes?select=id,nome&ativo=eq.true&order=nome.asc`,{headers:hAuth()})
   const data = await r.json()
   const sel = document.getElementById('f-cliente')
+  sel.innerHTML = '<option value="">— Nenhum —</option>'
   data.forEach(x => sel.innerHTML += `<option value="${x.id}">${esc(x.nome)}</option>`)
 }
 
