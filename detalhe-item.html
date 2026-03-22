@@ -23,8 +23,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .s-en{--c:#059669;--b:rgba(5,150,105,.1)}.s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)}.s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}.s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}.s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--b);color:var(--c)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--c);flex-shrink:0}
-.page{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
-.topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;margin:-20px -16px 24px}
+.page{max-width:1100px;margin:0 auto;padding:0 16px 60px}
+.topbar{height:52px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;margin-bottom:24px}
 .brand{font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;gap:6px}
 .back-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s}
 .back-btn:hover{background:var(--sur2);color:var(--tx)}
@@ -146,11 +146,7 @@ body.has-sidebar{display:flex;min-height:100vh}
 .sidebar{width:220px;min-width:220px;height:100vh;background:var(--sur);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;z-index:100;transition:width .2s,min-width .2s;overflow:hidden;flex-shrink:0}
 .sidebar.collapsed{width:56px;min-width:56px}
 .sb-brand{height:60px;display:flex;align-items:center;justify-content:center;padding:0 12px;border-bottom:1px solid var(--bd);flex-shrink:0;overflow:hidden;position:relative}
-.sb-logo{height:36px;object-fit:contain;max-width:160px;transition:opacity .15s}
-.sb-logo-sm{position:absolute;width:32px;height:32px;object-fit:contain;opacity:0;transition:opacity .15s}
-.sidebar.collapsed .sb-logo{opacity:0;pointer-events:none}
-.sidebar.collapsed .sb-logo-sm{opacity:1}
-.sb-toggle{position:absolute;top:18px;right:-12px;width:24px;height:24px;border-radius:50%;background:var(--sur);border:1px solid var(--bd);color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;z-index:10}
+.sidebar.collapsed .sidebar.collapsed .sb-toggle{position:absolute;top:18px;right:-12px;width:24px;height:24px;border-radius:50%;background:var(--sur);border:1px solid var(--bd);color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;z-index:10}
 .sb-toggle:hover{background:var(--sur2);color:var(--tx)}
 .sb-nav{flex:1;padding:8px 0;overflow-y:auto;overflow-x:hidden}
 .sb-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;border-radius:8px;cursor:pointer;white-space:nowrap;color:var(--tx2);font-size:13px;font-weight:500;transition:all .15s;text-decoration:none;border:none;background:none;font-family:inherit;width:calc(100% - 16px);text-align:left}
@@ -178,7 +174,8 @@ body.has-sidebar{display:flex;min-height:100vh}
     <svg id="sb-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
   <div class="sb-brand">
-    <div style="font-size:13px;font-weight:700;color:var(--ac)">Axis Inventory</div>
+    <div style="font-size:13px;font-weight:700;color:var(--ac);letter-spacing:-.01em">Axis Inventory</div>
+    <div style="font-size:10px;color:var(--tx3);font-weight:400;margin-top:1px">Gestão de equipamentos</div>
     
   </div>
   <nav class="sb-nav">
@@ -200,8 +197,7 @@ body.has-sidebar{display:flex;min-height:100vh}
 </aside>
 <div class="sb-main"><div class="page">
 
-  <div class="topbar">
-    <div class="brand">Axis Inventory</div>
+  <div class="topbar" style="margin-bottom:20px">
     <button class="back-btn" onclick="history.back()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
       Voltar
@@ -602,7 +598,7 @@ const frel = (iso) => {
   return fdt(iso)
 }
 
-const fmoeda = (v) => {
+const fmoeda = v => {
   if (v == null || v === '') return '—'
   return Number(v).toLocaleString('pt-BR', { style:'currency', currency:'BRL' })
 }
