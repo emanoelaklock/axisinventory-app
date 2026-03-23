@@ -236,7 +236,7 @@ const POR_PAG=25
 let SESSION=null,PERFIL='Consulta',editId=null
 
 const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
-const chk401=r=>{if(r.status===401){sessionStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}return r}
+const chk401=r=>{if(r.status===401){localStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}return r}
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 const fdt=iso=>iso?new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'—'
 
@@ -275,7 +275,7 @@ const fazerLogin=async()=>{
   try{
     const r=await fetch(`${SURL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})})
     const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.message||'Erro')
-    SESSION={access_token:d.access_token,user:d.user};sessionStorage.setItem('ax_sess',JSON.stringify(SESSION));await posLogin()
+    SESSION={access_token:d.access_token,user:d.user};localStorage.setItem('ax_sess',JSON.stringify(SESSION));await posLogin()
   }catch(e){msg.innerHTML=`<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`}
   finally{btn.textContent='Entrar';btn.disabled=false}
 }
@@ -405,14 +405,14 @@ function toggleSidebar(){
   const a=document.getElementById('sb-arrow')
   a.innerHTML=sidebarCollapsed?'<polyline points="9 18 15 12 9 6"/>':'<polyline points="15 18 9 12 15 6"/>'
 }
-const fazerLogout=()=>{SESSION=null;PERFIL=null;sessionStorage.removeItem('ax_sess');location.reload()}
+const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');location.reload()}
 
 const init=async()=>{
   document.querySelector('.sidebar').style.display='none'
-  const saved=sessionStorage.getItem('ax_sess')
+  const saved=localStorage.getItem('ax_sess')
   if(saved){
     try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}
-    sessionStorage.removeItem('ax_sess');SESSION=null
+    localStorage.removeItem('ax_sess');SESSION=null
   }
   document.getElementById('login-screen').style.display='block'
 }
