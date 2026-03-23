@@ -52,7 +52,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .topbar-title{font-size:16px;font-weight:600;color:var(--tx);letter-spacing:-.01em}
 .topbar-r{display:flex;align-items:center;gap:8px}
 .content{flex:1;padding:24px}
-.s-en{--c:#059669;--b:rgba(5,150,105,.1)}.s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)}.s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}.s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}.s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
+.s-en{--c:#059669;--b:rgba(5,150,105,.1)}.s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)}.s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}.s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}.s-dm{--c:#0D9488;--b:rgba(13,148,136,.1)}.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}.s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;background:var(--b);color:var(--c)}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--c);flex-shrink:0}
 .dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
@@ -272,6 +272,7 @@ tr:hover .acts{opacity:1}
             <option value="">Status</option>
             <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
             <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
+            <option>Em Demonstração</option>
             <option>Aguardando Inspeção</option><option>Finalizada Inspeção</option>
             <option>Em RMA / Assistência Técnica</option><option>Sucata</option>
           </select>
@@ -326,7 +327,7 @@ tr:hover .acts{opacity:1}
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Novo status *</label>
         <select id="m-status" class="fg-sel-modal" onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
           <option value="">Selecione o status…</option>
-          <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option><option>Vendido</option><option>Com Técnico</option><option>Locado</option><option>Aguardando Inspeção</option><option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option><option>Sucata</option>
+          <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option><option>Vendido</option><option>Com Técnico</option><option>Locado</option><option>Em Demonstração</option><option>Aguardando Inspeção</option><option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option><option>Sucata</option>
         </select>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
@@ -442,7 +443,7 @@ const posLogin=async()=>{
 const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');document.getElementById('app-screen').style.display='none';document.getElementById('login-screen').style.display='block'}
 
 // DASHBOARD
-const SM_COLOR={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Aguardando Inspeção':'#EA580C','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
+const SM_COLOR={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Em Demonstração':'#0D9488','Em Demonstração':'#0D9488','Aguardando Inspeção':'#EA580C','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
 let statusChartInstance=null
 const carregarDashboard=async()=>{
   try{
@@ -518,7 +519,7 @@ const atualizarInfo=()=>{const from=QS.pagina*POR_PAG+1,to=Math.min((QS.pagina+1
 const srt=col=>{if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc;else{QS.sortCol=col;QS.sortAsc=true};QS.pagina=0;carregarItens()}
 
 // RENDER
-const SM={'Estoque Novo':'s-en','Estoque Usado':'s-eu','Reservado':'s-rv','Vendido':'s-vd','Com Técnico':'s-ct','Locado':'s-lc','Aguardando Inspeção':'s-ai','Finalizada Inspeção':'s-fi','Em RMA / Assistência Técnica':'s-rm','Sucata':'s-sc'}
+const SM={'Estoque Novo':'s-en','Estoque Usado':'s-eu','Reservado':'s-rv','Vendido':'s-vd','Com Técnico':'s-ct','Locado':'s-lc','Em Demonstração':'s-dm','Aguardando Inspeção':'s-ai','Finalizada Inspeção':'s-fi','Em RMA / Assistência Técnica':'s-rm','Sucata':'s-sc'}
 const sbadge=s=>{const cls=SM[s]||'s-sc';const label=s==='Em RMA / Assistência Técnica'?'Em RMA':(s||'—');return`<span class="badge ${cls}"><span class="dot"></span>${esc(label)}</span>`}
 const fdata=iso=>{if(!iso)return'<span class="dim">—</span>';const d=new Date(iso),now=new Date(),df=Math.floor((now-d)/86400000);if(df===0)return'<span style="color:var(--gr);font-size:12px">Hoje</span>';if(df===1)return'<span style="color:var(--am);font-size:12px">Ontem</span>';if(df<7)return`<span class="dim">${df}d atrás</span>`;return`<span class="dim">${d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}</span>`}
 const fstr=(v,cls='')=>v?`<span class="${cls}">${esc(v)}</span>`:'<span class="dim">—</span>'

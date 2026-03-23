@@ -270,7 +270,7 @@ const limparF=()=>{
 }
 const srt=col=>{if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc;else{QS.sortCol=col;QS.sortAsc=false};QS.pagina=0;carregar()}
 const TIPO_ICONS={'Entrada estoque':'📦','Reserva':'🔒','Envio cliente':'🚚','Retorno cliente':'↩️','Envio técnico':'🔧','Retorno técnico':'↩️','Envio inspeção':'🔬','Resultado inspeção':'📋','Envio RMA':'⚠️','Retorno RMA':'✅','Substituição RMA':'🔄','Baixa':'🗑️','Ajuste administrativo':'⚙️'}
-const SM={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Aguardando Inspeção':'#EA580C','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
+const SM={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Em Demonstração':'#0D9488','Em Demonstração':'#0D9488','Aguardando Inspeção':'#EA580C','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
 const sbadge=(s)=>{const c=SM[s]||'#71717A';return`<span class="badge" style="background:${c}18;color:${c}">${esc(s||'—')}</span>`}
 const renderSkel=()=>{document.getElementById('tbody').innerHTML=Array(8).fill(0).map(()=>`<tr>${Array(7).fill(0).map(()=>`<td><span class="sk" style="width:${40+Math.random()*60}px"></span></td>`).join('')}<td></td></tr>`).join('')}
 const renderTabela=rows=>{
