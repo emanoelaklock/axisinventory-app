@@ -255,18 +255,57 @@ body.has-sidebar{display:flex;min-height:100vh}
         <div class="info-cell"><div class="info-label">Categoria</div><div class="info-val" id="h-cat">—</div></div>
         <div class="info-cell"><div class="info-label">Última movimentação</div><div class="info-val dim" id="h-ultima">—</div></div>
         <div class="info-cell"><div class="info-label">Cadastro</div><div class="info-val dim" id="h-cadastro">—</div></div>
+        <div class="info-cell" style="grid-column:1/-1;border-top:1px solid var(--bd);padding-top:12px;margin-top:4px">
+          <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Informações Adicionais</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+            <div class="info-cell">
+              <div class="info-label" style="display:flex;align-items:center;justify-content:space-between">
+                Valor de Aquisição
+                <button onclick="editarCampo('valor')" style="font-size:10px;font-weight:600;color:var(--ac);background:none;border:none;cursor:pointer;padding:0">Editar</button>
+              </div>
+              <div class="info-val" id="h-valor">—</div>
+              <div id="h-valor-edit" style="display:none;margin-top:4px">
+                <div style="display:flex;gap:6px;align-items:center">
+                  <input id="h-valor-input" type="number" step="0.01" style="flex:1;padding:6px 9px;border:1.5px solid var(--ac);border-radius:7px;font-size:13px;color:var(--tx);background:var(--sur);outline:none;box-shadow:0 0 0 3px var(--acl)" placeholder="0,00" onkeydown="if(event.key==='Enter')salvarCampo('valor');if(event.key==='Escape')cancelarCampo('valor')"/>
+                  <button onclick="salvarCampo('valor')" style="padding:5px 10px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">✓</button>
+                  <button onclick="cancelarCampo('valor')" style="padding:5px 10px;background:var(--sur2);color:var(--tx3);border:1px solid var(--bd);border-radius:7px;font-size:12px;cursor:pointer">✕</button>
+                </div>
+              </div>
+            </div>
+            <div class="info-cell">
+              <div class="info-label" style="display:flex;align-items:center;justify-content:space-between">
+                Data de Aquisição
+                <button onclick="editarCampo('dtaq')" style="font-size:10px;font-weight:600;color:var(--ac);background:none;border:none;cursor:pointer;padding:0">Editar</button>
+              </div>
+              <div class="info-val" id="h-dtaq">—</div>
+              <div id="h-dtaq-edit" style="display:none;margin-top:4px">
+                <div style="display:flex;gap:6px;align-items:center">
+                  <input id="h-dtaq-input" type="date" style="flex:1;padding:6px 9px;border:1.5px solid var(--ac);border-radius:7px;font-size:13px;color:var(--tx);background:var(--sur);outline:none;box-shadow:0 0 0 3px var(--acl)" onkeydown="if(event.key==='Escape')cancelarCampo('dtaq')"/>
+                  <button onclick="salvarCampo('dtaq')" style="padding:5px 10px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">✓</button>
+                  <button onclick="cancelarCampo('dtaq')" style="padding:5px 10px;background:var(--sur2);color:var(--tx3);border:1px solid var(--bd);border-radius:7px;font-size:12px;cursor:pointer">✕</button>
+                </div>
+              </div>
+            </div>
+            <div class="info-cell" style="grid-column:1/-1">
+              <div class="info-label" style="display:flex;align-items:center;justify-content:space-between">
+                Observações
+                <button onclick="editarCampo('obs')" style="font-size:10px;font-weight:600;color:var(--ac);background:none;border:none;cursor:pointer;padding:0">Editar</button>
+              </div>
+              <div class="info-val" id="h-obs" style="white-space:pre-wrap">—</div>
+              <div id="h-obs-edit" style="display:none;margin-top:4px">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <textarea id="h-obs-input" rows="3" style="padding:6px 9px;border:1.5px solid var(--ac);border-radius:7px;font-size:13px;color:var(--tx);background:var(--sur);outline:none;box-shadow:0 0 0 3px var(--acl);resize:vertical;font-family:inherit" placeholder="Observações..."></textarea>
+                  <div style="display:flex;gap:6px">
+                    <button onclick="salvarCampo('obs')" style="padding:5px 10px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">✓ Salvar</button>
+                    <button onclick="cancelarCampo('obs')" style="padding:5px 10px;background:var(--sur2);color:var(--tx3);border:1px solid var(--bd);border-radius:7px;font-size:12px;cursor:pointer">✕</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    
-        <!-- INFORMAÇÕES ADICIONAIS -->
-        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bd)">
-          <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Informações Adicionais</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-            <div class="info-cell">
-              <div class="info-label">Valor de Aquisição</div>
-              <div class="info-val" id="h-valor">—</div>
-            </div>
             <div class="info-cell">
               <div class="info-label">Data de Aquisição</div>
               <div class="info-val" id="h-dtaq">—</div>
@@ -674,9 +713,22 @@ const renderHero = (i) => {
   set('h-ultima', frel(i.data_ultima_movimentacao))
   set('h-cadastro', fdt(i.data_cadastro))
   // Informações adicionais
-  set('h-valor', i.valor_aquisicao ? 'R$ ' + Number(i.valor_aquisicao).toLocaleString('pt-BR',{minimumFractionDigits:2}) : null)
-  set('h-dtaq', i.data_aquisicao ? new Date(i.data_aquisicao+'T12:00:00').toLocaleDateString('pt-BR') : null)
-  set('h-obs', i.observacoes || null)
+  const valorEl = document.getElementById('h-valor')
+  if (i.valor_aquisicao) {
+    valorEl.textContent = 'R$ ' + Number(i.valor_aquisicao).toLocaleString('pt-BR',{minimumFractionDigits:2})
+    valorEl.dataset.raw = i.valor_aquisicao
+    valorEl.style.color = ''
+  } else { valorEl.textContent = '—'; valorEl.style.color = 'var(--tx3)' }
+  const dtaqEl = document.getElementById('h-dtaq')
+  if (i.data_aquisicao) {
+    dtaqEl.textContent = new Date(i.data_aquisicao+'T12:00:00').toLocaleDateString('pt-BR')
+    dtaqEl.dataset.raw = i.data_aquisicao
+    dtaqEl.style.color = ''
+  } else { dtaqEl.textContent = '—'; dtaqEl.style.color = 'var(--tx3)' }
+  const obsEl = document.getElementById('h-obs')
+  obsEl.textContent = i.observacoes || '—'
+  obsEl.dataset.raw = i.observacoes || ''
+  obsEl.style.color = i.observacoes ? '' : 'var(--tx3)'
 
   if (['Consulta'].includes(PERFIL))
     document.querySelector('button[onclick="openMov()"]').style.display = 'none'
@@ -1109,6 +1161,72 @@ let locEditId = null
 // XLSX EXPORT
 // ════════════════════════════════════════════════════════════
 
+
+
+
+// EDIÇÃO DE CAMPOS ADICIONAIS
+const CAMPOS_MAP = {
+  'valor': { dbKey: 'valor_aquisicao', inputType: 'number' },
+  'dtaq':  { dbKey: 'data_aquisicao',  inputType: 'date'   },
+  'obs':   { dbKey: 'observacoes',      inputType: 'text'  },
+}
+
+const editarCampo = (campo) => {
+  const el = document.getElementById('h-' + campo)
+  const wrap = document.getElementById('h-' + campo + '-edit')
+  const input = document.getElementById('h-' + campo + '-input')
+  const val = el.dataset.raw || ''
+  if (input.tagName === 'TEXTAREA') input.value = val
+  else input.value = val
+  el.style.display = 'none'
+  wrap.style.display = 'block'
+  input.focus()
+}
+
+const cancelarCampo = (campo) => {
+  document.getElementById('h-' + campo).style.display = ''
+  document.getElementById('h-' + campo + '-edit').style.display = 'none'
+}
+
+const salvarCampo = async (campo) => {
+  const input = document.getElementById('h-' + campo + '-input')
+  const novo = input.value.trim()
+  const { dbKey } = CAMPOS_MAP[campo]
+  try {
+    const body = {}
+    body[dbKey] = novo || null
+    const r = await fetch(`${SURL}/rest/v1/itens?id=eq.${ITEM_ID}`, {
+      method: 'PATCH',
+      headers: { ...hAuth(), 'Prefer': 'return=minimal' },
+      body: JSON.stringify(body)
+    })
+    chk401(r)
+    if (!r.ok) throw new Error((await r.json())?.message || 'Erro ao salvar')
+    const el = document.getElementById('h-' + campo)
+    if (campo === 'valor') {
+      el.textContent = novo ? 'R$ ' + Number(novo).toLocaleString('pt-BR', {minimumFractionDigits:2}) : '—'
+    } else if (campo === 'dtaq') {
+      el.textContent = novo ? new Date(novo + 'T12:00:00').toLocaleDateString('pt-BR') : '—'
+    } else {
+      el.textContent = novo || '—'
+    }
+    el.dataset.raw = novo
+    el.style.color = novo ? '' : 'var(--tx3)'
+    cancelarCampo(campo)
+    toast('Salvo ✓', 'ok')
+  } catch(e) {
+    toast(e.message, 'err')
+  }
+}
+
+const fazerLogout = () => { SESSION=null; localStorage.removeItem('ax_sess'); location.href='lista-itens.html' }
+let sidebarCollapsed = false
+const toggleSidebar = () => {
+  sidebarCollapsed = !sidebarCollapsed
+  document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed)
+  const a = document.getElementById('sb-arrow')
+  if (a) a.innerHTML = sidebarCollapsed ? '<polyline points="9 18 15 12 9 6"/>' : '<polyline points="15 18 9 12 15 6"/>'
+}
 
 // ABAS
 const switchTab = (tabId) => {
