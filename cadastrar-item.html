@@ -241,8 +241,8 @@ body.has-sidebar{display:flex;min-height:100vh}
             <div class="field-error" id="err-status">Selecione um status</div>
           </div>
           <div class="fg">
-            <label class="flabel">Localização</label>
-            <input class="finput" id="f-local" placeholder="Ex: Almoxarifado Central"/>
+            <label class="flabel">Localização / VMS</label>
+            <input class="finput" id="f-local" placeholder="Ex: Almoxarifado Central / CAM-01"/>
           </div>
         </div>
       </div>
@@ -264,11 +264,7 @@ body.has-sidebar{display:flex;min-height:100vh}
       <div class="form-section">
         <div class="section-label"><span>📄</span> Informações adicionais</div>
         <div class="fgrid">
-          <div class="fg">
-            <label class="flabel">Nome VMS</label>
-            <input class="finput" id="f-vms" placeholder="Nome no sistema VMS (opcional)"/>
-            <div class="field-hint">Identificador no sistema de vídeo</div>
-          </div>
+          
           <div class="fg">
             <label class="flabel">Valor de aquisição (R$)</label>
             <input class="finput" id="f-valor" type="number" step="0.01" min="0" placeholder="0,00"/>
@@ -518,7 +514,7 @@ const salvar = async (salvarECadastrarOutro) => {
       localizacao_atual: document.getElementById('f-local').value.trim() || null,
       responsavel_atual: respId,
       cliente_atual:     cliId,
-      nome_vms:          document.getElementById('f-vms').value.trim()  || null,
+      nome_vms:          null,
       valor_aquisicao:   valor ? parseFloat(valor) : null,
       data_aquisicao:    dataAq || null,
       observacoes:       document.getElementById('f-obs').value.trim()  || null,
@@ -558,7 +554,7 @@ const salvar = async (salvarECadastrarOutro) => {
 
 const resetForm = () => {
   limparModelo()
-  ;['f-serial','f-local','f-vms','f-valor','f-data-aq','f-obs'].forEach(id => document.getElementById(id).value = '')
+  ;['f-serial','f-local','f-valor','f-data-aq','f-obs'].forEach(id => document.getElementById(id).value = '')
   document.getElementById('f-status').value  = ''
   document.getElementById('f-resp').value    = ''
   document.getElementById('f-cliente').value = ''
