@@ -193,12 +193,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY4MTc0MiwiZXhwIjoyMDg5MjU3NzQyfQ.2pgi0lruJn5cDJMGs7gyX95AGintUx6oYjNRW9gg0Hw'
 
 
-const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
 const hAdmin=()=>({'apikey':SKEY,'Authorization':`Bearer ${SKEY}`,'Content-Type':'application/json'})
-const chk401=r=>{if(r.status===401){localStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}return r}
-
-
-
 const carregarUsuarios=async()=>{
   const tbody=document.getElementById('usr-tbody')
   tbody.innerHTML=Array(3).fill(0).map(()=>`<tr>${Array(4).fill(0).map(()=>`<td><span class="sk" style="width:${50+Math.random()*80}px"></span></td>`).join('')}<td></td></tr>`).join('')
@@ -318,15 +313,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelect
 const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
 
 
-const init=async()=>{
-  document.querySelector('.sidebar').style.display='none'
-  const saved=localStorage.getItem('ax_sess')
-  if(saved){
-    try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}
-    localStorage.removeItem('ax_sess');SESSION=null
-  }
-  location.href='dashboard.html'
-}
+
 
 async function onPostLogin() {
   renderSidebar('usuarios')
