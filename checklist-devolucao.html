@@ -99,7 +99,7 @@ input[type=hidden]{display:none}
 .success-screen p{font-size:14px;color:var(--tx3);line-height:1.6}
 .btn-novo{margin-top:24px;padding:12px 28px;border:2px solid var(--blue);border-radius:var(--r);background:#fff;color:var(--blue);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
 </style>
-<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
 </head>
 <body>
 
@@ -496,102 +496,6 @@ async function enviar(){
     if(!r.ok){
       const err = await r.json().catch(()=>({}))
       throw new Error(err?.message || err?.hint || `Erro ${r.status}`)
-    }
-
-    // 2. Gerar PDF e salvar como anexo no item
-    let itemId = document.getElementById('f-item-id').value
-    if(!itemId && serial){
-      try{
-        const ri = await fetch(
-          SURL+'/rest/v1/vw_itens_completo?serial=eq.'+encodeURIComponent(serial)+'&select=id&limit=1',
-          {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY}}
-        )
-        const di = await ri.json()
-        if(di && di[0]) itemId = di[0].id
-      }catch(e){ console.warn('item_id nao encontrado:', e) }
-    }
-
-    if(itemId){
-      try{
-        showMsg('Gerando PDF...','info')
-        const nomeResp = document.getElementById('f-resp').options[document.getElementById('f-resp').selectedIndex]?.text || resp
-        const nomeCli  = document.getElementById('f-cliente').options[document.getElementById('f-cliente').selectedIndex]?.text || cliente
-        const obs      = document.getElementById('f-obs').value.trim()
-        const vals = {
-          ws:   document.getElementById('ws-val').value,
-          sup:  document.getElementById('sup-val').value,
-          cabo: document.getElementById('cabo-val').value,
-          plug: document.getElementById('plug-val').value,
-          gask: document.getElementById('gask-val').value,
-          acess:document.getElementById('f-acess').value.trim()
-        }
-        const jsPDFLib = window.jspdf || window.jsPDF
-        if(!jsPDFLib){ console.warn('jsPDF nao carregou'); throw new Error('jsPDF nao disponivel') }
-        const { jsPDF } = jsPDFLib
-        const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'})
-        const W=210, M=15
-        let y=15
-        doc.setFillColor(27,42,74); doc.rect(0,0,W,28,'F')
-        doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold')
-        doc.text('Checklist de Devolucao',M,12)
-        doc.setFontSize(9); doc.setFont('helvetica','normal')
-        doc.text('Axis Inventory',M,20); doc.text('Data: '+data,W-M,20,{align:'right'})
-        y=38
-        doc.setTextColor(27,42,74); doc.setFontSize(9); doc.setFont('helvetica','bold')
-        doc.setFillColor(240,244,250); doc.rect(M-2,y-5,W-2*M+4,8,'F')
-        doc.text('IDENTIFICACAO DO EQUIPAMENTO',M,y); y+=7
-        const dadosItem=[['Empresa',nomeCli],['Tipo',tipo],['Serial',serial],['Modelo',document.getElementById('f-modelo').value||'—']]
-        dadosItem.forEach(([lb,vl])=>{
-          doc.setFont('helvetica','bold'); doc.setTextColor(100,116,139); doc.setFontSize(8); doc.text(lb+':',M,y)
-          doc.setFont('helvetica','normal'); doc.setTextColor(27,42,74); doc.setFontSize(10); doc.text(vl||'—',M+35,y); y+=7
-        })
-        y+=3
-        if(obs){
-          doc.setFillColor(254,242,242); doc.rect(M-2,y-5,W-2*M+4,8,'F')
-          doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(27,42,74)
-          doc.text('DEFEITO / OBSERVACAO',M,y); y+=7
-          doc.setFont('helvetica','normal'); doc.setFontSize(10)
-          const obsL=doc.splitTextToSize(obs,W-2*M); doc.text(obsL,M,y); y+=obsL.length*6+4
-        }
-        doc.setFillColor(240,244,250); doc.rect(M-2,y-5,W-2*M+4,8,'F')
-        doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(27,42,74)
-        doc.text('ACESSORIOS E COMPONENTES',M,y); y+=7
-        const acessItems=[['Weathershield/Tampa',vals.ws],['Suporte de Montagem',vals.sup],['Cabo/PoE',vals.cabo],['Conector/Plug',vals.plug],['Gasket/Vedacao',vals.gask]]
-        acessItems.forEach(([lb,vl])=>{
-          if(!vl) return
-          doc.setFont('helvetica','bold'); doc.setTextColor(100,116,139); doc.setFontSize(8); doc.text(lb+':',M,y)
-          const cor=vl==='Incluso'?[5,150,105]:vl==='Danificado'?[220,38,38]:vl==='Nao incluso'?[217,119,6]:[100,116,139]
-          doc.setTextColor(...cor); doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text(vl,M+55,y)
-          doc.setTextColor(27,42,74); y+=7
-        })
-        if(vals.acess){doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(27,42,74);doc.text('Outros: '+vals.acess,M,y);y+=7}
-        y+=3
-        const fotosArr=[fotos[1],fotos[2],fotos[3]].filter(Boolean)
-        if(fotosArr.length){
-          if(y>200){doc.addPage();y=15}
-          doc.setFillColor(240,244,250); doc.rect(M-2,y-5,W-2*M+4,8,'F')
-          doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(27,42,74)
-          doc.text('FOTOS',M,y); y+=7
-          fotosArr.forEach((f,i)=>{
-            const fx=M+i*(58+4)
-            try{doc.addImage(f,'JPEG',fx,y,55,42)}catch(er){}
-          })
-          y+=50
-        }
-        if(y>250){doc.addPage();y=15}
-        doc.setFillColor(240,244,250); doc.rect(M-2,y-5,W-2*M+4,16,'F')
-        doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(100,116,139)
-        doc.text('RESPONSAVEL PELO PREENCHIMENTO',M,y); y+=7
-        doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(27,42,74)
-        doc.text(nomeResp,M,y)
-        const pdfB64='data:application/pdf;base64,'+doc.output('datauristring').split(',')[1]
-        const rAnx=await fetch(SURL+'/rest/v1/anexos',{
-          method:'POST',
-          headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY,'Content-Type':'application/json','Prefer':'return=minimal'},
-          body:JSON.stringify({item_id:itemId,arquivo:pdfB64,tipo:'pdf',usuario_id:null})
-        })
-        if(!rAnx.ok) console.warn('Erro ao salvar PDF:', await rAnx.text())
-      }catch(ePdf){ console.warn('Erro ao gerar PDF:', ePdf) }
     }
 
     // Sucesso

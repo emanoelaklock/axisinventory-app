@@ -64,7 +64,7 @@ function renderSidebar(paginaAtiva) {
       <a class="sb-subitem${a==='checklists-inspecao'?' on':''}" href="checklists.html">
         ${SVG.inspec}<span class="sb-label">Inspeção</span>
       </a>
-      <a class="sb-subitem${a==='checklists-devolucao'?' on':''}" href="checklist-devolucao.html" target="_blank">
+      <a class="sb-subitem${a==='checklists-devolucao'?' on':''}" href="checklists-devolucao-lista.html">
         ${SVG.devol}<span class="sb-label">Devolução</span>
       </a>
     </div>
