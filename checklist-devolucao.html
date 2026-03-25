@@ -299,29 +299,29 @@ async function carregarDropdowns(){
   try{
     // Empresas
     const rCli = await fetch(
-      `${SURL}/rest/v1/clientes?select=id,nome&ativo=eq.true&order=nome.asc`,
-      {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY}}
+      `${SURL}/rest/v1/clientes?select=id,nome&order=nome.asc`,
+      {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY,'Content-Type':'application/json'}}
     )
     const clientes = await rCli.json()
     const selCli = document.getElementById('f-cliente')
     selCli.innerHTML = '<option value="">Selecione a empresa...</option>' +
       clientes.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('')
   }catch(e){
-    document.getElementById('f-cliente').innerHTML = '<option value="">Erro ao carregar</option>'
+    console.error('Erro clientes:', e); document.getElementById('f-cliente').innerHTML = '<option value="">Erro: '+e.message+'</option>'
   }
 
   try{
     // Responsáveis
     const rResp = await fetch(
-      `${SURL}/rest/v1/responsaveis?select=id,nome&ativo=eq.true&order=nome.asc`,
-      {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY}}
+      `${SURL}/rest/v1/responsaveis?select=id,nome&order=nome.asc`,
+      {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY,'Content-Type':'application/json'}}
     )
     const resps = await rResp.json()
     const selResp = document.getElementById('f-resp')
     selResp.innerHTML = '<option value="">Selecione o responsável...</option>' +
       resps.map(r=>`<option value="${r.id}">${r.nome}</option>`).join('')
   }catch(e){
-    document.getElementById('f-resp').innerHTML = '<option value="">Erro ao carregar</option>'
+    console.error('Erro responsaveis:', e); document.getElementById('f-resp').innerHTML = '<option value="">Erro: '+e.message+'</option>'
   }
 }
 
@@ -348,7 +348,7 @@ async function buscarSerial(){
     try{
       const r = await fetch(
         `${SURL}/rest/v1/vw_itens_completo?or=(serial.ilike.*${encodeURIComponent(q)}*,codigo_interno.ilike.*${encodeURIComponent(q)}*)&select=id,serial,codigo_interno,modelo,part_number&limit=8`,
-        {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY}}
+        {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY,'Content-Type':'application/json'}}
       )
       const data = await r.json()
       if(!data.length){

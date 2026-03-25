@@ -6,9 +6,6 @@
 <title>Checklists — Axis Inventory</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="theme.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
-<script src="sidebar.js"></script>
 <style>
 .content{flex:1;padding:20px;max-width:1200px;margin:0 auto;width:100%}
 .page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
@@ -104,6 +101,9 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 </div>
 <div class="lb" id="lb" onclick="closeLB()"><button class="lb-x" onclick="closeLB()">✕</button><img id="lb-img" src="" alt=""/></div>
 <div class="tc" id="tc"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script src="sidebar.js"></script>
 <script>
 const POR_PAG=24
 const fdt=iso=>{if(!iso)return"—";return new Date(iso).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"})}
@@ -178,11 +178,11 @@ const closeLB=()=>document.getElementById("lb").classList.remove("open")
 
 // Chamado pelo auth.js após autenticação
 async function onPostLogin() {
-  renderSidebar('checklists')
+  renderSidebar('checklists-inspecao')
   await carregar(true)
 }
 
-renderSidebar('checklists')
+renderSidebar('checklists-inspecao')
 initAuth()
 </script>
 </body>

@@ -309,3 +309,23 @@ tr:hover .acts{opacity:1}
 @media(max-width:1100px){.dash-grid{grid-template-columns:repeat(2,1fr)}.dash-row{grid-template-columns:1fr}}
 @media(max-width:800px){.col-resp,.col-pn{display:none}}
 @media(max-width:600px){.col-serial,.col-data{display:none}.frow{grid-template-columns:1fr}}
+
+/* ── SIDEBAR SUBMENU ── */
+.sb-item-parent{width:calc(100% - 16px);text-align:left;border:none;background:none;font-family:inherit;cursor:pointer}
+.sb-item-parent:hover{background:rgba(255,255,255,.07)!important;color:#fff!important}
+.sb-item-parent.on{background:rgba(46,107,230,.3)!important;color:#fff!important;font-weight:500!important}
+.sb-chevron{transition:transform .2s}
+.sb-chevron.open{transform:rotate(180deg)}
+.sb-submenu{overflow:hidden;max-height:0;transition:max-height .25s ease}
+.sb-submenu.open{max-height:120px}
+.sidebar.collapsed .sb-submenu{max-height:0!important}
+.sb-subitem{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 14px 8px 32px;margin:1px 8px;border-radius:7px;
+  cursor:pointer;white-space:nowrap;color:rgba(255,255,255,.45);
+  font-size:12px;font-weight:400;transition:all .15s;text-decoration:none;
+}
+.sb-subitem:hover{background:rgba(255,255,255,.07)!important;color:#fff!important}
+.sb-subitem.on{background:rgba(46,107,230,.2)!important;color:#fff!important;font-weight:500!important}
+.sb-subitem svg{flex-shrink:0;width:14px;height:14px}
+.sidebar.collapsed .sb-subitem .sb-label{opacity:0}
