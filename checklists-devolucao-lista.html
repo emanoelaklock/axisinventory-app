@@ -97,7 +97,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .foto-grid a img{width:120px;height:90px;object-fit:cover;display:block}
 
 /* Confirm delete overlay */
-.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.6);z-index:300;align-items:center;justify-content:center;padding:16px}
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.6);z-index:400;align-items:center;justify-content:center;padding:16px}
 .confirm-overlay.open{display:flex}
 .confirm-box{background:var(--sur);border-radius:14px;width:100%;max-width:380px;padding:28px 24px 20px;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center;animation:mup .18s ease}
 .confirm-icon{width:52px;height:52px;border-radius:50%;background:#FEF2F2;border:2px solid #FECACA;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px}
@@ -420,7 +420,7 @@ function abrirModal(id) {
 
   // Botão excluir só para Administrador
   var btnExc = document.getElementById('btn-excluir')
-  btnExc.style.display = (typeof PERFIL !== 'undefined' && PERFIL === 'Administrador') ? 'inline-flex' : 'none'
+  btnExc.style.display = (window.PERFIL && window.PERFIL.toLowerCase() === 'administrador') ? 'inline-flex' : 'none'
 
   var html = ''
 
@@ -508,19 +508,29 @@ async function executarExclusao() {
   btn.disabled = true
   btn.textContent = 'Excluindo...'
   try {
+    var hdrs = Object.assign({}, hAuth(), {'Prefer': 'return=representation'})
     var r = await fetch(
       SURL + '/rest/v1/checklists_devolucao?id=eq.' + modalIdAtual,
-      { method: 'DELETE', headers: hAuth() }
+      { method: 'DELETE', headers: hdrs }
     )
     chk401(r)
-    if (!r.ok) throw new Error((await r.json()).message || 'Erro ao excluir')
+    if (!r.ok) {
+      var errBody = {}
+      try { errBody = await r.json() } catch(x) {}
+      throw new Error(errBody.message || errBody.hint || ('Erro HTTP ' + r.status))
+    }
+    var deleted = await r.json()
+    if (!deleted || deleted.length === 0) {
+      throw new Error('Sem permissao para excluir. Adicione a RLS policy de DELETE na tabela checklists_devolucao no Supabase.')
+    }
     todosRows = todosRows.filter(function(x){ return String(x.id) !== String(modalIdAtual) })
     fecharConfirm()
     fecharModal()
     aplicarFiltros()
-    toast('Checklist excluído com sucesso.', 'ok')
+    toast('Checklist excluido com sucesso.', 'ok')
   } catch(e) {
-    toast('Erro ao excluir: ' + e.message, 'err')
+    fecharConfirm()
+    toast('Erro: ' + e.message, 'err')
   } finally {
     btn.disabled = false
     btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Sim, excluir'
