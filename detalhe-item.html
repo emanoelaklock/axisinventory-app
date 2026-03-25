@@ -1285,7 +1285,7 @@ const salvarCampo = async (campo) => {
   }
 }
 
-const fazerLogout = () => { SESSION=null; localStorage.removeItem('ax_sess'); location.href='lista-itens.html' }
+const fazerLogout = () => { SESSION=null; localStorage.removeItem('ax_sess'); location.href='dashboard.html' }
 let sidebarCollapsed = false
 const toggleSidebar = () => {
   sidebarCollapsed = !sidebarCollapsed
@@ -1308,7 +1308,7 @@ const switchTab = (tabId) => {
 const init = async () => {
   const autenticado = await carregarSessao()
   if (!autenticado) {
-    mostrarAcessoNegado()
+    location.href='dashboard.html'
     return
   }
   let id = location.hash.replace('#', '').trim()

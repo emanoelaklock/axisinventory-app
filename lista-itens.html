@@ -169,14 +169,12 @@ tr:hover .acts{opacity:1}
     </div>
   </div>
   <nav class="sb-nav">
-    <button class="sb-item on" id="nav-dash" onclick="showView('dash')">
+    <a class="sb-item" href="dashboard.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      <span class="sb-label">Dashboard</span>
-    </button>
-    <button class="sb-item" id="nav-itens" onclick="showView('itens')">
+      <span class="sb-label">Dashboard</span></a>
+    <a class="sb-item on" href="lista-itens.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span class="sb-label">Equipamentos</span>
-    </button>
+      <span class="sb-label">Equipamentos</span></a>
     <div class="sb-section">Registros</div>
     <button class="sb-item" onclick="location.href='movimentacoes.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -463,10 +461,10 @@ const posLogin=async()=>{
   document.getElementById('login-screen').style.display='none'
   document.getElementById('app-screen').style.display='block'
   document.querySelector('.sidebar').style.display='flex'
-  showView('dash')
-  await Promise.all([carregarDropdowns(),carregarItens(),carregarDashboard()])
+  showView('itens')
+  await Promise.all([carregarDropdowns(),carregarItens()])
 }
-const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');document.getElementById('app-screen').style.display='none';document.getElementById('login-screen').style.display='block'}
+const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');location.href='dashboard.html'}
 
 // DASHBOARD
 const SM_COLOR={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Em Demonstração':'#0D9488','Em Demonstração':'#0D9488','Aguardando Inspeção':'#2E6BE6','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
@@ -601,7 +599,7 @@ const init=async()=>{
   document.querySelector('.sidebar').style.display='none'
   const saved=localStorage.getItem('ax_sess')
   if(saved){try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}localStorage.removeItem('ax_sess');SESSION=null}
-  document.getElementById('login-screen').style.display='block'
+  location.href='dashboard.html'
 }
 init()
 </script>

@@ -344,7 +344,7 @@ function toggleSidebar(){
   const a=document.getElementById('sb-arrow')
   a.innerHTML=sidebarCollapsed?'<polyline points="9 18 15 12 9 6"/>':'<polyline points="15 18 9 12 15 6"/>'
 }
-const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');location.reload()}
+const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');location.href='dashboard.html'}
 const init=async()=>{
   document.querySelector('.sidebar').style.display='none'
   const saved=localStorage.getItem("ax_sess")

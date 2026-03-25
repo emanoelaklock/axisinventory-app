@@ -597,7 +597,7 @@ function toggleSidebar(){
   const a=document.getElementById('sb-arrow')
   a.innerHTML=sidebarCollapsed?'<polyline points="9 18 15 12 9 6"/>':'<polyline points="15 18 9 12 15 6"/>'
 }
-const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');location.reload()}
+const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');location.href='dashboard.html'}
 
 const init=async()=>{
   document.querySelector('.sidebar').style.display='none'
@@ -606,7 +606,7 @@ const init=async()=>{
     try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}
     localStorage.removeItem('ax_sess');SESSION=null
   }
-  document.getElementById('login-screen').style.display='block'
+  location.href='dashboard.html'
 }
 init()
 </script>
