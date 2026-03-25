@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Checklist de Devolução — Axis Inventory</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2A4A;--blue:#2E6BE6;--bg:#F4F6FA;--sur:#fff;
+  --bd:#E3E8F0;--tx:#1B2A4A;--tx2:#4A5568;--tx3:#8A9BBB;
+  --gr:#059669;--re:#DC2626;--am:#D97706;
+  --r:12px;--mono:'Courier New',monospace;
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding-bottom:40px}
+
+/* HEADER */
+.header{background:var(--navy);padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
+.header-logo{width:36px;height:36px;border-radius:9px;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.header-logo svg{width:18px;height:18px}
+.header h1{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.header p{font-size:11px;color:rgba(255,255,255,.5);margin-top:1px}
+
+/* CONTAINER */
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+
+/* CARD / SECTION */
+.card{background:#fff;border:1.5px solid #dde2ef;border-radius:14px;overflow:hidden;margin-bottom:12px}
+.card-head{padding:14px 18px;border-bottom:1px solid #dde2ef;background:#FAFBFD}
+.card-head h2{font-size:10px;font-weight:800;color:#1B2A4A;text-transform:uppercase;letter-spacing:.08em}
+.card-body{padding:16px}
+
+/* CAMPO */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg:last-child{margin-bottom:0}
+.fg label{font-size:10px;font-weight:800;color:#8e96b0;text-transform:uppercase;letter-spacing:.07em}
+.fg input,.fg select,.fg textarea{padding:10px 13px;border:1.5px solid #dde2ef;border-radius:9px;font-family:inherit;font-size:14px;color:#1B2A4A;background:#f8f9fe;outline:none;transition:border .15s;width:100%;-webkit-appearance:none;appearance:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#2E6BE6;box-shadow:0 0 0 3px rgba(46,107,230,.08);background:#fff}
+.fg textarea{resize:vertical;min-height:80px;line-height:1.5}
+.fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238A9BBB' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.fg input[readonly]{background:#F8FAFC;color:var(--tx2)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:400px){.frow{grid-template-columns:1fr}}
+
+/* SERIAL AUTOCOMPLETE */
+.serial-wrap{position:relative}
+.ac-results{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:9px;border-top:none;border-top-left-radius:0;border-top-right-radius:0;z-index:100;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(27,42,74,.12)}
+.ac-item{padding:11px 13px;cursor:pointer;border-bottom:1px solid var(--bd);font-size:13px}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover{background:var(--bg)}
+.ac-item .ac-serial{font-weight:700;color:var(--tx);font-family:var(--mono);font-size:13px}
+.ac-item .ac-modelo{font-size:12px;color:var(--tx3);margin-top:2px}
+.serial-found{border-color:var(--gr)!important;background:#F0FDF4!important}
+
+/* OPÇÕES (Incluso / Não incluso / Danificado / N/A) */
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.opt{padding:7px 14px;border-radius:20px;border:1.5px solid #dde2ef;background:#f8f9fe;font-size:13px;cursor:pointer;font-weight:500;color:#4a5470;transition:all .15s;user-select:none}
+.opt:hover{border-color:#1B2A4A;color:#1B2A4A}
+.opt.on{background:#1B2A4A;color:#fff;border-color:#1B2A4A;font-weight:700}
+.opt.on.warn{background:#D97706;color:#fff;border-color:#D97706;font-weight:700}
+.opt.on.bad{background:#DC2626;color:#fff;border-color:#DC2626;font-weight:700}
+input[type=hidden]{display:none}
+
+/* FOTOS */
+.fotos{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.fslot{
+  width:calc(33% - 7px);aspect-ratio:1;min-width:90px;max-width:130px;
+  border:2px dashed var(--bd);border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;background:#F8FAFC;position:relative;overflow:hidden;transition:all .15s;
+}
+.fslot:hover{border-color:var(--blue);background:#EFF6FF}
+.fslot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px}
+.fslot .rm{
+  display:none;position:absolute;top:4px;right:4px;
+  width:22px;height:22px;background:rgba(0,0,0,.6);
+  border-radius:50%;color:#fff;font-size:12px;
+  align-items:center;justify-content:center;cursor:pointer;
+}
+.fslot:has(img) .rm{display:flex}
+.fslot span{pointer-events:none}
+
+/* MENSAGENS */
+.msg{display:none;padding:12px 14px;border-radius:9px;font-size:14px;font-weight:500;margin-bottom:12px;text-align:center}
+.msg.ok{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;display:block}
+.msg.err{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;display:block}
+.msg.info{background:#EFF6FF;color:var(--blue);border:1px solid #BFDBFE;display:block}
+
+/* BOTÃO */
+.btn-submit{width:100%;padding:14px;border:none;border-radius:12px;background:#1B2A4A;color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:-.01em;margin-top:4px}
+.btn-submit:hover{background:#2E6BE6}
+.btn-submit:active{transform:scale(.98)}
+.btn-submit:disabled{opacity:.5;cursor:default}
+
+/* SUCESSO */
+.success-screen{display:none;text-align:center;padding:48px 20px}
+.success-icon{width:72px;height:72px;border-radius:50%;background:#F0FDF4;border:2px solid #BBF7D0;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px}
+.success-screen h2{font-size:22px;font-weight:700;color:var(--tx);margin-bottom:8px}
+.success-screen p{font-size:14px;color:var(--tx3);line-height:1.6}
+.btn-novo{margin-top:24px;padding:12px 28px;border:2px solid var(--blue);border-radius:var(--r);background:#fff;color:var(--blue);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+      <path d="M2 17l10 5 10-5"/>
+      <path d="M2 12l10 5 10-5"/>
+    </svg>
+  </div>
+  <div>
+    <h1>Checklist de Devolução</h1>
+    <p>Axis Inventory · Preenchimento via mobile</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div id="msg" class="msg"></div>
+
+  <!-- FORMULÁRIO -->
+  <div id="form-screen">
+
+    <!-- IDENTIFICAÇÃO -->
+    <div class="card">
+      <div class="card-head"><h2>Identificação</h2></div>
+      <div class="card-body">
+        <div class="frow">
+          <div class="fg">
+            <label>Data *</label>
+            <input type="date" id="f-data"/>
+          </div>
+          <div class="fg">
+            <label>Empresa *</label>
+            <select id="f-cliente">
+              <option value="">Carregando...</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Tipo de equipamento *</label>
+          <select id="f-tipo">
+            <option value="">Selecione...</option>
+            <option>Câmera</option>
+            <option>Intercom</option>
+            <option>Controle de Acesso</option>
+            <option>Áudio</option>
+            <option>Wearable</option>
+            <option>Acessório</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Número de série *</label>
+          <div class="serial-wrap">
+            <input type="text" id="f-serial" placeholder="Digite o serial para buscar..." oninput="buscarSerial()" autocomplete="off"/>
+            <div class="ac-results" id="serial-results"></div>
+          </div>
+          <input type="hidden" id="f-item-id"/>
+        </div>
+        <div class="fg">
+          <label>Modelo</label>
+          <input type="text" id="f-modelo" placeholder="Preenchido automaticamente ao selecionar o serial" readonly/>
+        </div>
+        <div class="fg">
+          <label>Observação / Defeito relatado</label>
+          <textarea id="f-obs" placeholder="Descreva o motivo da devolução, defeitos ou observações relevantes..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACESSÓRIOS E COMPONENTES -->
+    <div class="card">
+      <div class="card-head"><h2>Acessórios e Componentes</h2></div>
+      <div class="card-body">
+        <div class="fg">
+          <label>Weathershield / Tampa</label>
+          <div class="opts">
+            <span class="opt" onclick="selOpt(this,'ws')">Incluso</span>
+            <span class="opt" onclick="selOpt(this,'ws')">Não incluso</span>
+            <span class="opt warn" onclick="selOpt(this,'ws')">Danificado</span>
+            <span class="opt" onclick="selOpt(this,'ws')">N/A</span>
+          </div>
+          <input type="hidden" id="ws-val"/>
+        </div>
+        <div class="fg">
+          <label>Suporte de Montagem</label>
+          <div class="opts">
+            <span class="opt" onclick="selOpt(this,'sup')">Incluso</span>
+            <span class="opt" onclick="selOpt(this,'sup')">Não incluso</span>
+            <span class="opt warn" onclick="selOpt(this,'sup')">Danificado</span>
+            <span class="opt" onclick="selOpt(this,'sup')">N/A</span>
+          </div>
+          <input type="hidden" id="sup-val"/>
+        </div>
+        <div class="fg">
+          <label>Cabo de Alimentação / PoE</label>
+          <div class="opts">
+            <span class="opt" onclick="selOpt(this,'cabo')">Incluso</span>
+            <span class="opt" onclick="selOpt(this,'cabo')">Não incluso</span>
+            <span class="opt warn" onclick="selOpt(this,'cabo')">Danificado</span>
+            <span class="opt" onclick="selOpt(this,'cabo')">N/A</span>
+          </div>
+          <input type="hidden" id="cabo-val"/>
+        </div>
+        <div class="fg">
+          <label>Conector / Plug</label>
+          <div class="opts">
+            <span class="opt" onclick="selOpt(this,'plug')">Incluso</span>
+            <span class="opt" onclick="selOpt(this,'plug')">Não incluso</span>
+            <span class="opt warn" onclick="selOpt(this,'plug')">Danificado</span>
+            <span class="opt" onclick="selOpt(this,'plug')">N/A</span>
+          </div>
+          <input type="hidden" id="plug-val"/>
+        </div>
+        <div class="fg">
+          <label>Gasket / Vedação</label>
+          <div class="opts">
+            <span class="opt" onclick="selOpt(this,'gask')">Incluso</span>
+            <span class="opt" onclick="selOpt(this,'gask')">Não incluso</span>
+            <span class="opt warn" onclick="selOpt(this,'gask')">Danificado</span>
+            <span class="opt" onclick="selOpt(this,'gask')">N/A</span>
+          </div>
+          <input type="hidden" id="gask-val"/>
+        </div>
+        <div class="fg">
+          <label>Demais acessórios / Observação</label>
+          <textarea id="f-acess" placeholder="Descreva outros acessórios inclusos ou ausentes..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="card">
+      <div class="card-head"><h2>Fotos</h2></div>
+      <div class="card-body">
+        <p style="font-size:12px;color:var(--tx3);margin-bottom:12px">Foto frontal + etiqueta serial + eventuais danos visíveis.</p>
+        <div class="fotos">
+          <div class="fslot" id="fslot1" onclick="document.getElementById('fi1').click()">
+            <span style="font-size:26px">📷</span>
+            <span style="font-size:11px;color:var(--tx3);margin-top:4px">Foto 1</span>
+            <div class="rm" onclick="event.stopPropagation();rmFoto(1)">✕</div>
+          </div>
+          <div class="fslot" id="fslot2" onclick="document.getElementById('fi2').click()">
+            <span style="font-size:26px">📷</span>
+            <span style="font-size:11px;color:var(--tx3);margin-top:4px">Foto 2</span>
+            <div class="rm" onclick="event.stopPropagation();rmFoto(2)">✕</div>
+          </div>
+          <div class="fslot" id="fslot3" onclick="document.getElementById('fi3').click()">
+            <span style="font-size:26px">📷</span>
+            <span style="font-size:11px;color:var(--tx3);margin-top:4px">Foto 3</span>
+            <div class="rm" onclick="event.stopPropagation();rmFoto(3)">✕</div>
+          </div>
+        </div>
+        <input type="file" id="fi1" accept="image/*" capture="environment" style="display:none" onchange="carregarFoto(this,1)"/>
+        <input type="file" id="fi2" accept="image/*" capture="environment" style="display:none" onchange="carregarFoto(this,2)"/>
+        <input type="file" id="fi3" accept="image/*" capture="environment" style="display:none" onchange="carregarFoto(this,3)"/>
+      </div>
+    </div>
+
+    <!-- FINALIZAÇÃO -->
+    <div class="card">
+      <div class="card-head"><h2>Finalização</h2></div>
+      <div class="card-body">
+        <div class="fg">
+          <label>Responsável pelo preenchimento *</label>
+          <select id="f-resp">
+            <option value="">Carregando...</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="btn-enviar" onclick="enviar()">
+      Enviar Checklist
+    </button>
+
+  </div><!-- /form-screen -->
+
+  <!-- SUCESSO -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✅</div>
+    <h2>Checklist enviado!</h2>
+    <p>O checklist de devolução foi registrado com sucesso.<br>Obrigado pelo preenchimento.</p>
+    <button class="btn-novo" onclick="novoChecklist()">Preencher outro</button>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+const SURL = 'https://adbskoverysjohhwadln.supabase.co'
+const AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+
+
+// ── CARREGAR DROPDOWNS ──
+async function carregarDropdowns(){
+  try{
+    // Empresas
+    const rCli = await fetch(
+      `${SURL}/rest/v1/clientes?select=id,nome&ativo=eq.true&order=nome.asc`,
+      {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY}}
+    )
+    const clientes = await rCli.json()
+    const selCli = document.getElementById('f-cliente')
+    selCli.innerHTML = '<option value="">Selecione a empresa...</option>' +
+      clientes.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('')
+  }catch(e){
+    document.getElementById('f-cliente').innerHTML = '<option value="">Erro ao carregar</option>'
+  }
+
+  try{
+    // Responsáveis
+    const rResp = await fetch(
+      `${SURL}/rest/v1/responsaveis?select=id,nome&ativo=eq.true&order=nome.asc`,
+      {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY}}
+    )
+    const resps = await rResp.json()
+    const selResp = document.getElementById('f-resp')
+    selResp.innerHTML = '<option value="">Selecione o responsável...</option>' +
+      resps.map(r=>`<option value="${r.id}">${r.nome}</option>`).join('')
+  }catch(e){
+    document.getElementById('f-resp').innerHTML = '<option value="">Erro ao carregar</option>'
+  }
+}
+
+// Fotos
+const fotos = {1:null,2:null,3:null}
+
+// Setar data de hoje
+document.getElementById('f-data').valueAsDate = new Date()
+
+// Carregar dropdowns
+carregarDropdowns()
+
+// ── SERIAL AUTOCOMPLETE ──
+let stimer = null
+async function buscarSerial(){
+  const q = document.getElementById('f-serial').value.trim()
+  const res = document.getElementById('serial-results')
+  document.getElementById('f-item-id').value = ''
+  document.getElementById('f-modelo').value = ''
+  document.getElementById('f-serial').classList.remove('serial-found')
+  clearTimeout(stimer)
+  if(q.length < 2){ res.style.display='none'; return }
+  stimer = setTimeout(async()=>{
+    try{
+      const r = await fetch(
+        `${SURL}/rest/v1/vw_itens_completo?or=(serial.ilike.*${encodeURIComponent(q)}*,codigo_interno.ilike.*${encodeURIComponent(q)}*)&select=id,serial,codigo_interno,modelo,part_number&limit=8`,
+        {headers:{'apikey':AKEY,'Authorization':'Bearer '+AKEY}}
+      )
+      const data = await r.json()
+      if(!data.length){
+        res.innerHTML='<div style="padding:12px;font-size:13px;color:var(--tx3)">Nenhum equipamento encontrado</div>'
+        res.style.display='block'; return
+      }
+      res.innerHTML = data.map(d=>`
+        <div class="ac-item" onclick="selecionarItem('${d.id}','${(d.serial||d.codigo_interno||'').replace(/'/g,"\\'")}','${(d.modelo||'').replace(/'/g,"\\'")}')">
+          <div class="ac-serial">${d.serial||d.codigo_interno||'—'}</div>
+          <div class="ac-modelo">${d.modelo||''} ${d.part_number?'· '+d.part_number:''}</div>
+        </div>`).join('')
+      res.style.display='block'
+    }catch(e){
+      res.style.display='none'
+    }
+  }, 300)
+}
+
+function selecionarItem(id, serial, modelo){
+  document.getElementById('f-item-id').value = id
+  document.getElementById('f-serial').value = serial
+  document.getElementById('f-modelo').value = modelo
+  document.getElementById('f-serial').classList.add('serial-found')
+  document.getElementById('serial-results').style.display='none'
+}
+
+// Fechar autocomplete ao clicar fora
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.serial-wrap'))
+    document.getElementById('serial-results').style.display='none'
+})
+
+// ── OPÇÕES ──
+function selOpt(el, key){
+  el.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('on'))
+  el.classList.add('on')
+  document.getElementById(key+'-val').value = el.textContent
+}
+
+// ── FOTOS ──
+function carregarFoto(input, n){
+  const file = input.files[0]; if(!file) return
+  const reader = new FileReader()
+  reader.onload = ev => {
+    fotos[n] = ev.target.result
+    const slot = document.getElementById('fslot'+n)
+    slot.querySelectorAll('span').forEach(s=>s.style.display='none')
+    const img = document.createElement('img')
+    img.src = ev.target.result
+    slot.insertBefore(img, slot.firstChild)
+    slot.querySelector('.rm').style.display='flex'
+  }
+  reader.readAsDataURL(file)
+}
+function rmFoto(n){
+  fotos[n] = null
+  const slot = document.getElementById('fslot'+n)
+  const img = slot.querySelector('img')
+  if(img) img.remove()
+  slot.querySelectorAll('span').forEach(s=>s.style.display='')
+  slot.querySelector('.rm').style.display='none'
+  document.getElementById('fi'+n).value=''
+}
+
+// ── MENSAGEM ──
+function showMsg(txt, tipo){
+  const el = document.getElementById('msg')
+  el.textContent = txt
+  el.className = 'msg '+tipo
+  if(tipo !== 'err') setTimeout(()=>el.className='msg', 4000)
+  el.scrollIntoView({behavior:'smooth',block:'center'})
+}
+
+// ── ENVIAR ──
+async function enviar(){
+  const btn = document.getElementById('btn-enviar')
+
+  // Validar obrigatórios
+  const data    = document.getElementById('f-data').value
+  const cliente = document.getElementById('f-cliente').value.trim()
+  const tipo    = document.getElementById('f-tipo').value
+  const serial  = document.getElementById('f-serial').value.trim()
+  const resp    = document.getElementById('f-resp').value.trim()
+
+  if(!data || !cliente || !tipo || !serial || !resp){
+    showMsg('Preencha todos os campos obrigatórios: Data, Cliente, Tipo, Serial e Responsável.','err')
+    return
+  }
+
+  btn.disabled = true
+  btn.textContent = 'Enviando...'
+  showMsg('Salvando checklist...','info')
+
+  try{
+    const payload = {
+      data_checklist:       data,
+      cliente:              document.getElementById('f-cliente').options[document.getElementById('f-cliente').selectedIndex]?.text || cliente,
+      tipo_equipamento:     tipo,
+      serial:               serial,
+      item_id:              document.getElementById('f-item-id').value || null,
+      cliente_id:           document.getElementById('f-cliente').value || null,
+      responsavel_id:       document.getElementById('f-resp').value || null,
+      modelo:               document.getElementById('f-modelo').value.trim() || null,
+      observacoes:          document.getElementById('f-obs').value.trim() || null,
+      // Acessórios
+      weathershield:        document.getElementById('ws-val').value || null,
+      suporte_montagem:     document.getElementById('sup-val').value || null,
+      cabo_alimentacao:     document.getElementById('cabo-val').value || null,
+      conector_plug:        document.getElementById('plug-val').value || null,
+      gasket_vedacao:       document.getElementById('gask-val').value || null,
+      demais_acessorios:    document.getElementById('f-acess').value.trim() || null,
+      // Fotos
+      foto_1: fotos[1] || null,
+      foto_2: fotos[2] || null,
+      foto_3: fotos[3] || null,
+      // Responsável
+      responsavel:          document.getElementById('f-resp').options[document.getElementById('f-resp').selectedIndex]?.text || resp,
+      origem:               'qrcode_mobile',
+    }
+
+    // 1. Salvar na tabela de checklists
+    const r = await fetch(`${SURL}/rest/v1/checklists_devolucao`, {
+      method: 'POST',
+      headers: {
+        'apikey': AKEY,
+        'Authorization': 'Bearer '+AKEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if(!r.ok){
+      const err = await r.json().catch(()=>({}))
+      throw new Error(err?.message || err?.hint || `Erro ${r.status}`)
+    }
+
+    // 2. Se há item_id, salvar fotos + resumo como anexos no detalhe-item
+    const itemId = document.getElementById('f-item-id').value
+    if(itemId){
+      const headers = {
+        'apikey': AKEY,
+        'Authorization': 'Bearer '+AKEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      }
+
+      // Salvar fotos como anexos
+      for(let n=1;n<=3;n++){
+        if(fotos[n]){
+          await fetch(`${SURL}/rest/v1/anexos`, {
+            method: 'POST', headers,
+            body: JSON.stringify({
+              item_id: itemId,
+              arquivo: fotos[n],
+              tipo: 'imagem',
+              usuario_id: null
+            })
+          }).catch(()=>{})
+        }
+      }
+
+      // Salvar resumo do checklist como anexo texto
+      const nomeResp = document.getElementById('f-resp').options[document.getElementById('f-resp').selectedIndex]?.text || resp
+      const nomeCli  = document.getElementById('f-cliente').options[document.getElementById('f-cliente').selectedIndex]?.text || cliente
+      const obs      = document.getElementById('f-obs').value.trim()
+      const acess    = [
+        document.getElementById('ws-val').value   ? `Weathershield: ${document.getElementById('ws-val').value}`   : null,
+        document.getElementById('sup-val').value  ? `Suporte: ${document.getElementById('sup-val').value}`         : null,
+        document.getElementById('cabo-val').value ? `Cabo: ${document.getElementById('cabo-val').value}`           : null,
+        document.getElementById('plug-val').value ? `Conector: ${document.getElementById('plug-val').value}`       : null,
+        document.getElementById('gask-val').value ? `Gasket: ${document.getElementById('gask-val').value}`         : null,
+      ].filter(Boolean).join(' | ')
+
+      const resumo = [
+        `📋 CHECKLIST DE DEVOLUÇÃO`,
+        `Data: ${data} | Empresa: ${nomeCli}`,
+        `Tipo: ${tipo} | Serial: ${serial}`,
+        obs   ? `Defeito/Obs: ${obs}` : null,
+        acess ? `Acessórios: ${acess}` : null,
+        `Responsável: ${nomeResp}`
+      ].filter(Boolean).join('
+')
+
+      // Salvar resumo como "data URI" de texto plain
+      const resumoB64 = 'data:text/plain;base64,' + btoa(unescape(encodeURIComponent(resumo)))
+      await fetch(`${SURL}/rest/v1/anexos`, {
+        method: 'POST', headers,
+        body: JSON.stringify({
+          item_id: itemId,
+          arquivo: resumoB64,
+          tipo: 'checklist_devolucao',
+          usuario_id: null
+        })
+      }).catch(()=>{})
+    }
+
+    // Sucesso
+    document.getElementById('form-screen').style.display = 'none'
+    document.getElementById('success-screen').style.display = 'block'
+    document.getElementById('msg').className = 'msg'
+    window.scrollTo({top:0,behavior:'smooth'})
+
+  }catch(e){
+    showMsg('Erro ao enviar: '+e.message,'err')
+  }finally{
+    btn.disabled = false
+    btn.textContent = 'Enviar Checklist'
+  }
+}
+
+// ── NOVO CHECKLIST ──
+function novoChecklist(){
+  document.getElementById('form-screen').style.display = 'block'
+  document.getElementById('success-screen').style.display = 'none'
+  document.getElementById('form-screen').reset?.()
+  // Reset manual
+  document.getElementById('f-data').valueAsDate = new Date()
+  document.getElementById('f-cliente').selectedIndex = 0
+  document.getElementById('f-tipo').value = ''
+  document.getElementById('f-serial').value = ''
+  document.getElementById('f-serial').classList.remove('serial-found')
+  document.getElementById('f-item-id').value = ''
+  document.getElementById('f-modelo').value = ''
+  document.getElementById('f-obs').value = ''
+  document.getElementById('f-acess').value = ''
+  document.getElementById('f-resp').selectedIndex = 0
+  ;['ws','sup','cabo','plug','gask'].forEach(k=>{
+    document.getElementById(k+'-val').value=''
+    document.querySelectorAll(`[onclick*="'${k}'"]`).forEach(o=>o.classList.remove('on'))
+  })
+  for(let n=1;n<=3;n++) rmFoto(n)
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+</script>
+</body>
+</html>

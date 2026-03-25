@@ -6,10 +6,7 @@
 <title>Detalhe do Item — Axis Inventory</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="theme.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="auth.js"></script>
-<script src="sidebar.js"></script>
 <style>
 .s-en{--c:#059669;--b:rgba(5,150,105,.1)}.s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)}.s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}.s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}.s-dm{--c:#0D9488;--b:rgba(13,148,136,.1)}.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}.s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--b);color:var(--c)}
@@ -461,6 +458,9 @@ body.has-sidebar{display:flex;min-height:100vh}
   <button class="lb-close" onclick="closeLB()">✕</button>
   <img id="lb-img" src="" alt=""/>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script src="sidebar.js"></script>
 <script>
 // ════════════════════════════════════════════════════════════
 // CONFIG
@@ -748,7 +748,17 @@ const carregarChecklists = async (id) => {
 // ════════════════════════════════════════════════════════════
 // ANEXOS
 // ════════════════════════════════════════════════════════════
-const TIPO_ICON = { imagem:'🖼️', pdf:'📄', outro:'📎' }
+
+const mostrarChecklist = (dataUri) => {
+  try {
+    const base64 = dataUri.split(',')[1]
+    const texto = decodeURIComponent(escape(atob(base64)))
+    alert(texto)
+  } catch(e) {
+    toast('Erro ao exibir checklist', 'err')
+  }
+}
+const TIPO_ICON = { imagem:'🖼️', pdf:'📄', checklist_devolucao:'📋', outro:'📎' }
 
 const carregarAnexos = async (id) => {
   const el = document.getElementById('anx-content')
@@ -767,7 +777,7 @@ const carregarAnexos = async (id) => {
         const thumb = isImg
           ? `<div class="anx-thumb" onclick="openLB('${a.arquivo.replace(/'/g,"\\'")}')"><img src="${a.arquivo}" alt="" loading="lazy"/></div>`
           : `<div class="anx-thumb" onclick="abrirAnexo('${a.id}')">${TIPO_ICON[a.tipo]||'📎'}</div>`
-        const label = isImg ? 'Imagem' : (a.tipo || 'Arquivo')
+        const label = isImg ? 'Imagem' : a.tipo === 'checklist_devolucao' ? 'Checklist Devolução' : a.tipo === 'pdf' ? 'PDF' : (a.tipo || 'Arquivo')
         const data  = fdt(a.data_upload)
         return `<div class="anx-card">
           ${thumb}
