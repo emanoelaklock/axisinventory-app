@@ -536,13 +536,12 @@ async function enviar(){
 
       const resumo = [
         'CHECKLIST DE DEVOLUCAO',
-        `Data: ${data} | Empresa: ${nomeCli}`,
-        `Tipo: ${tipo} | Serial: ${serial}`,
-        obs   ? `Defeito/Obs: ${obs}` : null,
-        acess ? `Acessórios: ${acess}` : null,
-        `Responsável: ${nomeResp}`
-      ].filter(Boolean).join('
-')
+        'Data: '+data+' | Empresa: '+nomeCli,
+        'Tipo: '+tipo+' | Serial: '+serial,
+        obs   ? 'Defeito/Obs: '+obs : null,
+        acess ? 'Acessorios: '+acess : null,
+        'Responsavel: '+nomeResp
+      ].filter(Boolean).join('\n')
 
       // Salvar resumo como "data URI" de texto plain
       const resumoB64 = 'data:text/plain;base64,' + btoa(unescape(encodeURIComponent(resumo)))
