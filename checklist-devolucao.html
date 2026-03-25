@@ -102,6 +102,14 @@ input[type=hidden]{display:none}
 
 </head>
 <body>
+<script>
+if (new URLSearchParams(window.location.search).get('modal') === '1') {
+  document.addEventListener('DOMContentLoaded', function() {
+    var h = document.querySelector('.header')
+    if (h) h.style.display = 'none'
+  })
+}
+</script>
 
 <div class="header">
   <div class="header-logo">
@@ -503,6 +511,13 @@ async function enviar(){
     document.getElementById('success-screen').style.display = 'block'
     document.getElementById('msg').className = 'msg'
     window.scrollTo({top:0,behavior:'smooth'})
+    // Se estiver dentro de um modal iframe, notifica o pai
+    var params = new URLSearchParams(window.location.search)
+    if (params.get('modal') === '1' && window.parent !== window) {
+      setTimeout(function() {
+        window.parent.postMessage({ type: 'checklist_saved' }, '*')
+      }, 900)
+    }
 
   }catch(e){
     showMsg('Erro ao enviar: '+e.message,'err')
