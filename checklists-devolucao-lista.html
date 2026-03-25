@@ -245,7 +245,7 @@ const fdt = iso => {
 
 const tipoBadge = t => {
   if (!t) return '<span style="color:var(--tx3)">--</span>'
-  const m = {'Câmera':['#dbeafe','#1d4ed8'],'Intercom':['#e0e7ff','#4338ca'],'Controle de Acesso':['#fef9c3','#854d0e'],'Áudio':['#dcfce7','#15803d'],'Wearable':['#fce7f3','#9d174d'],'Acessório':['#f3f4f6','#374151'],'Outro':['#f3f4f6','#374151']}
+  const m = {'C\u00e2mera':['#dbeafe','#1d4ed8'],'Intercom':['#e0e7ff','#4338ca'],'Controle de Acesso':['#fef9c3','#854d0e'],'\u00c1udio':['#dcfce7','#15803d'],'Wearable':['#fce7f3','#9d174d'],'Acess\u00f3rio':['#f3f4f6','#374151'],'Outro':['#f3f4f6','#374151']}
   const [bg,c] = m[t] || ['#f3f4f6','#374151']
   return `<span class="badge" style="background:${bg};color:${c}">${esc(t)}</span>`
 }
@@ -285,7 +285,7 @@ const renderTabela = () => {
   document.getElementById('pag').style.display = 'flex'
 }
 
-// -- PAGINAÇÃO -----------------------------------------------------
+// -- PAGINACAO -----------------------------------------------------
 const renderPag = () => {
   const total = Math.ceil(QS.total / POR_PAG)
   if (total <= 1) { document.getElementById('pag-ctrl').innerHTML=''; return }
@@ -315,7 +315,7 @@ const dotCls = v => {
   const s = v.toLowerCase()
   if (s==='incluso')                              return 'dot-ok'
   if (s==='danificado')                           return 'dot-warn'
-  if (s==='não incluso'||s==='nao incluso')       return 'dot-nok'
+  if (s==='n\u00e3o incluso'||s==='nao incluso')       return 'dot-nok'
   return 'dot-na'
 }
 
@@ -326,43 +326,49 @@ const da = (label, valor) =>
   `<div class="df"><label>${label}</label><div class="arow"><div class="dot ${dotCls(valor)}"></div><span>${valor ? esc(valor) : 'N/A'}</span></div></div>`
 
 function abrirModal(id) {
-  const r = todosRows.find(x => x.id === id)
+  var r = todosRows.find(function(x){ return x.id === id })
   if (!r) return
 
-  document.getElementById('modal-titulo').textContent = `${r.cliente||''}  -  ${fdt(r.data_checklist)}`
+  document.getElementById('modal-titulo').textContent = (r.cliente||'') + '  -  ' + fdt(r.data_checklist)
 
-  const fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
+  var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
 
-  document.getElementById('modal-corpo').innerHTML = `
-    <div class="ds">Identificação</div>
-    ${df('Data', fdt(r.data_checklist))}
-    ${df('Cliente', r.cliente)}
-    ${df('Tipo de Equipamento', r.tipo_equipamento)}
-    ${df('Modelo', r.modelo)}
-    ${df('Serial', r.serial)}
-    ${df('Responsável', r.responsavel)}
-    ${df('Origem', r.origem)}
-    ${df('Registrado em', r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : null)}
+  var html = ''
+  html += '<div class="ds">Identifica\u00e7\u00e3o</div>'
+  html += df('Data', fdt(r.data_checklist))
+  html += df('Cliente', r.cliente)
+  html += df('Tipo de Equipamento', r.tipo_equipamento)
+  html += df('Modelo', r.modelo)
+  html += df('Serial', r.serial)
+  html += df('Respons\u00e1vel', r.responsavel)
+  html += df('Origem', r.origem)
+  html += df('Registrado em', r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : null)
+  html += '<div class="ds">Acess\u00f3rios e Componentes</div>'
+  html += da('Weathershield / Tampa',     r.weathershield)
+  html += da('Suporte de Montagem',       r.suporte_montagem)
+  html += da('Cabo de Alimenta\u00e7\u00e3o / PoE', r.cabo_alimentacao)
+  html += da('Conector / Plug',           r.conector_plug)
+  html += da('Gasket / Veda\u00e7\u00e3o',          r.gasket_vedacao)
+  if (r.demais_acessorios) {
+    html += '<div class="df" style="grid-column:1/-1"><label>Demais Acess\u00f3rios</label>'
+    html += '<span style="white-space:pre-wrap">' + esc(r.demais_acessorios) + '</span></div>'
+  }
+  if (r.observacoes) {
+    html += '<div class="ds">Observa\u00e7\u00f5es / Defeito</div>'
+    html += '<div class="df" style="grid-column:1/-1"><label>Relato</label>'
+    html += '<span style="white-space:pre-wrap">' + esc(r.observacoes) + '</span></div>'
+  }
+  if (fotos.length) {
+    html += '<div class="ds">Fotos</div>'
+    html += '<div class="foto-grid">'
+    fotos.forEach(function(u, i) {
+      html += '<a href="' + u + '" target="_blank" rel="noopener">'
+      html += '<img src="' + u + '" alt="Foto ' + (i+1) + '" loading="lazy"/></a>'
+    })
+    html += '</div>'
+  }
 
-    <div class="ds">Acessórios e Componentes</div>
-    ${da('Weathershield / Tampa',      r.weathershield)}
-    ${da('Suporte de Montagem',        r.suporte_montagem)}
-    ${da('Cabo de Alimentação / PoE',  r.cabo_alimentacao)}
-    ${da('Conector / Plug',            r.conector_plug)}
-    ${da('Gasket / Vedação',           r.gasket_vedacao)}
-    ${r.demais_acessorios ? `<div class="df" style="grid-column:1/-1"><label>Demais Acessórios</label><span style="white-space:pre-wrap">${esc(r.demais_acessorios)}</span></div>` : ''}
-
-    ${r.observacoes ? `
-      <div class="ds">Observações / Defeito</div>
-      <div class="df" style="grid-column:1/-1"><label>Relato</label><span style="white-space:pre-wrap">${esc(r.observacoes)}</span></div>` : ''}
-
-    ${fotos.length ? `
-      <div class="ds">Fotos</div>
-      <div class="foto-grid">
-        ${fotos.map((u,i)=>`<a href="${u}" target="_blank" rel="noopener"><img src="${u}" alt="Foto ${i+1}" loading="lazy"/></a>`).join('')}
-      </div>` : ''}
-  `
-
+  document.getElementById('modal-corpo').innerHTML = html
   document.getElementById('overlay').classList.add('open')
   document.body.style.overflow = 'hidden'
 }
@@ -376,7 +382,7 @@ function fecharModalFora(e) {
   if (e.target === document.getElementById('overlay')) fecharModal()
 }
 
-// -- AUTH CALLBACK (padrão do projeto) ----------------------------
+// -- AUTH CALLBACK (padrao do projeto) ----------------------------
 async function onPostLogin() {
   renderSidebar('checklists-devolucao')
   await carregar()
