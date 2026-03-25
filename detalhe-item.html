@@ -10,10 +10,10 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;
-  --bd:#E2E6F0;--bd2:#C8CEDF;
-  --tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;
-  --ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;
+  --bg:#F8F5F2;--sur:#FFF;--sur2:#F3EDE8;
+  --bd:#E8DDD6;--bd2:#D4C5BA;
+  --tx:#1A1208;--tx2:#5C4A3A;--tx3:#9C8070;
+  --ac:#EA580C;--acl:#FFF4EE;--acm:#FED7AA;
   --gr:#059669;--am:#D97706;--re:#DC2626;--pu:#7C3AED;
   --sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);
   --shl:0 4px 32px rgba(15,21,35,.12);
@@ -95,7 +95,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:16px;box-shadow:var(--sh)}
 .btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
 .btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}
-.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#1D4ED8;border-color:#1D4ED8;color:#fff}
+.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#C2410C;border-color:#C2410C;color:#fff}
 .btn-g{background:#059669;border-color:#059669;color:#fff}.btn-g:hover{background:#047857;color:#fff}
 .btn-sm{padding:5px 10px;font-size:12px}
 .empty{text-align:center;padding:32px;color:var(--tx3);font-size:13px}
@@ -162,6 +162,36 @@ body.has-sidebar{display:flex;min-height:100vh}
 .sb-user-name{font-size:13px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sb-user-role{font-size:11px;color:var(--tx3);white-space:nowrap}
 .sb-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-y:auto;height:100vh}
+
+/* ── SIDEBAR DARK THEME ── */
+.sidebar{background:#1A1208!important;border-right:none!important;box-shadow:4px 0 24px rgba(26,18,8,.15)!important}
+.sb-brand{border-bottom:1px solid rgba(255,255,255,.08)!important}
+.sb-bottom{border-top:1px solid rgba(255,255,255,.08)!important}
+.sb-item{color:rgba(196,181,168,.8)!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#F8F5F2!important}
+.sb-item.on{background:rgba(234,88,12,.2)!important;color:#EA580C!important}
+.sb-section{color:rgba(196,181,168,.4)!important}
+.sb-user:hover{background:rgba(255,255,255,.06)!important}
+.sb-user-name{color:#F8F5F2!important}
+.sb-user-role{color:rgba(196,181,168,.6)!important}
+.sb-avatar{background:#EA580C!important;color:#fff!important}
+.sb-toggle{background:#2D1F12!important;border-color:rgba(255,255,255,.1)!important;color:rgba(196,181,168,.6)!important}
+.sb-toggle:hover{background:#3D2F22!important;color:#F8F5F2!important}
+.sb-brand-text{color:#EA580C!important}
+/* Topbar melhorada */
+.topbar{box-shadow:0 1px 0 var(--bd)!important}
+/* Tabela listras */
+tr:nth-child(even) td{background:rgba(26,18,8,.018)}
+tr:hover td{background:rgba(234,88,12,.04)!important}
+/* Stat card hover */
+.stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
+.stat-card:hover{border-top-color:#EA580C!important;transform:translateY(-2px)!important}
+/* Barras laranja */
+.cli-bar-fill{background:linear-gradient(90deg,#EA580C,#F97316)!important}
+/* btn-p */
+.btn-p{font-weight:600!important}
+.btn-p:hover{background:#C2410C!important;border-color:#C2410C!important}
+
 </style>
 </head>
 <body class="has-sidebar">
@@ -170,7 +200,7 @@ body.has-sidebar{display:flex;min-height:100vh}
     <svg id="sb-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
   <div class="sb-brand">
-    <div style="font-size:13px;font-weight:700;color:var(--ac);letter-spacing:-.01em">Axis Inventory</div>
+    <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:7px;background:#EA580C;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div style="font-size:13px;font-weight:700;color:#fff;letter-spacing:-.01em">Axis Inventory</div>
     <div style="font-size:10px;color:var(--tx3);font-weight:400;margin-top:1px">Gestão de equipamentos</div>
     
   </div>
@@ -180,6 +210,18 @@ body.has-sidebar{display:flex;min-height:100vh}
       <a class="sb-item" href="checklists.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="sb-label">Checklists</span></a>
       <div class="sb-section">Configurações</div>
       <a class="sb-item" href="configuracoes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="sb-label">Configurações</span></a>
+    <a class="sb-item" href="modelos.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span class="sb-label">Modelos</span>
+    </a>
+    <a class="sb-item" href="clientes.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="sb-label">Empresas</span>
+    </a>
+    <a class="sb-item" href="responsaveis.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="sb-label">Responsáveis</span>
+    </a>
   </nav>
   <div class="sb-bottom">
     <div class="sb-user" onclick="fazerLogout()" title="Sair">
@@ -428,7 +470,7 @@ body.has-sidebar{display:flex;min-height:100vh}
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Novo status *</label>
         <select id="m-status" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
-          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
           <option value="">Selecione o status…</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
@@ -446,7 +488,7 @@ body.has-sidebar{display:flex;min-height:100vh}
         </label>
         <select id="m-resp" multiple
           style="width:100%;padding:6px 4px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;min-height:100px;max-height:130px;transition:border .15s"
-          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
         </select>
         <div style="font-size:11px;color:#C8CEDF">Deixe vazio para manter o responsável atual</div>
@@ -454,7 +496,7 @@ body.has-sidebar{display:flex;min-height:100vh}
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Empresa</label>
         <select id="m-cli" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
-          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
           <option value="">— Manter atual —</option>
         </select>
@@ -463,22 +505,22 @@ body.has-sidebar{display:flex;min-height:100vh}
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Localização</label>
         <input id="m-local" placeholder="Ex: Almoxarifado Central"
           style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;transition:border .15s"
-          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"/>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Motivo</label>
         <textarea id="m-motivo" placeholder="Descreva o motivo da movimentação…"
           style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;resize:vertical;min-height:80px;transition:border .15s"
-          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></textarea>
       </div>
     </div>
     <div style="padding:14px 22px;border-top:1px solid #E2E6F0;display:flex;gap:8px;justify-content:flex-end;background:#FAFBFD">
       <button onclick="closeM('m-mov')" style="padding:9px 18px;border-radius:10px;border:1px solid #E2E6F0;background:#fff;color:#4A5470;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer"
         onmouseover="this.style.background='#F0F2F8'" onmouseout="this.style.background='#fff'">Cancelar</button>
-      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#2563EB;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px"
-        onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
+      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#EA580C;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px"
+        onmouseover="this.style.background='#C2410C'" onmouseout="this.style.background='#EA580C'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         Registrar
       </button>

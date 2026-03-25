@@ -11,55 +11,57 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;
-  --bd:#E2E6F0;--bd2:#C8CEDF;
-  --tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;
-  --ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;
+  --bg:#F8F5F2;--sur:#FFF;--sur2:#F3EDE8;
+  --bd:#E8DDD6;--bd2:#D4C5BA;
+  --tx:#1A1208;--tx2:#5C4A3A;--tx3:#9C8070;
+  --ac:#EA580C;--acl:#FFF4EE;--acm:#FED7AA;
   --gr:#059669;--am:#D97706;--re:#DC2626;
-  --sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);
-  --shl:0 4px 32px rgba(15,21,35,.12);
+  --sh:0 1px 3px rgba(26,18,8,.06),0 4px 16px rgba(26,18,8,.04);
+  --shl:0 4px 32px rgba(26,18,8,.14);
   --r:10px;--mono:'IBM Plex Mono',monospace;
-  --sb:220px;--sb-col:56px;
+  --sb:240px;--sb-col:60px;
+  --sb-bg:#1A1208;--sb-tx:#C4B5A8;--sb-tx2:#F8F5F2;--sb-bd:rgba(255,255,255,.08);
+  --sb-hover:rgba(255,255,255,.06);--sb-on:rgba(234,88,12,.2);
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;display:flex}
-.sidebar{width:var(--sb);min-width:var(--sb);height:100vh;background:var(--sur);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;z-index:100;transition:width .2s ease,min-width .2s ease;overflow:hidden}
+.sidebar{width:var(--sb);min-width:var(--sb);height:100vh;background:var(--sb-bg);border-right:none;display:flex;flex-direction:column;position:sticky;top:0;z-index:100;transition:width .2s ease,min-width .2s ease;overflow:hidden;box-shadow:4px 0 24px rgba(26,18,8,.15)}
 .sidebar.collapsed{width:var(--sb-col);min-width:var(--sb-col)}
-.sb-brand{height:56px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--bd);flex-shrink:0;white-space:nowrap;overflow:hidden}
+.sb-brand{height:64px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--sb-bd);flex-shrink:0;white-space:nowrap;overflow:hidden}
 .sb-icon{width:28px;height:28px;border-radius:8px;background:var(--acl);color:var(--ac);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sb-brand-text{font-size:13px;font-weight:700;color:var(--ac);opacity:1;transition:opacity .15s}
+.sb-brand-text{font-size:13px;font-weight:700;color:#EA580C;opacity:1;transition:opacity .15s}
 .sidebar.collapsed .sb-brand-text{opacity:0;pointer-events:none}
-.sb-toggle{position:absolute;top:14px;right:-12px;width:24px;height:24px;border-radius:50%;background:var(--sur);border:1px solid var(--bd);color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;z-index:10}
-.sb-toggle:hover{background:var(--sur2);color:var(--tx)}
+.sb-toggle{position:absolute;top:18px;right:-12px;width:24px;height:24px;border-radius:50%;background:#2D1F12;border:1px solid var(--sb-bd);color:var(--sb-tx);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;z-index:10}
+.sb-toggle:hover{background:#3D2F22;color:var(--sb-tx2)}
 .sb-nav{flex:1;padding:8px 0;overflow-y:auto;overflow-x:hidden}
-.sb-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;border-radius:8px;cursor:pointer;white-space:nowrap;color:var(--tx2);font-size:13px;font-weight:500;transition:all .15s;text-decoration:none;border:none;background:none;font-family:inherit;width:calc(100% - 16px);text-align:left}
-.sb-item:hover{background:var(--sur2);color:var(--tx)}
-.sb-item.on{background:var(--acl);color:var(--ac)}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:8px;cursor:pointer;white-space:nowrap;color:var(--sb-tx);font-size:13px;font-weight:500;transition:all .15s;text-decoration:none;border:none;background:none;font-family:inherit;width:calc(100% - 16px);text-align:left}
+.sb-item:hover{background:var(--sb-hover);color:var(--sb-tx2)}
+.sb-item.on{background:var(--sb-on);color:#EA580C}
 .sb-item svg{flex-shrink:0;width:16px;height:16px}
 .sb-label{opacity:1;transition:opacity .15s;overflow:hidden}
 .sidebar.collapsed .sb-label{opacity:0;pointer-events:none}
-.sb-section{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;padding:12px 22px 4px;white-space:nowrap;opacity:1;transition:opacity .15s}
+.sb-section{font-size:10px;font-weight:700;color:rgba(196,181,168,.5);text-transform:uppercase;letter-spacing:.07em;padding:12px 22px 4px;white-space:nowrap;opacity:1;transition:opacity .15s}
 .sidebar.collapsed .sb-section{opacity:0}
-.sb-bottom{padding:12px 8px;border-top:1px solid var(--bd);flex-shrink:0}
+.sb-bottom{padding:12px 8px;border-top:1px solid var(--sb-bd);flex-shrink:0}
 .sb-user{display:flex;align-items:center;gap:9px;padding:8px 6px;border-radius:8px;cursor:pointer;transition:background .15s;overflow:hidden}
-.sb-user:hover{background:var(--sur2)}
-.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--acl);color:var(--ac);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-user:hover{background:var(--sb-hover)}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:#EA580C;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sb-user-info{overflow:hidden;opacity:1;transition:opacity .15s}
 .sidebar.collapsed .sb-user-info{opacity:0}
-.sb-user-name{font-size:13px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-user-role{font-size:11px;color:var(--tx3);white-space:nowrap}
+.sb-user-name{font-size:13px;font-weight:500;color:var(--sb-tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-user-role{font-size:11px;color:var(--sb-tx);white-space:nowrap}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow-y:auto}
-.topbar{height:56px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:12px;flex-shrink:0}
-.topbar-title{font-size:16px;font-weight:600;color:var(--tx);letter-spacing:-.01em}
+.topbar{height:60px;background:var(--sur);border-bottom:1px solid var(--bd);padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:12px;flex-shrink:0;box-shadow:0 1px 0 var(--bd)}
+.topbar-title{font-size:17px;font-weight:700;color:var(--tx);letter-spacing:-.02em}
 .topbar-r{display:flex;align-items:center;gap:8px}
 .content{flex:1;padding:24px}
 .s-en{--c:#059669;--b:rgba(5,150,105,.1)}.s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)}.s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}.s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}.s-dm{--c:#0D9488;--b:rgba(13,148,136,.1)}.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}.s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;background:var(--b);color:var(--c)}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--c);flex-shrink:0}
 .dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat-card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;box-shadow:var(--sh);cursor:pointer;transition:all .15s}
-.stat-card:hover{box-shadow:var(--shl);border-color:var(--bd2);transform:translateY(-1px)}
+.stat-card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:18px 20px;box-shadow:var(--sh);cursor:pointer;transition:all .2s;border-top:3px solid transparent}
+.stat-card:hover{box-shadow:var(--shl);border-top-color:var(--ac);transform:translateY(-2px)}
 .stat-label{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
-.stat-val{font-size:28px;font-weight:700;color:var(--tx);letter-spacing:-.02em;line-height:1}
+.stat-val{font-size:32px;font-weight:700;color:var(--tx);letter-spacing:-.03em;line-height:1}
 .stat-sub{font-size:12px;color:var(--tx3);margin-top:4px}
 .stat-icon{float:right;font-size:20px;margin-top:-2px}
 .dash-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
@@ -82,7 +84,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .cli-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .cli-bar-label{font-size:12px;color:var(--tx2);width:130px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cli-bar-track{flex:1;height:8px;background:var(--sur2);border-radius:4px;overflow:hidden}
-.cli-bar-fill{height:100%;border-radius:4px;background:var(--ac);transition:width .4s ease}
+.cli-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ac),#F97316);transition:width .4s ease}
 .cli-bar-val{font-size:12px;color:var(--tx3);width:36px;text-align:right;flex-shrink:0}
 .toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .toolbar-l{display:flex;align-items:center;gap:6px;flex:1;min-width:0;flex-wrap:wrap}
@@ -93,10 +95,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .sinput:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acl)}
 .sinput::placeholder{color:var(--tx3)}
 .fsel{padding:7px 26px 7px 9px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sur) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center;font-family:inherit;font-size:13px;color:var(--tx2);outline:none;cursor:pointer;appearance:none;transition:border .15s;min-width:110px}
-.fsel:focus{border-color:var(--ac)}.fsel.on{border-color:var(--ac);background-color:var(--acl);color:var(--ac)}
+.fsel:focus{border-color:var(--ac)}.fsel.on{border-color:var(--ac);background-color:var(--acl);color:var(--ac);font-weight:500}
 .cbadge{font-size:12px;font-weight:600;color:var(--tx3);padding:3px 9px;border-radius:20px;background:var(--sur2);white-space:nowrap}
 .btn{padding:7px 13px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
-.btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#1D4ED8;border-color:#1D4ED8;color:#fff}.btn-sm{padding:5px 9px;font-size:12px}.btn:disabled{opacity:.4;cursor:default}
+.btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}.btn-p{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}.btn-p:hover{background:#C2410C;border-color:#C2410C;color:#fff}.btn-sm{padding:5px 9px;font-size:12px}.btn:disabled{opacity:.4;cursor:default}
 .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
 .chip{display:inline-flex;align-items:center;gap:5px;padding:3px 8px 3px 9px;border-radius:20px;font-size:12px;font-weight:500;background:var(--acl);color:var(--ac);border:1px solid var(--acm)}
 .chip-x{width:15px;height:15px;border-radius:50%;border:none;background:var(--acm);color:var(--ac);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;padding:0;transition:all .15s}
@@ -109,18 +111,19 @@ th:hover{color:var(--tx2)}
 td{padding:11px 13px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
 td:first-child{color:var(--tx);font-weight:500}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(37,99,235,.015)}
+tr:nth-child(even) td{background:rgba(26,18,8,.018)}
+tr:hover td{background:rgba(234,88,12,.04)!important}
 .mono{font-family:var(--mono);font-size:12px}.dim{color:var(--tx3);font-size:12px}
 .acts{display:flex;gap:3px;opacity:0;transition:opacity .15s}
 tr:hover .acts{opacity:1}
 .ab{padding:4px 8px;border-radius:6px;border:1px solid transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
-.ab-v{color:var(--ac);background:var(--acl);border-color:var(--acm)}.ab-v:hover{background:var(--ac);color:#fff}
+.ab-v{color:var(--ac);background:var(--acl);border-color:var(--acm);font-weight:600}.ab-v:hover{background:var(--ac);color:#fff}
 .ab-m{color:#059669;background:rgba(5,150,105,.08);border-color:rgba(5,150,105,.2)}.ab-m:hover{background:#059669;color:#fff}
 .ab-c{color:#D97706;background:rgba(217,119,6,.08);border-color:rgba(217,119,6,.2)}.ab-c:hover{background:#D97706;color:#fff}
 .pag{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--bd);flex-wrap:wrap;gap:6px}
 .pag-info{font-size:12px;color:var(--tx3)}.pag-ctrl{display:flex;align-items:center;gap:3px}
 .pb{width:29px;height:29px;border-radius:7px;border:1px solid var(--bd);background:var(--sur);color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;font-family:inherit;font-weight:500}
-.pb:hover:not(:disabled){background:var(--sur2);color:var(--tx)}.pb:disabled{opacity:.3;cursor:default}.pb.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.pb:hover:not(:disabled){background:var(--sur2);color:var(--tx)}.pb:disabled{opacity:.3;cursor:default}.pb.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
 .state-row td{text-align:center;padding:52px 20px;color:var(--tx3)}
 .state-icon{font-size:28px;margin-bottom:8px}.state-t{font-size:14px;font-weight:600;color:var(--tx2);margin-bottom:3px}.state-s{font-size:12px;color:var(--tx3)}
 .sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bd) 50%,var(--sur2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;height:13px;display:inline-block}
@@ -146,7 +149,7 @@ tr:hover .acts{opacity:1}
 @media(max-width:800px){.col-resp,.col-pn{display:none}}
 @media(max-width:600px){.col-serial,.col-data{display:none}.search-wrap{max-width:none;min-width:0}}
 
-.sidebar.collapsed .sidebar.collapsed </style>
+</style>
 </head>
 <body>
 <!-- SIDEBAR -->
@@ -155,8 +158,15 @@ tr:hover .acts{opacity:1}
     <svg id="sb-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
   <div class="sb-brand">
-    <div style="font-size:13px;font-weight:700;color:var(--ac);letter-spacing:-.01em">Axis Inventory</div>
-    <div style="font-size:10px;color:var(--tx3);font-weight:400;margin-top:1px">Gestão de equipamentos</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:30px;height:30px;border-radius:8px;background:#EA580C;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#fff;letter-spacing:-.01em">Axis Inventory</div>
+        <div style="font-size:10px;color:rgba(196,181,168,.6);font-weight:400;margin-top:1px">Gestão de equipamentos</div>
+      </div>
+    </div>
   </div>
   <nav class="sb-nav">
     <button class="sb-item on" id="nav-dash" onclick="showView('dash')">
@@ -181,6 +191,18 @@ tr:hover .acts{opacity:1}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span class="sb-label">Configurações</span>
     </button>
+    <a class="sb-item" href="modelos.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span class="sb-label">Modelos</span>
+    </a>
+    <a class="sb-item" href="clientes.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="sb-label">Empresas</span>
+    </a>
+    <a class="sb-item" href="responsaveis.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="sb-label">Responsáveis</span>
+    </a>
   </nav>
   <div class="sb-bottom">
     <div class="sb-user" onclick="fazerLogout()" title="Sair">
@@ -325,32 +347,32 @@ tr:hover .acts{opacity:1}
       <div class="msg-box" id="m-msg"></div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Novo status *</label>
-        <select id="m-status" class="fg-sel-modal" onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+        <select id="m-status" class="fg-sel-modal" onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
           <option value="">Selecione o status…</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option><option>Vendido</option><option>Com Técnico</option><option>Locado</option><option>Em Demonstração</option><option>Aguardando Inspeção</option><option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option><option>Sucata</option>
         </select>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Novo Responsável <span style="font-size:10px;color:#C8CEDF;font-weight:400;text-transform:none"> · Ctrl/Cmd para múltiplos</span></label>
-        <select id="m-resp-select" multiple style="width:100%;padding:6px 4px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;min-height:90px;max-height:120px;transition:border .15s" onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></select>
+        <select id="m-resp-select" multiple style="width:100%;padding:6px 4px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;min-height:90px;max-height:120px;transition:border .15s" onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></select>
         <div style="font-size:11px;color:#C8CEDF">Deixe vazio para manter o responsável atual</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Empresa</label>
-        <select id="m-cli" class="fg-sel-modal" onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"><option value="">— Manter atual —</option></select>
+        <select id="m-cli" class="fg-sel-modal" onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"><option value="">— Manter atual —</option></select>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Localização</label>
-        <input id="m-local" placeholder="Ex: Almoxarifado Central" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;transition:border .15s" onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"/>
+        <input id="m-local" placeholder="Ex: Almoxarifado Central" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;transition:border .15s" onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"/>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Motivo</label>
-        <textarea id="m-motivo" placeholder="Descreva o motivo da movimentação…" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;resize:vertical;min-height:72px;transition:border .15s" onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></textarea>
+        <textarea id="m-motivo" placeholder="Descreva o motivo da movimentação…" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;resize:vertical;min-height:72px;transition:border .15s" onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #EFF4FF'" onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></textarea>
       </div>
     </div>
     <div style="padding:14px 22px;border-top:1px solid #E2E6F0;display:flex;gap:8px;justify-content:flex-end;background:#FAFBFD">
       <button onclick="closeM('m-mov')" style="padding:9px 18px;border-radius:10px;border:1px solid #E2E6F0;background:#fff;color:#4A5470;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer" onmouseover="this.style.background='#F0F2F8'" onmouseout="this.style.background='#fff'">Cancelar</button>
-      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#2563EB;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px" onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
+      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#EA580C;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px" onmouseover="this.style.background='#C2410C'" onmouseout="this.style.background='#EA580C'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Registrar
       </button>
     </div>

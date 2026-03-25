@@ -10,10 +10,10 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;
-  --bd:#E2E6F0;--bd2:#C8CEDF;
-  --tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;
-  --ac:#2563EB;--acl:#EFF4FF;--acm:#BFCFFF;
+  --bg:#F8F5F2;--sur:#FFF;--sur2:#F3EDE8;
+  --bd:#E8DDD6;--bd2:#D4C5BA;
+  --tx:#1A1208;--tx2:#5C4A3A;--tx3:#9C8070;
+  --ac:#EA580C;--acl:#FFF4EE;--acm:#FED7AA;
   --gr:#059669;--am:#D97706;--re:#DC2626;
   --sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);
   --shl:0 4px 32px rgba(15,21,35,.12);
@@ -28,7 +28,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .head-acts{display:flex;gap:7px;flex-wrap:wrap}
 .btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
 .btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}
-.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#1D4ED8;color:#fff}
+.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#C2410C;color:#fff}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn:disabled{opacity:.4;cursor:default}
 .toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
@@ -47,10 +47,11 @@ th{padding:9px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--t
 th:hover{color:var(--tx2)}
 td{padding:11px 13px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(37,99,235,.015)}
+tr:nth-child(even) td{background:rgba(26,18,8,.018)}
+tr:hover td{background:rgba(234,88,12,.04)!important}
 .mono{font-family:var(--mono);font-size:12px}
 .cat-badge{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.cat-cameras{background:rgba(37,99,235,.1);color:#2563EB}
+.cat-cameras{background:rgba(37,99,235,.1);color:#EA580C}
 .cat-intercom{background:rgba(8,145,178,.1);color:#0891B2}
 .cat-acesso{background:rgba(5,150,105,.1);color:#059669}
 .cat-audio{background:rgba(220,38,38,.1);color:#DC2626}
@@ -129,6 +130,36 @@ tr:hover .acts{opacity:1}
 .sb-user-role{font-size:11px;color:var(--tx3);white-space:nowrap}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow-y:auto}
 @media(max-width:700px){.frow{grid-template-columns:1fr}}
+
+/* ── SIDEBAR DARK THEME ── */
+.sidebar{background:#1A1208!important;border-right:none!important;box-shadow:4px 0 24px rgba(26,18,8,.15)!important}
+.sb-brand{border-bottom:1px solid rgba(255,255,255,.08)!important}
+.sb-bottom{border-top:1px solid rgba(255,255,255,.08)!important}
+.sb-item{color:rgba(196,181,168,.8)!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#F8F5F2!important}
+.sb-item.on{background:rgba(234,88,12,.2)!important;color:#EA580C!important}
+.sb-section{color:rgba(196,181,168,.4)!important}
+.sb-user:hover{background:rgba(255,255,255,.06)!important}
+.sb-user-name{color:#F8F5F2!important}
+.sb-user-role{color:rgba(196,181,168,.6)!important}
+.sb-avatar{background:#EA580C!important;color:#fff!important}
+.sb-toggle{background:#2D1F12!important;border-color:rgba(255,255,255,.1)!important;color:rgba(196,181,168,.6)!important}
+.sb-toggle:hover{background:#3D2F22!important;color:#F8F5F2!important}
+.sb-brand-text{color:#EA580C!important}
+/* Topbar melhorada */
+.topbar{box-shadow:0 1px 0 var(--bd)!important}
+/* Tabela listras */
+tr:nth-child(even) td{background:rgba(26,18,8,.018)}
+tr:hover td{background:rgba(234,88,12,.04)!important}
+/* Stat card hover */
+.stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
+.stat-card:hover{border-top-color:#EA580C!important;transform:translateY(-2px)!important}
+/* Barras laranja */
+.cli-bar-fill{background:linear-gradient(90deg,#EA580C,#F97316)!important}
+/* btn-p */
+.btn-p{font-weight:600!important}
+.btn-p:hover{background:#C2410C!important;border-color:#C2410C!important}
+
 </style>
 </head>
 <body>
@@ -156,6 +187,18 @@ tr:hover .acts{opacity:1}
     <a class="sb-item on" href="configuracoes.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span class="sb-label">Configurações</span>
+    </a>
+    <a class="sb-item" href="modelos.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span class="sb-label">Modelos</span>
+    </a>
+    <a class="sb-item" href="clientes.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="sb-label">Empresas</span>
+    </a>
+    <a class="sb-item" href="responsaveis.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="sb-label">Responsáveis</span>
     </a>
   </nav>
   <div class="sb-bottom">
