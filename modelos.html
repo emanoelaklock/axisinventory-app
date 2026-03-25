@@ -10,10 +10,10 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F8F5F2;--sur:#FFF;--sur2:#F3EDE8;
-  --bd:#E8DDD6;--bd2:#D4C5BA;
-  --tx:#1A1208;--tx2:#5C4A3A;--tx3:#9C8070;
-  --ac:#EA580C;--acl:#FFF4EE;--acm:#FED7AA;
+  --bg:#F4F6FA;--sur:#FFF;--sur2:#F0F4FA;
+  --bd:#E3E8F0;--bd2:#CBD5E8;
+  --tx:#1B2A4A;--tx2:#4A5568;--tx3:#8A9BBB;
+  --ac:#2E6BE6;--acl:#EFF6FF;--acm:#BFDBFE;
   --gr:#059669;--am:#D97706;--re:#DC2626;
   --sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);
   --shl:0 4px 32px rgba(15,21,35,.12);
@@ -28,7 +28,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .head-acts{display:flex;gap:7px;flex-wrap:wrap}
 .btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
 .btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}
-.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#C2410C;color:#fff}
+.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#1D4ED8;color:#fff}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn:disabled{opacity:.4;cursor:default}
 .toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
@@ -47,11 +47,11 @@ th{padding:9px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--t
 th:hover{color:var(--tx2)}
 td{padding:11px 13px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:nth-child(even) td{background:rgba(26,18,8,.018)}
-tr:hover td{background:rgba(234,88,12,.04)!important}
+tr:nth-child(even) td{background:rgba(27,42,74,.018)}
+tr:hover td{background:rgba(46,107,230,.03)!important}
 .mono{font-family:var(--mono);font-size:12px}
 .cat-badge{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.cat-cameras{background:rgba(37,99,235,.1);color:#EA580C}
+.cat-cameras{background:rgba(37,99,235,.1);color:#2E6BE6}
 .cat-intercom{background:rgba(8,145,178,.1);color:#0891B2}
 .cat-acesso{background:rgba(5,150,105,.1);color:#059669}
 .cat-audio{background:rgba(220,38,38,.1);color:#DC2626}
@@ -132,33 +132,33 @@ tr:hover .acts{opacity:1}
 @media(max-width:700px){.frow{grid-template-columns:1fr}}
 
 /* ── SIDEBAR DARK THEME ── */
-.sidebar{background:#1A1208!important;border-right:none!important;box-shadow:4px 0 24px rgba(26,18,8,.15)!important}
+.sidebar{background:#1B2A4A!important;border-right:none!important;box-shadow:4px 0 24px rgba(26,18,8,.15)!important}
 .sb-brand{border-bottom:1px solid rgba(255,255,255,.08)!important}
 .sb-bottom{border-top:1px solid rgba(255,255,255,.08)!important}
 .sb-item{color:rgba(196,181,168,.8)!important}
 .sb-item:hover{background:rgba(255,255,255,.06)!important;color:#F8F5F2!important}
-.sb-item.on{background:rgba(234,88,12,.2)!important;color:#EA580C!important}
+.sb-item.on{background:rgba(234,88,12,.2)!important;color:#2E6BE6!important}
 .sb-section{color:rgba(196,181,168,.4)!important}
 .sb-user:hover{background:rgba(255,255,255,.06)!important}
 .sb-user-name{color:#F8F5F2!important}
 .sb-user-role{color:rgba(196,181,168,.6)!important}
-.sb-avatar{background:#EA580C!important;color:#fff!important}
+.sb-avatar{background:#2E6BE6!important;color:#fff!important}
 .sb-toggle{background:#2D1F12!important;border-color:rgba(255,255,255,.1)!important;color:rgba(196,181,168,.6)!important}
 .sb-toggle:hover{background:#3D2F22!important;color:#F8F5F2!important}
-.sb-brand-text{color:#EA580C!important}
+.sb-brand-text{color:#2E6BE6!important}
 /* Topbar melhorada */
 .topbar{box-shadow:0 1px 0 var(--bd)!important}
 /* Tabela listras */
-tr:nth-child(even) td{background:rgba(26,18,8,.018)}
-tr:hover td{background:rgba(234,88,12,.04)!important}
+tr:nth-child(even) td{background:rgba(27,42,74,.018)}
+tr:hover td{background:rgba(46,107,230,.03)!important}
 /* Stat card hover */
 .stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
-.stat-card:hover{border-top-color:#EA580C!important;transform:translateY(-2px)!important}
+.stat-card:hover{border-top-color:#2E6BE6!important;transform:translateY(-2px)!important}
 /* Barras laranja */
-.cli-bar-fill{background:linear-gradient(90deg,#EA580C,#F97316)!important}
+.cli-bar-fill{background:linear-gradient(90deg,#2E6BE6,#3B82F6)!important}
 /* btn-p */
 .btn-p{font-weight:600!important}
-.btn-p:hover{background:#C2410C!important;border-color:#C2410C!important}
+.btn-p:hover{background:#1D4ED8!important;border-color:#1D4ED8!important}
 
 </style>
 </head>
@@ -183,11 +183,7 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       <span class="sb-label">Checklists</span>
     </a>
-    <div class="sb-section">Configurações</div>
-    <a class="sb-item on" href="configuracoes.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span class="sb-label">Configurações</span>
-    </a>
+    <div class="sb-section">Cadastros</div>
     <a class="sb-item" href="modelos.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       <span class="sb-label">Modelos</span>
@@ -214,11 +210,13 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
 <div class="main">
 <main class="content">
   <div id="login-screen" style="display:none;max-width:360px;margin:60px auto">
-    <div style="text-align:center;margin-bottom:24px">
-      <div style="width:48px;height:48px;border-radius:14px;background:var(--acl);color:var(--ac);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">📡</div>
-      <div style="font-size:18px;font-weight:700">Axis Inventory</div>
-      <div style="font-size:13px;color:var(--tx3);margin-top:4px">Entre para continuar</div>
-    </div>
+          <div style="text-align:center;margin-bottom:32px">
+        <div style="width:44px;height:44px;border-radius:12px;background:#1B2A4A;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div style="font-size:20px;font-weight:600;color:#1B2A4A;letter-spacing:-.02em">Axis Inventory</div>
+        <div style="font-size:13px;color:#8A9BBB;margin-top:4px">Acesso ao sistema de gestão</div>
+      </div>
     <div id="login-msg" style="margin-bottom:10px"></div>
     <div class="fg" style="margin-bottom:10px"><label>Email</label><input type="email" id="l-email" placeholder="seu@email.com"/></div>
     <div class="fg" style="margin-bottom:16px"><label>Senha</label><input type="password" id="l-senha" onkeydown="if(event.key==='Enter')fazerLogin()"/></div>

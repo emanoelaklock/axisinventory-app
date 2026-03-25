@@ -10,17 +10,17 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F8F5F2;--sur:#FFF;--sur2:#F3EDE8;
-  --bd:#E8DDD6;--bd2:#D4C5BA;
-  --tx:#1A1208;--tx2:#5C4A3A;--tx3:#9C8070;
-  --ac:#EA580C;--acl:#FFF4EE;--acm:#FED7AA;
+  --bg:#F4F6FA;--sur:#FFF;--sur2:#F0F4FA;
+  --bd:#E3E8F0;--bd2:#CBD5E8;
+  --tx:#1B2A4A;--tx2:#4A5568;--tx3:#8A9BBB;
+  --ac:#2E6BE6;--acl:#EFF6FF;--acm:#BFDBFE;
   --gr:#059669;--am:#D97706;--re:#DC2626;--pu:#7C3AED;
   --sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);
   --shl:0 4px 32px rgba(15,21,35,.12);
   --r:10px;--mono:'IBM Plex Mono',monospace;
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
-.s-en{--c:#059669;--b:rgba(5,150,105,.1)}.s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)}.s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}.s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}.s-dm{--c:#0D9488;--b:rgba(13,148,136,.1)}.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}.s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
+.s-en{--c:#059669;--b:rgba(5,150,105,.1)}.s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)}.s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}.s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}.s-dm{--c:#0D9488;--b:rgba(13,148,136,.1)}.s-ai{--c:#2E6BE6;--b:rgba(234,88,12,.1)}.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}.s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--b);color:var(--c)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--c);flex-shrink:0}
 .page{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
@@ -28,10 +28,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .hero{background:var(--sur);border:1px solid var(--bd);border-radius:14px;padding:24px;margin-bottom:16px;box-shadow:var(--sh)}
 .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .hero-id{display:flex;flex-direction:column;gap:6px}
-.hero-pn{font-size:12px;color:var(--tx3);font-weight:400;margin-bottom:4px}
-.hero-model{font-size:20px;font-weight:700;color:var(--tx);letter-spacing:-.02em;line-height:1.2}
-.hero-serial{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--tx);margin-top:4px}
-.hero-code{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--tx3);margin-top:3px}
+.hero-pn{font-size:12px;color:var(--tx3);font-weight:400;margin-bottom:2px}
+.hero-model{font-size:13px;font-weight:400;color:var(--tx3);letter-spacing:0;line-height:1.4;margin-bottom:2px}
+.hero-serial{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--tx);margin-top:4px;letter-spacing:.02em}
+.hero-code{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--tx3);margin-top:4px}
 .hero-acts{display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0}
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
 @media(max-width:700px){.info-grid{grid-template-columns:1fr 1fr}}
@@ -95,7 +95,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:16px;box-shadow:var(--sh)}
 .btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
 .btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}
-.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#C2410C;border-color:#C2410C;color:#fff}
+.btn-p{background:var(--ac);border-color:var(--ac);color:#fff}.btn-p:hover{background:#1D4ED8;border-color:#1D4ED8;color:#fff}
 .btn-g{background:#059669;border-color:#059669;color:#fff}.btn-g:hover{background:#047857;color:#fff}
 .btn-sm{padding:5px 10px;font-size:12px}
 .empty{text-align:center;padding:32px;color:var(--tx3);font-size:13px}
@@ -164,33 +164,33 @@ body.has-sidebar{display:flex;min-height:100vh}
 .sb-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-y:auto;height:100vh}
 
 /* ── SIDEBAR DARK THEME ── */
-.sidebar{background:#1A1208!important;border-right:none!important;box-shadow:4px 0 24px rgba(26,18,8,.15)!important}
+.sidebar{background:#1B2A4A!important;border-right:none!important;box-shadow:4px 0 24px rgba(26,18,8,.15)!important}
 .sb-brand{border-bottom:1px solid rgba(255,255,255,.08)!important}
 .sb-bottom{border-top:1px solid rgba(255,255,255,.08)!important}
 .sb-item{color:rgba(196,181,168,.8)!important}
 .sb-item:hover{background:rgba(255,255,255,.06)!important;color:#F8F5F2!important}
-.sb-item.on{background:rgba(234,88,12,.2)!important;color:#EA580C!important}
+.sb-item.on{background:rgba(234,88,12,.2)!important;color:#2E6BE6!important}
 .sb-section{color:rgba(196,181,168,.4)!important}
 .sb-user:hover{background:rgba(255,255,255,.06)!important}
 .sb-user-name{color:#F8F5F2!important}
 .sb-user-role{color:rgba(196,181,168,.6)!important}
-.sb-avatar{background:#EA580C!important;color:#fff!important}
+.sb-avatar{background:#2E6BE6!important;color:#fff!important}
 .sb-toggle{background:#2D1F12!important;border-color:rgba(255,255,255,.1)!important;color:rgba(196,181,168,.6)!important}
 .sb-toggle:hover{background:#3D2F22!important;color:#F8F5F2!important}
-.sb-brand-text{color:#EA580C!important}
+.sb-brand-text{color:#2E6BE6!important}
 /* Topbar melhorada */
 .topbar{box-shadow:0 1px 0 var(--bd)!important}
 /* Tabela listras */
-tr:nth-child(even) td{background:rgba(26,18,8,.018)}
-tr:hover td{background:rgba(234,88,12,.04)!important}
+tr:nth-child(even) td{background:rgba(27,42,74,.018)}
+tr:hover td{background:rgba(46,107,230,.03)!important}
 /* Stat card hover */
 .stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
-.stat-card:hover{border-top-color:#EA580C!important;transform:translateY(-2px)!important}
+.stat-card:hover{border-top-color:#2E6BE6!important;transform:translateY(-2px)!important}
 /* Barras laranja */
-.cli-bar-fill{background:linear-gradient(90deg,#EA580C,#F97316)!important}
+.cli-bar-fill{background:linear-gradient(90deg,#2E6BE6,#3B82F6)!important}
 /* btn-p */
 .btn-p{font-weight:600!important}
-.btn-p:hover{background:#C2410C!important;border-color:#C2410C!important}
+.btn-p:hover{background:#1D4ED8!important;border-color:#1D4ED8!important}
 
 </style>
 </head>
@@ -200,7 +200,7 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
     <svg id="sb-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
   <div class="sb-brand">
-    <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:7px;background:#EA580C;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div style="font-size:13px;font-weight:700;color:#fff;letter-spacing:-.01em">Axis Inventory</div>
+    <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:7px;background:#2E6BE6;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div style="font-size:13px;font-weight:700;color:#fff;letter-spacing:-.01em">Axis Inventory</div>
     <div style="font-size:10px;color:var(--tx3);font-weight:400;margin-top:1px">Gestão de equipamentos</div>
     
   </div>
@@ -208,8 +208,7 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
       <a class="sb-item on" href="lista-itens.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-label">Equipamentos</span></a>
       <a class="sb-item" href="movimentacoes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span class="sb-label">Movimentações</span></a>
       <a class="sb-item" href="checklists.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="sb-label">Checklists</span></a>
-      <div class="sb-section">Configurações</div>
-      <a class="sb-item" href="configuracoes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="sb-label">Configurações</span></a>
+      <div class="sb-section">Cadastros</div>
     <a class="sb-item" href="modelos.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       <span class="sb-label">Modelos</span>
@@ -262,7 +261,7 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
           <div class="hero-pn" id="h-pn"></div>
           <div class="hero-model" id="h-model">—</div>
           <div class="hero-serial" id="h-serial"><span id="h-serial-val">—</span></div>
-          <div class="hero-code" id="h-codigo">—</div>
+          <div class="hero-code" id="h-codigo" style="opacity:.6">—</div>
         </div>
         <div class="hero-acts">
           <button class="btn" onclick="history.back()">
@@ -470,7 +469,7 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Novo status *</label>
         <select id="m-status" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
-          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
+          onfocus="this.style.borderColor='#2E6BE6';this.style.boxShadow='0 0 0 3px #EFF6FF'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
           <option value="">Selecione o status…</option>
           <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
@@ -488,7 +487,7 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
         </label>
         <select id="m-resp" multiple
           style="width:100%;padding:6px 4px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;min-height:100px;max-height:130px;transition:border .15s"
-          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
+          onfocus="this.style.borderColor='#2E6BE6';this.style.boxShadow='0 0 0 3px #EFF6FF'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
         </select>
         <div style="font-size:11px;color:#C8CEDF">Deixe vazio para manter o responsável atual</div>
@@ -496,7 +495,7 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Empresa</label>
         <select id="m-cli" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
-          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
+          onfocus="this.style.borderColor='#2E6BE6';this.style.boxShadow='0 0 0 3px #EFF6FF'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
           <option value="">— Manter atual —</option>
         </select>
@@ -505,22 +504,22 @@ tr:hover td{background:rgba(234,88,12,.04)!important}
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Localização</label>
         <input id="m-local" placeholder="Ex: Almoxarifado Central"
           style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;transition:border .15s"
-          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
+          onfocus="this.style.borderColor='#2E6BE6';this.style.boxShadow='0 0 0 3px #EFF6FF'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"/>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Motivo</label>
         <textarea id="m-motivo" placeholder="Descreva o motivo da movimentação…"
           style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;resize:vertical;min-height:80px;transition:border .15s"
-          onfocus="this.style.borderColor='#EA580C';this.style.boxShadow='0 0 0 3px #FFF4EE'"
+          onfocus="this.style.borderColor='#2E6BE6';this.style.boxShadow='0 0 0 3px #EFF6FF'"
           onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></textarea>
       </div>
     </div>
     <div style="padding:14px 22px;border-top:1px solid #E2E6F0;display:flex;gap:8px;justify-content:flex-end;background:#FAFBFD">
       <button onclick="closeM('m-mov')" style="padding:9px 18px;border-radius:10px;border:1px solid #E2E6F0;background:#fff;color:#4A5470;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer"
         onmouseover="this.style.background='#F0F2F8'" onmouseout="this.style.background='#fff'">Cancelar</button>
-      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#EA580C;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px"
-        onmouseover="this.style.background='#C2410C'" onmouseout="this.style.background='#EA580C'">
+      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#2E6BE6;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px"
+        onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2E6BE6'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         Registrar
       </button>
