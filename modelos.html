@@ -416,7 +416,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelect
 // Chamado pelo auth.js após autenticação
 async function onPostLogin() {
   renderSidebar('modelos')
-  await Promise.all([carregarDropdowns(), carregar(true)])
+  await carregarModelos(true)
 }
 
 renderSidebar('modelos')
