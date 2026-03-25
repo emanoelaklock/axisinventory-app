@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Responsáveis — Axis Inventory</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script src="sidebar.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#F6F7FB;--sur:#FFF;--sur2:#F0F2F8;--bd:#E2E6F0;--bd2:#C8CEDF;--tx:#0F1523;--tx2:#4A5470;--tx3:#8892AA;--ac:#2E6BE6;--acl:#EFF6FF;--acm:#BFDBFE;--gr:#059669;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace;--sb:220px;--sb-col:56px}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;display:flex}
 .content{flex:1;padding:20px;max-width:900px;margin:0 auto;width:100%}
 .page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
 .page-title{font-size:19px;font-weight:700;letter-spacing:-.02em}
@@ -72,79 +73,9 @@ tr:hover .acts{opacity:1}
 .toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
-.sidebar{width:var(--sb);min-width:var(--sb);height:100vh;background:var(--sur);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;z-index:100;transition:width .2s ease,min-width .2s ease;overflow:hidden}
-.sidebar.collapsed{width:var(--sb-col);min-width:var(--sb-col)}
-.sb-brand{height:56px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--bd);flex-shrink:0;white-space:nowrap;overflow:hidden}
-.sb-brand-text{font-size:13px;font-weight:700;color:var(--ac);opacity:1;transition:opacity .15s}
-.sidebar.collapsed .sb-brand-text{opacity:0;pointer-events:none}
-.sb-toggle{position:absolute;top:14px;right:-12px;width:24px;height:24px;border-radius:50%;background:var(--sur);border:1px solid var(--bd);color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;z-index:10}
-.sb-toggle:hover{background:var(--sur2);color:var(--tx)}
-.sb-nav{flex:1;padding:8px 0;overflow-y:auto;overflow-x:hidden}
-.sb-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;border-radius:8px;cursor:pointer;white-space:nowrap;color:var(--tx2);font-size:13px;font-weight:500;transition:all .15s;text-decoration:none;border:none;background:none;font-family:inherit;width:calc(100% - 16px);text-align:left}
-.sb-item:hover{background:var(--sur2);color:var(--tx)}.sb-item.on{background:var(--acl);color:var(--ac)}
-.sb-item svg{flex-shrink:0;width:16px;height:16px}
-.sb-label{opacity:1;transition:opacity .15s;overflow:hidden}
-.sidebar.collapsed .sb-label{opacity:0;pointer-events:none}
-.sb-section{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;padding:12px 22px 4px;white-space:nowrap;opacity:1;transition:opacity .15s}
-.sidebar.collapsed .sb-section{opacity:0}
-.sb-bottom{padding:12px 8px;border-top:1px solid var(--bd);flex-shrink:0}
-.sb-user{display:flex;align-items:center;gap:9px;padding:8px 6px;border-radius:8px;cursor:pointer;transition:background .15s;overflow:hidden}
-.sb-user:hover{background:var(--sur2)}
-.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--acl);color:var(--ac);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sb-user-info{overflow:hidden;opacity:1;transition:opacity .15s}
-.sidebar.collapsed .sb-user-info{opacity:0}
-.sb-user-name{font-size:13px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-user-role{font-size:11px;color:var(--tx3);white-space:nowrap}
-.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow-y:auto}
 @media(max-width:600px){.frow{grid-template-columns:1fr}}
 
-/* ── SIDEBAR DARK THEME ── */
-.sidebar{background:#1B2A4A!important;border-right:none!important;box-shadow:4px 0 24px rgba(26,18,8,.15)!important}
-.sb-brand{border-bottom:1px solid rgba(255,255,255,.08)!important}
-.sb-bottom{border-top:1px solid rgba(255,255,255,.08)!important}
-.sb-item{color:rgba(196,181,168,.8)!important}
-.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#F8F5F2!important}
-.sb-item.on{background:rgba(46,107,230,.2)!important;color:#2E6BE6!important}
-.sb-section{color:rgba(196,181,168,.4)!important}
-.sb-user:hover{background:rgba(255,255,255,.06)!important}
-.sb-user-name{color:#F8F5F2!important}
-.sb-user-role{color:rgba(196,181,168,.6)!important}
-.sb-avatar{background:#2E6BE6!important;color:#fff!important}
-.sb-toggle{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.12)!important;color:rgba(255,255,255,.5)!important}
-.sb-toggle:hover{background:rgba(255,255,255,.14)!important;color:#fff!important}
-.sb-brand-text{color:#2E6BE6!important}
-/* Topbar melhorada */
-.topbar{box-shadow:0 1px 0 var(--bd)!important}
-/* Tabela listras */
-tr:nth-child(even) td{background:rgba(27,42,74,.018)}
-tr:hover td{background:rgba(46,107,230,.03)!important}
-/* Stat card hover */
-.stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
-.stat-card:hover{border-top-color:#2E6BE6!important;transform:translateY(-2px)!important}
-/* Barras laranja */
-.cli-bar-fill{background:linear-gradient(90deg,#2E6BE6,#3B82F6)!important}
-/* btn-p */
-.btn-p{font-weight:600!important}
-.btn-p:hover{background:#1D4ED8!important;border-color:#1D4ED8!important}
 
-
-/* ── SIDEBAR NAVY ── */
-.sidebar{background:#1B2A4A!important;border-right:none!important;box-shadow:4px 0 20px rgba(0,0,0,.15)!important}
-.sb-brand{border-bottom:1px solid rgba(255,255,255,.07)!important}
-.sb-brand-text{color:#fff!important}
-.sb-bottom{border-top:1px solid rgba(255,255,255,.07)!important}
-.sb-item{color:rgba(255,255,255,.55)!important}
-.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}
-.sb-item.on{background:rgba(46,107,230,.25)!important;color:#fff!important;font-weight:500!important}
-.sb-section{color:rgba(255,255,255,.25)!important}
-.sb-user:hover{background:rgba(255,255,255,.06)!important}
-.sb-user-name{color:#fff!important}
-.sb-user-role{color:rgba(255,255,255,.4)!important}
-.sb-avatar{background:#2E6BE6!important;color:#fff!important}
-.sb-toggle{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.12)!important;color:rgba(255,255,255,.5)!important}
-.sb-toggle:hover{background:rgba(255,255,255,.14)!important;color:#fff!important}
-/* ── TEMA NAVY GERAL ── */
-:root{--bg:#F4F6FA;--sur:#FFF;--sur2:#F0F4FA;--bd:#E3E8F0;--bd2:#CBD5E8;--tx:#1B2A4A;--tx2:#4A5568;--tx3:#8A9BBB;--ac:#2E6BE6;--acl:#EFF6FF;--acm:#BFDBFE}
 tr:nth-child(even) td{background:rgba(27,42,74,.018)}
 tr:hover td{background:rgba(46,107,230,.03)!important}
 .stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
@@ -159,70 +90,9 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 </style>
 </head>
 <body>
-<aside class="sidebar" id="sidebar">
-  <button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" title="Expandir/recolher">
-    <svg id="sb-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-  </button>
-  <div class="sb-brand">
-    <span class="sb-brand-text">Axis Inventory</span>
-  </div>
-  <nav class="sb-nav">
-    <a class="sb-item" href="lista-itens.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span class="sb-label">Equipamentos</span>
-    </a>
-    <a class="sb-item" href="movimentacoes.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      <span class="sb-label">Movimentações</span>
-    </a>
-    <a class="sb-item" href="checklists.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      <span class="sb-label">Checklists</span>
-    </a>
-    <div class="sb-section">Cadastros</div>
-    <a class="sb-item" href="modelos.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      <span class="sb-label">Modelos</span>
-    </a>
-    <a class="sb-item" href="clientes.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span class="sb-label">Empresas</span>
-    </a>
-    <a class="sb-item" href="responsaveis.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span class="sb-label">Responsáveis</span>
-    </a>
-    <div class="sb-section">Sistema</div>
-    <a class="sb-item" href="configuracoes.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span class="sb-label">Usuários</span>
-    </a>
-  </nav>
-  <div class="sb-bottom">
-    <div class="sb-user" onclick="fazerLogout()" title="Sair">
-      <div class="sb-avatar" id="sb-avatar">?</div>
-      <div class="sb-user-info">
-        <div class="sb-user-name" id="sb-user-name">—</div>
-        <div class="sb-user-role" id="sb-user-role">—</div>
-      </div>
-    </div>
-  </div>
-</aside>
+<div id="sidebar-container"></div>
 <div class="main">
 <main class="content">
-  <div id="login-screen" style="display:none;max-width:360px;margin:60px auto">
-          <div style="text-align:center;margin-bottom:32px">
-        <div style="width:44px;height:44px;border-radius:12px;background:#1B2A4A;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        </div>
-        <div style="font-size:20px;font-weight:600;color:#1B2A4A;letter-spacing:-.02em">Axis Inventory</div>
-        <div style="font-size:13px;color:#8A9BBB;margin-top:4px">Acesso ao sistema de gestão</div>
-      </div>
-    <div id="login-msg" style="margin-bottom:10px"></div>
-    <div class="fg" style="margin-bottom:10px"><label>Email</label><input type="email" id="l-email" placeholder="seu@email.com"/></div>
-    <div class="fg" style="margin-bottom:16px"><label>Senha</label><input type="password" id="l-senha" onkeydown="if(event.key==='Enter')fazerLogin()"/></div>
-    <button class="btn btn-p" style="width:100%;justify-content:center;padding:10px" id="btn-login" onclick="fazerLogin()">Entrar</button>
-  </div>
   <div id="app" style="display:none">
     <div class="page-head">
       <div>
@@ -287,41 +157,10 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
   </div>
 </div>
 <script>
-const SURL='https://adbskoverysjohhwadln.supabase.co'
-const AKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
 const POR_PAG=25
-let SESSION=null,PERFIL='Consulta',editId=null
 
-const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
-const chk401=r=>{if(r.status===401){localStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}return r}
-const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 
-const fazerLogin=async()=>{
-  const email=document.getElementById('l-email').value.trim(),senha=document.getElementById('l-senha').value
-  const btn=document.getElementById('btn-login'),msg=document.getElementById('login-msg')
-  if(!email||!senha){toast('Preencha email e senha.','err');return}
-  btn.textContent='Entrando...';btn.disabled=true;msg.innerHTML=''
-  try{
-    const r=await fetch(`${SURL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':AKEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})})
-    const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.message||'Erro')
-    SESSION={access_token:d.access_token,user:d.user};localStorage.setItem('ax_sess',JSON.stringify(SESSION));await posLogin()
-  }catch(e){msg.innerHTML=`<div style="padding:9px 12px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-size:13px">${e.message}</div>`}
-  finally{btn.textContent='Entrar';btn.disabled=false}
-}
 
-const posLogin=async()=>{
-  const r=await fetch(`${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${SESSION.user.id}`,{headers:hAuth()})
-  const d=await r.json();PERFIL=d[0]?.perfil||'Consulta'
-  const nome=d[0]?.nome||SESSION.user.email?.split('@')[0]||'?'
-  document.getElementById('sb-avatar').textContent=nome[0].toUpperCase()
-  document.getElementById('sb-user-name').textContent=nome
-  document.getElementById('sb-user-role').textContent=PERFIL
-  document.querySelector('.sidebar').style.display='flex'
-  document.getElementById('login-screen').style.display='none'
-  document.getElementById('app').style.display='block'
-  if(!['Administrador','Almoxarifado'].includes(PERFIL))document.getElementById('btn-novo').style.display='none'
-  carregar(true)
-}
 
 let QS={busca:'',ativo:'',sortCol:'nome',sortAsc:true,pagina:0,total:0}
 const buildQ=()=>{
@@ -417,27 +256,14 @@ window.toggleAtivo=async(id,atual)=>{
 const closeM=id=>document.getElementById(id).classList.remove('open')
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mback.open').forEach(m=>m.classList.remove('open'))})
 
-const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
-
-let sidebarCollapsed=false
-function toggleSidebar(){
-  sidebarCollapsed=!sidebarCollapsed
-  document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed)
-  const a=document.getElementById('sb-arrow')
-  a.innerHTML=sidebarCollapsed?'<polyline points="9 18 15 12 9 6"/>':'<polyline points="15 18 9 12 15 6"/>'
+// Chamado pelo auth.js após autenticação
+async function onPostLogin() {
+  renderSidebar('responsaveis')
+  await carregar(true)
 }
-const fazerLogout=()=>{SESSION=null;PERFIL=null;localStorage.removeItem('ax_sess');location.href='dashboard.html'}
 
-const init=async()=>{
-  document.querySelector('.sidebar').style.display='none'
-  const saved=localStorage.getItem('ax_sess')
-  if(saved){
-    try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}
-    localStorage.removeItem('ax_sess');SESSION=null
-  }
-  location.href='dashboard.html'
-}
-init()
+renderSidebar('responsaveis')
+initAuth()
 </script>
 </body>
 </html>
