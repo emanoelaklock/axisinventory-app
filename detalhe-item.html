@@ -1133,6 +1133,8 @@ const switchTab = (tabId) => {
     const el = document.getElementById(id)
     if (el) el.style.display = id === tabId ? '' : 'none'
   })
+  if (tabId === 'tab-anexos' && ITEM_ID) carregarAnexos(ITEM_ID)
+  if (tabId === 'tab-checklists' && ITEM_ID) carregarChecklists(ITEM_ID)
 }
 
 
