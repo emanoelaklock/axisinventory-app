@@ -274,7 +274,7 @@ const renderTabela = () => {
       <td><span class="mono">${esc(r.serial||'--')}</span></td>
       <td class="dim">${esc(r.modelo||'--')}</td>
       <td class="dim">${esc(r.responsavel||'--')}</td>
-      <td><button class="btn btn-sm btn-p" onclick="abrirModal(${r.id})">
+      <td><button class="btn btn-sm btn-p" onclick="abrirModal('${r.id}')">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         Ver
       </button></td>
@@ -326,7 +326,7 @@ const da = (label, valor) =>
   `<div class="df"><label>${label}</label><div class="arow"><div class="dot ${dotCls(valor)}"></div><span>${valor ? esc(valor) : 'N/A'}</span></div></div>`
 
 function abrirModal(id) {
-  var r = todosRows.find(function(x){ return x.id === id })
+  var r = todosRows.find(function(x){ return String(x.id) === String(id) })
   if (!r) return
 
   document.getElementById('modal-titulo').textContent = (r.cliente||'') + '  -  ' + fdt(r.data_checklist)
