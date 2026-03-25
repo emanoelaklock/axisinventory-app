@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#F8F5F2;--sur:#FFF;--sur2:#F3EDE8;--bd:#E8DDD6;--bd2:#D4C5BA;--tx:#1A1208;--tx2:#5C4A3A;--tx3:#9C8070;--ac:#2E6BE6;--acl:#EFF6FF;--acm:#BFDBFE;--gr:#059669;--am:#D97706;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace;--sb:220px;--sb-col:56px}
+:root{--bg:#F8F5F2;--sur:#FFF;--sur2:#F3EDE8;--bd:#E8DDD6;--bd2:#D4C5BA;--tx:#1B2A4A;--tx2:#5C4A3A;--tx3:#9C8070;--ac:#2E6BE6;--acl:#EFF6FF;--acm:#BFDBFE;--gr:#059669;--am:#D97706;--re:#DC2626;--sh:0 1px 3px rgba(15,21,35,.06),0 4px 16px rgba(15,21,35,.04);--shl:0 4px 32px rgba(15,21,35,.12);--r:10px;--mono:'IBM Plex Mono',monospace;--sb:220px;--sb-col:56px}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;display:flex}
 .content{flex:1;padding:24px 20px 60px;max-width:900px;margin:0 auto;width:100%}
 .page-title{font-size:19px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
@@ -21,7 +21,7 @@ thead tr{background:var(--sur2)}
 th{padding:9px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bd)}
 td{padding:12px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(234,88,12,.04)}
+tr:hover td{background:rgba(46,107,230,.04)}
 .badge-perfil{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
 .p-admin{background:rgba(220,38,38,.1);color:#DC2626}
 .p-almo{background:rgba(5,150,105,.1);color:#059669}
@@ -98,22 +98,35 @@ tr:hover .acts{opacity:1}
 .sb-user-role{font-size:11px;color:var(--tx3);white-space:nowrap}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow-y:auto}
 
-/* SIDEBAR DARK */
-.sidebar{background:#1B2A4A!important;border-right:none!important;box-shadow:4px 0 24px rgba(26,18,8,.15)!important}
-.sb-brand{border-bottom:1px solid rgba(255,255,255,.08)!important}
-.sb-brand-text{color:#2E6BE6!important}
-.sb-bottom{border-top:1px solid rgba(255,255,255,.08)!important}
-.sb-item{color:rgba(196,181,168,.8)!important}
-.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#F8F5F2!important}
-.sb-item.on{background:rgba(234,88,12,.2)!important;color:#2E6BE6!important}
-.sb-section{color:rgba(196,181,168,.4)!important}
+
+/* ── SIDEBAR NAVY ── */
+.sidebar{background:#1B2A4A!important;border-right:none!important;box-shadow:4px 0 20px rgba(0,0,0,.15)!important}
+.sb-brand{border-bottom:1px solid rgba(255,255,255,.07)!important}
+.sb-brand-text{color:#fff!important}
+.sb-bottom{border-top:1px solid rgba(255,255,255,.07)!important}
+.sb-item{color:rgba(255,255,255,.55)!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}
+.sb-item.on{background:rgba(46,107,230,.25)!important;color:#fff!important;font-weight:500!important}
+.sb-section{color:rgba(255,255,255,.25)!important}
 .sb-user:hover{background:rgba(255,255,255,.06)!important}
-.sb-user-name{color:#F8F5F2!important}
-.sb-user-role{color:rgba(196,181,168,.6)!important}
+.sb-user-name{color:#fff!important}
+.sb-user-role{color:rgba(255,255,255,.4)!important}
 .sb-avatar{background:#2E6BE6!important;color:#fff!important}
-.sb-toggle{background:#2D1F12!important;border-color:rgba(255,255,255,.1)!important;color:rgba(196,181,168,.6)!important}
-.sb-toggle:hover{background:#3D2F22!important;color:#F8F5F2!important}
+.sb-toggle{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.12)!important;color:rgba(255,255,255,.5)!important}
+.sb-toggle:hover{background:rgba(255,255,255,.14)!important;color:#fff!important}
+/* ── TEMA NAVY GERAL ── */
+:root{--bg:#F4F6FA;--sur:#FFF;--sur2:#F0F4FA;--bd:#E3E8F0;--bd2:#CBD5E8;--tx:#1B2A4A;--tx2:#4A5568;--tx3:#8A9BBB;--ac:#2E6BE6;--acl:#EFF6FF;--acm:#BFDBFE}
+tr:nth-child(even) td{background:rgba(27,42,74,.018)}
 tr:hover td{background:rgba(46,107,230,.03)!important}
+.stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
+.stat-card:hover{border-top-color:#2E6BE6!important;transform:translateY(-2px)!important}
+.cli-bar-fill{background:linear-gradient(90deg,#2E6BE6,#3B82F6)!important}
+.btn-p{background:#2E6BE6!important;border-color:#2E6BE6!important}
+.btn-p:hover{background:#1D4ED8!important;border-color:#1D4ED8!important}
+.pb.on{background:#2E6BE6!important;border-color:#2E6BE6!important}
+.fsel:focus{border-color:#2E6BE6!important}
+.sinput:focus{border-color:#2E6BE6!important;box-shadow:0 0 0 3px #EFF6FF!important}
+
 </style>
 </head>
 <body>
@@ -153,6 +166,11 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
     <a class="sb-item" href="responsaveis.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span class="sb-label">Responsáveis</span>
+    </a>
+    <div class="sb-section">Sistema</div>
+    <a class="sb-item" href="configuracoes.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="sb-label">Usuários</span>
     </a>
   </nav>
   <div class="sb-bottom">

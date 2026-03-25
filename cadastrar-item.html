@@ -117,14 +117,14 @@ body.has-sidebar{display:flex;min-height:100vh}
 .sb-bottom{border-top:1px solid rgba(255,255,255,.08)!important}
 .sb-item{color:rgba(196,181,168,.8)!important}
 .sb-item:hover{background:rgba(255,255,255,.06)!important;color:#F8F5F2!important}
-.sb-item.on{background:rgba(234,88,12,.2)!important;color:#2E6BE6!important}
+.sb-item.on{background:rgba(46,107,230,.2)!important;color:#2E6BE6!important}
 .sb-section{color:rgba(196,181,168,.4)!important}
 .sb-user:hover{background:rgba(255,255,255,.06)!important}
 .sb-user-name{color:#F8F5F2!important}
 .sb-user-role{color:rgba(196,181,168,.6)!important}
 .sb-avatar{background:#2E6BE6!important;color:#fff!important}
-.sb-toggle{background:#2D1F12!important;border-color:rgba(255,255,255,.1)!important;color:rgba(196,181,168,.6)!important}
-.sb-toggle:hover{background:#3D2F22!important;color:#F8F5F2!important}
+.sb-toggle{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.12)!important;color:rgba(255,255,255,.5)!important}
+.sb-toggle:hover{background:rgba(255,255,255,.14)!important;color:#fff!important}
 .sb-brand-text{color:#2E6BE6!important}
 /* Topbar melhorada */
 .topbar{box-shadow:0 1px 0 var(--bd)!important}
@@ -139,6 +139,35 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 /* btn-p */
 .btn-p{font-weight:600!important}
 .btn-p:hover{background:#1D4ED8!important;border-color:#1D4ED8!important}
+
+
+/* ── SIDEBAR NAVY ── */
+.sidebar{background:#1B2A4A!important;border-right:none!important;box-shadow:4px 0 20px rgba(0,0,0,.15)!important}
+.sb-brand{border-bottom:1px solid rgba(255,255,255,.07)!important}
+.sb-brand-text{color:#fff!important}
+.sb-bottom{border-top:1px solid rgba(255,255,255,.07)!important}
+.sb-item{color:rgba(255,255,255,.55)!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}
+.sb-item.on{background:rgba(46,107,230,.25)!important;color:#fff!important;font-weight:500!important}
+.sb-section{color:rgba(255,255,255,.25)!important}
+.sb-user:hover{background:rgba(255,255,255,.06)!important}
+.sb-user-name{color:#fff!important}
+.sb-user-role{color:rgba(255,255,255,.4)!important}
+.sb-avatar{background:#2E6BE6!important;color:#fff!important}
+.sb-toggle{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.12)!important;color:rgba(255,255,255,.5)!important}
+.sb-toggle:hover{background:rgba(255,255,255,.14)!important;color:#fff!important}
+/* ── TEMA NAVY GERAL ── */
+:root{--bg:#F4F6FA;--sur:#FFF;--sur2:#F0F4FA;--bd:#E3E8F0;--bd2:#CBD5E8;--tx:#1B2A4A;--tx2:#4A5568;--tx3:#8A9BBB;--ac:#2E6BE6;--acl:#EFF6FF;--acm:#BFDBFE}
+tr:nth-child(even) td{background:rgba(27,42,74,.018)}
+tr:hover td{background:rgba(46,107,230,.03)!important}
+.stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
+.stat-card:hover{border-top-color:#2E6BE6!important;transform:translateY(-2px)!important}
+.cli-bar-fill{background:linear-gradient(90deg,#2E6BE6,#3B82F6)!important}
+.btn-p{background:#2E6BE6!important;border-color:#2E6BE6!important}
+.btn-p:hover{background:#1D4ED8!important;border-color:#1D4ED8!important}
+.pb.on{background:#2E6BE6!important;border-color:#2E6BE6!important}
+.fsel:focus{border-color:#2E6BE6!important}
+.sinput:focus{border-color:#2E6BE6!important;box-shadow:0 0 0 3px #EFF6FF!important}
 
 </style>
 </head>
@@ -168,6 +197,11 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
     <a class="sb-item" href="responsaveis.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span class="sb-label">Responsáveis</span>
+    </a>
+    <div class="sb-section">Sistema</div>
+    <a class="sb-item" href="configuracoes.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="sb-label">Usuários</span>
     </a>
   </nav>
   <div class="sb-bottom">
@@ -495,7 +529,7 @@ const STATUS_COLORS = {
         'Em Demonstração':            {b:'rgba(13,148,136,.1)',  c:'#0D9488'},
   'Em Demonstração':         {b:'rgba(13,148,136,.1)', c:'#0D9488'},
   'Com Técnico':                {b:'rgba(109,40,217,.1)',  c:'#6D28D9'},
-  'Aguardando Inspeção':        {b:'rgba(234,88,12,.1)',   c:'#2E6BE6'},
+  'Aguardando Inspeção':        {b:'rgba(46,107,230,.1)',   c:'#2E6BE6'},
   'Finalizada Inspeção':        {b:'rgba(22,163,74,.1)',   c:'#16A34A'},
   'Em RMA / Assistência Técnica':{b:'rgba(220,38,38,.1)', c:'#DC2626'},
   'Sucata':                     {b:'rgba(113,113,122,.1)', c:'#71717A'},

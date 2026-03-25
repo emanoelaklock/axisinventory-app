@@ -20,8 +20,8 @@
   --shl:0 4px 32px rgba(26,18,8,.14);
   --r:10px;--mono:'IBM Plex Mono',monospace;
   --sb:240px;--sb-col:60px;
-  --sb-bg:#1A1208;--sb-tx:#C4B5A8;--sb-tx2:#F8F5F2;--sb-bd:rgba(255,255,255,.08);
-  --sb-hover:rgba(255,255,255,.06);--sb-on:rgba(234,88,12,.2);
+    --sb-bg:#1B2A4A;--sb-tx:rgba(255,255,255,.55);--sb-tx2:#fff;--sb-bd:rgba(255,255,255,.07);
+  --sb-hover:rgba(255,255,255,.06);--sb-on:rgba(46,107,230,.25);
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;display:flex}
 .sidebar{width:var(--sb);min-width:var(--sb);height:100vh;background:var(--sb-bg);border-right:none;display:flex;flex-direction:column;position:sticky;top:0;z-index:100;transition:width .2s ease,min-width .2s ease;overflow:hidden;box-shadow:4px 0 24px rgba(26,18,8,.15)}
@@ -199,6 +199,11 @@ tr:hover .acts{opacity:1}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span class="sb-label">Responsáveis</span>
     </a>
+    <div class="sb-section">Sistema</div>
+    <button class="sb-item" onclick="location.href='configuracoes.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="sb-label">Usuários</span>
+    </button>
   </nav>
   <div class="sb-bottom">
     <div class="sb-user" onclick="fazerLogout()" title="Sair">
