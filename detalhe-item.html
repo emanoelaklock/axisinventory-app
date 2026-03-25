@@ -122,6 +122,35 @@
 .toast.ok{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border:1px solid var(--acm)}
+.chkdev-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.55);z-index:500;align-items:center;justify-content:center;padding:16px}
+.chkdev-overlay.open{display:flex}
+.chkdev-modal{background:var(--sur);border-radius:16px;width:100%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.28);display:flex;flex-direction:column;animation:mup2 .2s ease}
+@keyframes mup2{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.chkdev-hd{background:linear-gradient(135deg,#1B2A4A 0%,#2E6BE6 100%);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;position:sticky;top:0}
+.chkdev-hd h2{margin:0;font-size:15px;font-weight:700;color:#fff}
+.chkdev-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.chkdev-close:hover{background:rgba(255,255,255,.32)}
+.chkdev-bd{padding:20px 22px;flex:1}
+.chkdev-ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 22px 16px;border-top:1px solid var(--bd)}
+.chkdev-sec-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#2E6BE6;padding-bottom:6px;border-bottom:2px solid #EFF6FF;margin:16px 0 12px}
+.chkdev-sec-title:first-child{margin-top:0}
+.chkdev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-bottom:4px}
+@media(max-width:480px){.chkdev-grid{grid-template-columns:1fr}}
+.chk-field label{display:block;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.chk-field span{font-size:13px;color:var(--tx)}
+.chk-field em{color:var(--tx3);font-style:normal}
+.chkdev-acess-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:4px}
+@media(max-width:480px){.chkdev-acess-grid{grid-template-columns:1fr}}
+.chk-acess{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:8px;border:1px solid var(--bd);background:var(--sur2)}
+.chk-alabel{font-size:11px;font-weight:600;color:var(--tx2);flex:1}
+.chk-aval{font-size:11px;font-weight:700}
+.chk-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.chk-dot-ok{background:#22c55e}.chk-dot-nok{background:#ef4444}.chk-dot-warn{background:#f59e0b}.chk-dot-na{background:#d1d5db}
+.chk-obs{font-size:13px;color:var(--tx);white-space:pre-wrap;background:var(--sur2);border-radius:8px;padding:10px 12px;margin-bottom:4px}
+.chk-fotos{display:flex;gap:8px;flex-wrap:wrap}
+.chk-fotos a{border-radius:9px;overflow:hidden;border:2px solid var(--bd);transition:border-color .15s}
+.chk-fotos a:hover{border-color:#2E6BE6}
+.chk-fotos img{width:110px;height:82px;object-fit:cover;display:block}
 @media(max-width:600px){.page{padding:12px 12px 60px}.hero{padding:16px}.hero-acts .btn span{display:none}.info-grid{grid-template-columns:1fr 1fr}.frow{grid-template-columns:1fr}.tabs-bar{gap:0}.tab-btn{padding:8px 12px;font-size:12px}}
 
 /* ── SIDEBAR GLOBAL ─── */
@@ -749,14 +778,84 @@ const carregarChecklists = async (id) => {
 // ANEXOS
 // ════════════════════════════════════════════════════════════
 
-const mostrarChecklist = (dataUri) => {
+const mostrarChecklist = async (arquivo) => {
+  // arquivo = 'checklist_devolucao:<uuid>'
+  var chkId = arquivo.replace('checklist_devolucao:', '').trim()
+  if (!chkId) { toast('ID do checklist invalido', 'err'); return }
   try {
-    const base64 = dataUri.split(',')[1]
-    const texto = decodeURIComponent(escape(atob(base64)))
-    alert(texto)
+    var rows = await get('checklists_devolucao?id=eq.' + chkId + '&select=*')
+    if (!rows || !rows.length) { toast('Checklist nao encontrado', 'err'); return }
+    var r = rows[0]
+    abrirModalChkDev(r)
   } catch(e) {
-    toast('Erro ao exibir checklist', 'err')
+    toast('Erro ao carregar checklist: ' + e.message, 'err')
   }
+}
+
+var abrirModalChkDev = function(r) {
+  var fdt2 = function(iso) {
+    if (!iso) return '--'
+    var p = iso.split('T')[0].split('-')
+    return p[2]+'/'+p[1]+'/'+p[0]
+  }
+  var dotInfo = function(v) {
+    if (!v) return {cls:'chk-dot-na', label:'N/A'}
+    var s = v.toLowerCase()
+    if (s==='incluso')   return {cls:'chk-dot-ok',   label:v}
+    if (s==='danificado') return {cls:'chk-dot-warn', label:v}
+    if (s==='n\u00e3o incluso'||s==='nao incluso') return {cls:'chk-dot-nok', label:v}
+    return {cls:'chk-dot-na', label:v}
+  }
+  var mf = function(label, valor) {
+    return '<div class="chk-field"><label>'+label+'</label><span>'+(valor ? esc(String(valor)) : '<em>--</em>')+'</span></div>'
+  }
+  var af = function(label, valor) {
+    var d = dotInfo(valor)
+    return '<div class="chk-acess"><div class="chk-dot '+d.cls+'"></div><span class="chk-alabel">'+label+'</span><span class="chk-aval">'+esc(d.label)+'</span></div>'
+  }
+  var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
+
+  var html = ''
+  html += '<div class="chk-sec-title">Identifica\u00e7\u00e3o</div>'
+  html += '<div class="chkdev-grid">'
+  html += mf('Data', fdt2(r.data_checklist))
+  html += mf('Cliente', r.cliente)
+  html += mf('Tipo de Equipamento', r.tipo_equipamento)
+  html += mf('Modelo', r.modelo)
+  html += mf('Serial', r.serial)
+  html += mf('Respons\u00e1vel', r.responsavel)
+  html += mf('Origem', r.origem)
+  html += mf('Registrado em', r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : null)
+  html += '</div>'
+  html += '<div class="chk-sec-title">Acess\u00f3rios e Componentes</div>'
+  html += '<div class="chkdev-acess-grid">'
+  html += af('Weathershield / Tampa', r.weathershield)
+  html += af('Suporte de Montagem', r.suporte_montagem)
+  html += af('Cabo de Alimenta\u00e7\u00e3o / PoE', r.cabo_alimentacao)
+  html += af('Conector / Plug', r.conector_plug)
+  html += af('Gasket / Veda\u00e7\u00e3o', r.gasket_vedacao)
+  html += '</div>'
+  if (r.demais_acessorios) {
+    html += '<div class="chk-sec-title">Demais Acess\u00f3rios</div>'
+    html += '<div class="chk-obs">'+esc(r.demais_acessorios)+'</div>'
+  }
+  if (r.observacoes) {
+    html += '<div class="chk-sec-title">Observa\u00e7\u00f5es / Defeito</div>'
+    html += '<div class="chk-obs">'+esc(r.observacoes)+'</div>'
+  }
+  if (fotos.length) {
+    html += '<div class="chk-sec-title">Fotos</div>'
+    html += '<div class="chk-fotos">'
+    fotos.forEach(function(u,i) {
+      html += '<a href="'+u+'" target="_blank" rel="noopener"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy"/></a>'
+    })
+    html += '</div>'
+  }
+
+  document.getElementById('chkdev-titulo').textContent = (r.cliente||'--') + '  ·  ' + fdt2(r.data_checklist)
+  document.getElementById('chkdev-corpo').innerHTML = html
+  document.getElementById('chkdev-overlay').classList.add('open')
+  document.body.style.overflow = 'hidden'
 }
 const TIPO_ICON = { imagem:'🖼️', pdf:'📄', checklist_devolucao:'📋', outro:'📎' }
 
@@ -777,7 +876,7 @@ const carregarAnexos = async (id) => {
     _inner.className = 'anx-grid'
     anx.forEach(a => {
       const _isImg = (a.tipo === 'imagem') || (a.arquivo||'').startsWith('data:image')
-      const _label = _isImg ? 'Imagem' : a.tipo === 'checklist_devolucao' ? 'Checklist Devolucao' : a.tipo === 'pdf' ? 'PDF' : (a.tipo || 'Arquivo')
+      const _label = _isImg ? 'Imagem' : a.tipo === 'checklist_devolucao' ? 'Checklist Devolu\u00e7\u00e3o' : a.tipo === 'pdf' ? 'PDF' : (a.tipo || 'Arquivo')
       const _card = document.createElement('div'); _card.className = 'anx-card'
       const _thumb = document.createElement('div'); _thumb.className = 'anx-thumb'
       if(_isImg){
@@ -1272,6 +1371,30 @@ async function onPostLogin() {
 
 renderSidebar('equipamentos')
 initAuth()
+</script>
+<!-- Modal Checklist de Devolução -->
+<div class="chkdev-overlay" id="chkdev-overlay" onclick="if(event.target===this)fecharChkDev()">
+  <div class="chkdev-modal">
+    <div class="chkdev-hd">
+      <h2 id="chkdev-titulo">Checklist de Devolução</h2>
+      <button class="chkdev-close" onclick="fecharChkDev()" title="Fechar">×</button>
+    </div>
+    <div class="chkdev-bd" id="chkdev-corpo"></div>
+    <div class="chkdev-ft">
+      <button class="btn btn-sm" onclick="fecharChkDev()">Fechar</button>
+      <button class="btn btn-sm btn-p" onclick="window.print()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function fecharChkDev() {
+  document.getElementById('chkdev-overlay').classList.remove('open')
+  document.body.style.overflow = ''
+}
 </script>
 </body>
 </html>
