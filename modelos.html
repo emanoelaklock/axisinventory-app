@@ -142,8 +142,8 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
       </div>
       <select class="fsel" id="f-cat" onchange="onF()">
         <option value="">Categoria</option>
-        <option>Cameras</option><option>Intercom</option><option>Controle de Acesso</option>
-        <option>Audio</option><option>Wearables</option><option>Acessórios</option><option>Outros</option>
+        <option>Câmera</option><option>Intercom</option><option>Controle de Acesso</option>
+        <option>Áudio</option><option>Wearable</option><option>Acessório</option><option>Outro</option>
       </select>
       <select class="fsel" id="f-ativo" onchange="onF()">
         <option value="">Status</option>
@@ -190,8 +190,8 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
           <label>Categoria *</label>
           <select id="f-cat-form">
             <option value="">Selecione...</option>
-            <option>Cameras</option><option>Intercom</option><option>Controle de Acesso</option>
-            <option>Audio</option><option>Wearables</option><option>Acessórios</option><option>Outros</option>
+            <option>Câmera</option><option>Intercom</option><option>Controle de Acesso</option>
+            <option>Áudio</option><option>Wearable</option><option>Acessório</option><option>Outro</option>
           </select>
         </div>
       </div>
@@ -282,7 +282,7 @@ const onQ=v=>{clearTimeout(qt);qt=setTimeout(()=>{QS.busca=v.trim();QS.pagina=0;
 const onF=()=>{QS.cat=document.getElementById('f-cat').value;QS.ativo=document.getElementById('f-ativo').value;QS.pagina=0;carregarModelos();['f-cat','f-ativo'].forEach(id=>{const el=document.getElementById(id);el.classList.toggle('on',!!el.value)})}
 const srt=col=>{if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc;else{QS.sortCol=col;QS.sortAsc=true};QS.pagina=0;carregarModelos()}
 
-const CAT_CLS={'Cameras':'cat-cameras','Intercom':'cat-intercom','Controle de Acesso':'cat-acesso','Audio':'cat-audio','Wearables':'cat-wearables','Acessórios':'cat-acessorios'}
+const CAT_CLS={'Câmera':'cat-cameras','Intercom':'cat-intercom','Controle de Acesso':'cat-acesso','Áudio':'cat-audio','Wearable':'cat-wearables','Acessório':'cat-acessorios'}
 const catBadge=c=>`<span class="cat-badge ${CAT_CLS[c]||'cat-outros'}">${esc(c||'—')}</span>`
 
 const renderSkel=()=>{document.getElementById('tbody').innerHTML=Array(6).fill(0).map(()=>`<tr>${Array(5).fill(0).map(()=>`<td><span class="sk" style="width:${40+Math.random()*80}px"></span></td>`).join('')}<td></td></tr>`).join('')}
@@ -350,7 +350,7 @@ window.toggleAtivo=async(id,atual)=>{
 }
 
 const baixarModelo=()=>{
-  const dados=[['categoria','part_number','modelo','descricao'],['Cameras','02060-001','AXIS P3818-PVE Panoramic Camera','Câmera panorâmica 12MP'],['Acessórios','01179-001','AXIS Q35 Weathershield Kit A','Kit de proteção para câmeras série Q35'],['Intercom','01995-001','AXIS I8016-LVE Network Video Intercom','Intercom de rede para ambientes externos']]
+  const dados=[['categoria','part_number','modelo','descricao'],['Câmera','02060-001','AXIS P3818-PVE Panoramic Camera','Câmera panorâmica 12MP'],['Acessório','01179-001','AXIS Q35 Weathershield Kit A','Kit de proteção para câmeras série Q35'],['Intercom','01995-001','AXIS I8016-LVE Network Video Intercom','Intercom de rede para ambientes externos']]
   const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(dados)
   ws['!cols']=[{wch:20},{wch:15},{wch:45},{wch:40}]
   XLSX.utils.book_append_sheet(wb,ws,'Modelos');XLSX.writeFile(wb,'modelo_importacao_modelos.xlsx')
@@ -373,7 +373,7 @@ const parseXLSX=buffer=>{
       const pn=String(row[kPN]||'').trim(),mod=String(row[kMod]||'').trim()
       const cat=kCat?String(row[kCat]||'').trim():'',desc=kDesc?String(row[kDesc]||'').trim():''
       if(!pn||!mod){erros++;previewLines.push('<div class="imp-row imp-err">✗ Linha '+(i+2)+': part_number ou modelo vazio</div>');return}
-      csvRows.push({part_number:pn,modelo:mod,categoria:cat||'Outros',descricao:desc||null,ativo:true})
+      csvRows.push({part_number:pn,modelo:mod,categoria:cat||'Outro',descricao:desc||null,ativo:true})
       previewLines.push('<div class="imp-row imp-ok">✓ '+esc(pn)+' — '+esc(mod.substring(0,42))+'</div>')
     })
     document.getElementById('imp-count').textContent=csvRows.length
