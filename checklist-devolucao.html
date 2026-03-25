@@ -99,6 +99,7 @@ input[type=hidden]{display:none}
 .success-screen p{font-size:14px;color:var(--tx3);line-height:1.6}
 .btn-novo{margin-top:24px;padding:12px 28px;border:2px solid var(--blue);border-radius:var(--r);background:#fff;color:var(--blue);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
 </style>
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -524,7 +525,9 @@ async function enviar(){
           gask: document.getElementById('gask-val').value,
           acess:document.getElementById('f-acess').value.trim()
         }
-        const { jsPDF } = window.jspdf
+        const jsPDFLib = window.jspdf || window.jsPDF
+        if(!jsPDFLib){ console.warn('jsPDF nao carregou'); throw new Error('jsPDF nao disponivel') }
+        const { jsPDF } = jsPDFLib
         const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'})
         const W=210, M=15
         let y=15
