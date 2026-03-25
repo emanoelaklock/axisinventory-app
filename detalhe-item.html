@@ -129,58 +129,351 @@
 
 /* ── SIDEBAR GLOBAL ─── */
 body.has-sidebar{display:flex;min-height:100vh}
-.sidebar.collapsed .sidebar.collapsed .sidebar.collapsed .sidebar.collapsed .sidebar.collapsed .sb-main{flex:1;min-width:0;display:flex;flex-direction:column;overflow-y:auto;height:100vh}
 </style>
 </head>
 <body>
 <div id="sidebar-container"></div>
+<div class="main"><div class="page">
+  </div>
 
+  <div id="state-err" class="err-state" style="display:none">
+    <div style="font-size:40px;margin-bottom:12px">🔍</div>
+    <h2>Item não encontrado</h2>
+    <p style="font-size:13px;color:var(--tx3);margin-bottom:16px" id="err-msg">Verifique o identificador e tente novamente.</p>
+    <button class="btn" onclick="location.href='lista-itens.html'">← Voltar</button>
+  </div>
+
+  <div id="state-loading">
+    <div class="hero">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span class="sk" style="width:180px;height:22px"></span>
+        <span class="sk" style="width:120px"></span>
+        <span class="sk" style="width:220px;height:18px"></span>
+      </div>
+    </div>
+    <div class="card" style="height:140px"></div>
+  </div>
+
+  <div id="state-content" style="display:none">
+
+    <div class="hero">
+      <div class="hero-top">
+        <div class="hero-id">
+          <div class="hero-pn" id="h-pn"></div>
+          <div class="hero-model" id="h-model">—</div>
+          <div class="hero-serial" id="h-serial"><span id="h-serial-val">—</span></div>
+          <div class="hero-code" id="h-codigo">—</div>
+        </div>
+        <div class="hero-acts">
+          <button class="btn" onclick="history.back()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>Voltar</span>
+          </button>
+          
+          <button class="btn btn-p" onclick="openMov()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <span>Movimentação</span>
+          </button>
+          <button class="btn btn-g" onclick="window.open('checklist-axis.html?item='+ITEM_ID,'_blank')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <span>Checklist</span>
+          </button>
+          <button class="btn" onclick="openQR()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>QR Code</span>
+          </button>
+          <button class="btn" id="btn-excluir-item" onclick="excluirItem()" style="border-color:#FECACA;color:#DC2626;display:none">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            <span>Excluir</span>
+          </button>
+        </div>
+      </div>
+      <hr class="hero-sep">
+      <div class="info-grid">
+        <div class="info-cell"><div class="info-label">Status atual</div><div id="h-status">—</div></div>
+        <div class="info-cell"><div class="info-label">Responsável</div><div class="info-val" id="h-resp">—</div><div class="info-val dim" id="h-resp-cargo" style="font-size:11px"></div></div>
+        <div class="info-cell"><div class="info-label">Empresa</div><div class="info-val" id="h-cliente">—</div></div>
+        <div class="info-cell"><div class="info-label">Localização / VMS</div><div class="info-val" id="h-local">—</div></div>
+        <div class="info-cell"><div class="info-label">Categoria</div><div class="info-val" id="h-cat">—</div></div>
+        <div class="info-cell"><div class="info-label">Última movimentação</div><div class="info-val dim" id="h-ultima">—</div></div>
+        <div class="info-cell"><div class="info-label">Cadastro</div><div class="info-val dim" id="h-cadastro">—</div></div>
+        <div class="info-cell" style="grid-column:1/-1;border-top:1px solid var(--bd);padding-top:12px;margin-top:4px">
+          <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Informações Adicionais</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="info-cell">
+              <div class="info-label" style="display:flex;align-items:center;justify-content:space-between">
+                Valor de Aquisição
+                <button onclick="editarCampo('valor')" style="font-size:10px;font-weight:600;color:var(--ac);background:none;border:none;cursor:pointer;padding:0">Editar</button>
+              </div>
+              <div class="info-val" id="h-valor">—</div>
+              <div id="h-valor-edit" style="display:none;margin-top:4px">
+                <div style="display:flex;gap:6px;align-items:center">
+                  <input id="h-valor-input" type="number" step="0.01" style="flex:1;padding:6px 9px;border:1.5px solid var(--ac);border-radius:7px;font-size:13px;color:var(--tx);background:var(--sur);outline:none;box-shadow:0 0 0 3px var(--acl)" placeholder="0,00" onkeydown="if(event.key==='Enter')salvarCampo('valor');if(event.key==='Escape')cancelarCampo('valor')"/>
+                  <button onclick="salvarCampo('valor')" style="padding:5px 10px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">✓</button>
+                  <button onclick="cancelarCampo('valor')" style="padding:5px 10px;background:var(--sur2);color:var(--tx3);border:1px solid var(--bd);border-radius:7px;font-size:12px;cursor:pointer">✕</button>
+                </div>
+              </div>
+            </div>
+            <div class="info-cell">
+              <div class="info-label" style="display:flex;align-items:center;justify-content:space-between">
+                Data de Aquisição
+                <button onclick="editarCampo('dtaq')" style="font-size:10px;font-weight:600;color:var(--ac);background:none;border:none;cursor:pointer;padding:0">Editar</button>
+              </div>
+              <div class="info-val" id="h-dtaq">—</div>
+              <div id="h-dtaq-edit" style="display:none;margin-top:4px">
+                <div style="display:flex;gap:6px;align-items:center">
+                  <input id="h-dtaq-input" type="date" style="flex:1;padding:6px 9px;border:1.5px solid var(--ac);border-radius:7px;font-size:13px;color:var(--tx);background:var(--sur);outline:none;box-shadow:0 0 0 3px var(--acl)" onkeydown="if(event.key==='Escape')cancelarCampo('dtaq')"/>
+                  <button onclick="salvarCampo('dtaq')" style="padding:5px 10px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">✓</button>
+                  <button onclick="cancelarCampo('dtaq')" style="padding:5px 10px;background:var(--sur2);color:var(--tx3);border:1px solid var(--bd);border-radius:7px;font-size:12px;cursor:pointer">✕</button>
+                </div>
+              </div>
+            </div>
+            <div class="info-cell" style="grid-column:1/-1">
+              <div class="info-label" style="display:flex;align-items:center;justify-content:space-between">
+                Observações
+                <button onclick="editarCampo('obs')" style="font-size:10px;font-weight:600;color:var(--ac);background:none;border:none;cursor:pointer;padding:0">Editar</button>
+              </div>
+              <div class="info-val" id="h-obs" style="white-space:pre-wrap">—</div>
+              <div id="h-obs-edit" style="display:none;margin-top:4px">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <textarea id="h-obs-input" rows="3" style="padding:6px 9px;border:1.5px solid var(--ac);border-radius:7px;font-size:13px;color:var(--tx);background:var(--sur);outline:none;box-shadow:0 0 0 3px var(--acl);resize:vertical;font-family:inherit" placeholder="Observações..."></textarea>
+                  <div style="display:flex;gap:6px">
+                    <button onclick="salvarCampo('obs')" style="padding:5px 10px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">✓ Salvar</button>
+                    <button onclick="cancelarCampo('obs')" style="padding:5px 10px;background:var(--sur2);color:var(--tx3);border:1px solid var(--bd);border-radius:7px;font-size:12px;cursor:pointer">✕</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+            
+      <!-- ABAS -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="tab-timeline" onclick="switchTab('tab-timeline')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Histórico <span class="tab-count" id="tl-count">0</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-checklists" onclick="switchTab('tab-checklists')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Checklists <span class="tab-count" id="chk-count">0</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-anexos" onclick="switchTab('tab-anexos')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        Anexos <span class="tab-count" id="anx-count">0</span>
+      </button>
+    </div>
+
+    <!-- TAB: TIMELINE -->
+    <div class="tab-pane active" id="tab-timeline">
+      <div class="section">
+        <div class="sec-head"><div class="sec-title">Histórico de movimentações</div></div>
+        <div id="tl-content"><div class="card empty"><div class="empty-icon">📋</div>Nenhuma movimentação registrada</div></div>
+      </div>
+    </div>
+
+    <!-- TAB: CHECKLISTS -->
+    <div class="tab-pane" id="tab-checklists">
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">Checklists de inspeção</div>
+          <button class="btn btn-sm" onclick="window.open('checklist-axis.html?item='+ITEM_ID,'_blank')">+ Novo</button>
+        </div>
+        <div id="chk-content"><div class="card empty"><div class="empty-icon">✅</div>Nenhum checklist registrado</div></div>
+      </div>
+    </div>
+
+    <!-- TAB: ANEXOS -->
+    <div class="tab-pane" id="tab-anexos">
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">Anexos</div>
+          <label class="btn btn-sm" style="cursor:pointer">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Incluir
+            <input type="file" style="display:none" id="anx-file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" onchange="uploadAnexos(this.files)"/>
+          </label>
+        </div>
+        <div id="anx-content"><div class="card empty"><div class="empty-icon">📎</div>Nenhum anexo</div></div>
+      </div>
+    </div>
+
+  </div><!-- /state-content -->
+</div></div><!-- /page -->
+
+<div class="tc" id="tc"></div>
+
+<!-- MODAL EDITAR MOVIMENTAÇÃO -->
+<div class="mback" id="m-edit-mov" onclick="if(event.target===this)closeM('m-edit-mov')">
+  <div class="modal" style="max-width:480px">
+    <div class="mh">
+      <div class="mt">Editar movimentação</div>
+      <button class="mx" onclick="closeM('m-edit-mov')">✕</button>
+    </div>
+    <div class="mb">
+      <div class="merr" id="edit-mov-err"></div>
+      <div class="fg">
+        <label>Tipo</label>
+        <input id="edit-mov-tipo" style="background:var(--sur2);color:var(--tx3)" readonly/>
+      </div>
+      <div class="fg">
+        <label>Novo status</label>
+        <select id="edit-mov-status">
+          <option value="">— Manter atual —</option>
+          <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
+          <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
+          <option>Em Demonstração</option>
+          <option>Aguardando Inspeção</option>
+          <option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option>
+          <option>Sucata</option>
+        </select>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label>Responsável</label>
+          <select id="edit-mov-resp"><option value="">— Manter —</option></select>
+        </div>
+        <div class="fg">
+          <label>Empresa</label>
+          <select id="edit-mov-cli"><option value="">— Manter —</option></select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Localização</label>
+        <input id="edit-mov-local" placeholder="Ex: Almoxarifado Central"/>
+      </div>
+      <div class="fg">
+        <label>Motivo</label>
+        <textarea id="edit-mov-motivo" style="min-height:72px" placeholder="Motivo da movimentação..."></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-edit-mov')">Cancelar</button>
+      <button class="btn btn-p btn-sm" id="btn-salvar-mov" onclick="salvarEditMov()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MOVIMENTAÇÃO -->
+<div class="mback" id="m-mov" onclick="if(event.target===this)closeM('m-mov')">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(15,21,35,.4);animation:modalIn .18s ease;overflow:hidden">
+    <div style="padding:18px 22px 16px;border-bottom:1px solid #E2E6F0;display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#0F1523">Registrar movimentação</div>
+        <div style="font-size:12px;color:#8892AA;margin-top:3px;font-family:'IBM Plex Mono',monospace" id="m-ref">—</div>
+      </div>
+      <button onclick="closeM('m-mov')" style="width:28px;height:28px;border-radius:8px;border:1px solid #E2E6F0;background:#F0F2F8;color:#8892AA;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">✕</button>
+    </div>
+    <div style="padding:20px 22px;display:flex;flex-direction:column;gap:16px">
+      <div class="merr" id="m-err"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Novo status *</label>
+        <select id="m-status" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+          <option value="">Selecione o status…</option>
+          <option>Estoque Novo</option><option>Estoque Usado</option><option>Reservado</option>
+          <option>Vendido</option><option>Com Técnico</option><option>Locado</option>
+          <option>Em Demonstração</option>
+          <option>Aguardando Inspeção</option>
+          <option>Finalizada Inspeção</option><option>Em RMA / Assistência Técnica</option>
+          <option>Sucata</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">
+          Novo Responsável
+          <span style="font-size:10px;color:#C8CEDF;font-weight:400;text-transform:none;letter-spacing:0"> · Ctrl/Cmd para múltiplos</span>
+        </label>
+        <select id="m-resp" multiple
+          style="width:100%;padding:6px 4px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;min-height:100px;max-height:130px;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+        </select>
+        <div style="font-size:11px;color:#C8CEDF">Deixe vazio para manter o responsável atual</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Empresa</label>
+        <select id="m-cli" style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;color:#0F1523;outline:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238892AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''">
+          <option value="">— Manter atual —</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Localização</label>
+        <input id="m-local" placeholder="Ex: Almoxarifado Central"
+          style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"/>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:11px;font-weight:700;color:#8892AA;text-transform:uppercase;letter-spacing:.07em">Motivo</label>
+        <textarea id="m-motivo" placeholder="Descreva o motivo da movimentação…"
+          style="width:100%;padding:10px 12px;border:1.5px solid #E2E6F0;border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:13px;color:#0F1523;outline:none;resize:vertical;min-height:80px;transition:border .15s"
+          onfocus="this.style.borderColor='#2563EB';this.style.boxShadow='0 0 0 3px #EFF4FF'"
+          onblur="this.style.borderColor='#E2E6F0';this.style.boxShadow=''"></textarea>
+      </div>
+    </div>
+    <div style="padding:14px 22px;border-top:1px solid #E2E6F0;display:flex;gap:8px;justify-content:flex-end;background:#FAFBFD">
+      <button onclick="closeM('m-mov')" style="padding:9px 18px;border-radius:10px;border:1px solid #E2E6F0;background:#fff;color:#4A5470;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer"
+        onmouseover="this.style.background='#F0F2F8'" onmouseout="this.style.background='#fff'">Cancelar</button>
+      <button id="btn-reg" onclick="registrar()" style="padding:9px 22px;border-radius:10px;border:none;background:#2563EB;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px"
+        onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Registrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: QR CODE -->
+<div class="mback" id="m-qr" onclick="if(event.target===this)closeM('m-qr')">
+  <div class="modal" style="max-width:360px">
+    <div class="mh">
+      <div><div class="mt">QR Code</div><div class="ms" id="qr-ref">—</div></div>
+      <button class="mx" onclick="closeM('m-qr')">✕</button>
+    </div>
+    <div class="mb">
+      <div class="qr-wrap">
+        <div class="qr-box">
+          <div style="font-size:11px;font-weight:800;color:#0B1120;letter-spacing:.08em;text-transform:uppercase">📡 AXIS INVENTORY</div>
+          <div id="qr-canvas"></div>
+          <div class="qr-label" id="qr-codigo">—</div>
+          <div style="width:100%;height:1px;background:#E2E8F0"></div>
+          <div class="qr-sub" id="qr-model">—</div>
+          <div style="font-size:9px;color:#94A3B8">Escaneie para abrir ficha do equipamento</div>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sm" onclick="closeM('m-qr')">Fechar</button>
+      <button class="btn btn-p btn-sm" onclick="imprimirQR()">🖨️ Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<div id="qr-print-area" style="display:none"></div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="closeLB()">
+  <button class="lb-close" onclick="closeLB()">✕</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
 <script>
-
 // ════════════════════════════════════════════════════════════
 // CONFIG
 // ════════════════════════════════════════════════════════════
-const SURL    = 'https://adbskoverysjohhwadln.supabase.co'
-const AKEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
 const BASE_URL = 'https://axisinventory-app.vercel.app'
 
 let ITEM_ID   = null
 let ITEM      = null
-let SESSION   = null
-let PERFIL    = 'Consulta'
 
 // ════════════════════════════════════════════════════════════
 // AUTH
 // ════════════════════════════════════════════════════════════
-const hAuth = () => ({
-  'apikey': AKEY,
-  'Authorization': `Bearer ${SESSION.access_token}`,
-  'Content-Type': 'application/json',
-})
-const chk401 = r => { if(r.status===401){localStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')} return r }
 
-const carregarSessao = async () => {
-  const saved = localStorage.getItem('ax_sess')
-  if (!saved) return false
-  try {
-    SESSION = JSON.parse(saved)
-    const r = await fetch(`${SURL}/auth/v1/user`, {
-      headers: { 'apikey': AKEY, 'Authorization': `Bearer ${SESSION.access_token}` }
-    })
-    if (!r.ok) { SESSION = null; return false }
-    const u = await r.json()
-    const p = await fetch(
-      `${SURL}/rest/v1/usuarios?select=perfil,nome&id=eq.${u.id}`,
-      { headers: hAuth() }
-    )
-    const pd = await p.json()
-    PERFIL = pd[0]?.perfil || 'Consulta'
-    return true
-  } catch {
-    SESSION = null
-    return false
-  }
-}
 
 // ════════════════════════════════════════════════════════════
 // API
@@ -223,7 +516,6 @@ const sbadge = s => {
 // ════════════════════════════════════════════════════════════
 // UTIL
 // ════════════════════════════════════════════════════════════
-const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent = v||'—' }
 
 const fdt = (iso, opts={}) => {
@@ -729,14 +1021,6 @@ document.addEventListener('keydown', e => {
   }
 })
 
-let tid = 0
-const toast = (msg, tipo='info', dur=4000) => {
-  const el = document.createElement('div')
-  el.className = `toast ${tipo}`
-  el.textContent = msg
-  document.getElementById('tc').appendChild(el)
-  setTimeout(() => el.remove(), dur)
-}
 
 // ════════════════════════════════════════════════════════════
 // INIT
@@ -825,11 +1109,6 @@ const salvarCampo = async (campo) => {
   }
 }
 
-  sidebarCollapsed = !sidebarCollapsed
-  document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed)
-  const a = document.getElementById('sb-arrow')
-  if (a) a.innerHTML = sidebarCollapsed ? '<polyline points="9 18 15 12 9 6"/>' : '<polyline points="15 18 9 12 15 6"/>'
-}
 
 // ABAS
 const switchTab = (tabId) => {
@@ -842,21 +1121,6 @@ const switchTab = (tabId) => {
   })
 }
 
-const init = async () => {
-  const autenticado = await carregarSessao()
-  if (!autenticado) {
-    mostrarAcessoNegado()
-    return
-  }
-  let id = location.hash.replace('#', '').trim()
-  if (id.startsWith('detalhe-')) id = id.replace('detalhe-', '')
-  if (!id || id.length < 32) {
-    mostrarErro('ID do item não informado na URL. Verifique o link.')
-    return
-  }
-  ITEM_ID = id
-  await carregarItem(id)
-}
 
 // ════════════════════════════════════════════════════════════
 // EDITAR MOVIMENTAÇÃO — FIX: pré-popula todos os campos ao abrir
@@ -977,13 +1241,10 @@ const excluirItem = async () => {
   }
 }
 
-init()
 
 
-// Chamado pelo auth.js após autenticação confirmada
 async function onPostLogin() {
   renderSidebar('equipamentos')
-  // Carregar item do hash da URL
   let id = location.hash.replace('#','').replace('detalhe-','').trim()
   if (!id || id.length < 32) {
     mostrarErro('ID do item não informado na URL.')
@@ -992,7 +1253,6 @@ async function onPostLogin() {
   ITEM_ID = id
   await carregarItem()
 }
-
 
 renderSidebar('equipamentos')
 initAuth()
