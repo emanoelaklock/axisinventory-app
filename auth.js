@@ -3,12 +3,12 @@
    Autenticação centralizada via Supabase client
 ═══════════════════════════════════════════════ */
 
-const SURL = 'https://adbskoverysjohhwadln.supabase.co'
-const AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
+var SURL = 'https://adbskoverysjohhwadln.supabase.co'
+var AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
 
 let _supabase = null
-let SESSION = null
-let PERFIL = 'Consulta'
+var SESSION = null
+var PERFIL = 'Consulta'
 
 // Inicializa o cliente Supabase (lazy)
 function getSupabase() {
@@ -21,13 +21,13 @@ function getSupabase() {
 }
 
 // Utilitários HTTP (fallback para pages que ainda usam fetch direto)
-const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-const hAuth = () => ({
+var esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+var hAuth = () => ({
   'apikey': AKEY,
   'Authorization': `Bearer ${SESSION?.access_token}`,
   'Content-Type': 'application/json'
 })
-const chk401 = r => {
+var chk401 = r => {
   if (r.status === 401) {
     getSupabase().auth.signOut()
     toast('Sessão expirada.', 'err')
@@ -39,7 +39,7 @@ const chk401 = r => {
 
 // Toast global
 let _tid = 0
-const toast = (msg, tipo = 'info', dur = 4000) => {
+var toast = (msg, tipo = 'info', dur = 4000) => {
   const tc = document.getElementById('tc')
   if (!tc) { console.warn('Toast:', msg); return }
   const el = document.createElement('div')
@@ -51,7 +51,7 @@ const toast = (msg, tipo = 'info', dur = 4000) => {
 }
 
 // Login com email/senha
-const fazerLogin = async () => {
+var fazerLogin = async () => {
   const email = document.getElementById('l-email')?.value.trim()
   const senha = document.getElementById('l-senha')?.value
   const btn = document.getElementById('btn-login')
@@ -106,14 +106,14 @@ const _posLogin = async (session) => {
 }
 
 // Logout
-const fazerLogout = async () => {
+var fazerLogout = async () => {
   await getSupabase().auth.signOut()
   SESSION = null; PERFIL = null
   location.href = 'dashboard.html'
 }
 
 // Init: verifica sessão existente
-const initAuth = async () => {
+var initAuth = async () => {
   const sidebar = document.querySelector('.sidebar')
   if (sidebar) sidebar.style.display = 'none'
 
