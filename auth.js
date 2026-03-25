@@ -85,14 +85,6 @@ const _posLogin = async (session) => {
   PERFIL = d[0]?.perfil || 'Consulta'
   const nome = d[0]?.nome || session.user.email?.split('@')[0] || '?'
 
-  // Atualiza sidebar
-  const avatar = document.getElementById('sb-avatar')
-  const userName = document.getElementById('sb-user-name')
-  const userRole = document.getElementById('sb-user-role')
-  if (avatar) avatar.textContent = nome[0].toUpperCase()
-  if (userName) userName.textContent = nome
-  if (userRole) userRole.textContent = PERFIL
-
   // Mostra UI
   const sidebar = document.querySelector('.sidebar')
   const loginScreen = document.getElementById('login-screen')
@@ -101,8 +93,16 @@ const _posLogin = async (session) => {
   if (loginScreen) loginScreen.style.display = 'none'
   if (appScreen) appScreen.style.display = 'block'
 
-  // Callback da página
+  // Callback da página (renderSidebar é chamado aqui)
   if (typeof onPostLogin === 'function') await onPostLogin()
+
+  // Atualiza avatar DEPOIS do renderSidebar (elementos existem no DOM agora)
+  const avatar = document.getElementById('sb-avatar')
+  const userName = document.getElementById('sb-user-name')
+  const userRole = document.getElementById('sb-user-role')
+  if (avatar) avatar.textContent = nome[0].toUpperCase()
+  if (userName) userName.textContent = nome
+  if (userRole) userRole.textContent = PERFIL
 }
 
 // Logout

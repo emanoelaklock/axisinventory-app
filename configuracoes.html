@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configurações — Axis Inventory</title>
+<title>Usuários — Axis Inventory</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="theme.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -72,7 +72,7 @@ tr:hover .acts{opacity:1}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
 @media(max-width:600px){.frow{grid-template-columns:1fr}.acts{opacity:1}}
-
+/* ── TEMA NAVY GERAL ── */
 tr:nth-child(even) td{background:rgba(27,42,74,.018)}
 tr:hover td{background:rgba(46,107,230,.03)!important}
 .stat-card{border-top:3px solid transparent!important;transition:all .2s!important}
@@ -88,34 +88,44 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 <body>
 <div id="sidebar-container"></div>
 <div class="main">
-<main class="content">
-
-  <div id="login-screen" style="display:none" class="login-wrap">
-          <div style="text-align:center;margin-bottom:32px">
-        <div style="width:44px;height:44px;border-radius:12px;background:#1B2A4A;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        </div>
-        <div style="font-size:20px;font-weight:600;color:#1B2A4A;letter-spacing:-.02em">Axis Inventory</div>
-        <div style="font-size:13px;color:#8A9BBB;margin-top:4px">Acesso ao sistema de gestão</div>
-      </div>
-    <div id="login-msg" style="margin-bottom:10px"></div>
-    <div class="fg" style="margin-bottom:10px"><label>Email</label><input type="email" id="l-email" placeholder="seu@email.com"/></div>
-    <div class="fg" style="margin-bottom:16px"><label>Senha</label><input type="password" id="l-senha" onkeydown="if(event.key==='Enter')fazerLogin()"/></div>
-    <button class="btn btn-p" style="width:100%;justify-content:center;padding:10px" id="btn-login" onclick="fazerLogin()">Entrar</button>
+  <div class="topbar">
+    <span class="topbar-title">Usuários</span>
+    <div class="topbar-r">
+      <button class="btn btn-p btn-sm" onclick="abrirNovoUsuario()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Novo usuário
+      </button>
+    </div>
   </div>
-
-  <div id="screen-negado" style="display:none" class="acesso-negado">
+  <div id="screen-negado" style="display:none;text-align:center;padding:80px 20px">
     <div style="font-size:40px;margin-bottom:12px">🔒</div>
     <h2>Acesso restrito</h2>
-    <p style="font-size:13px;margin-bottom:16px">Apenas Administradores podem acessar as configurações.</p>
-    <button class="btn" onclick="location.href='lista-itens.html'">← Voltar</button>
+    <p style="font-size:13px;margin-bottom:16px">Apenas Administradores podem acessar esta página.</p>
+    <button class="btn" onclick="history.back()">← Voltar</button>
   </div>
-
   <div id="app" style="display:none">
-    <div class="page-title">⚙ Configurações</div>
-    <div class="page-sub">Gerenciamento de cadastros e acessos do sistema</div>
-
-</main>
+    <div style="padding:20px 24px">
+      <div class="tcard">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:13px;font-weight:600;color:var(--tx)">
+            Usuários cadastrados <span class="cbadge" id="usr-count">—</span>
+          </span>
+        </div>
+        <div class="twrap">
+          <table>
+            <thead><tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Perfil</th>
+              <th>Status</th>
+              <th style="width:140px"></th>
+            </tr></thead>
+            <tbody id="usr-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="tc" id="tc"></div>
 
@@ -178,11 +188,14 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
     </div>
   </div>
 </div>
+
 <script>
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY4MTc0MiwiZXhwIjoyMDg5MjU3NzQyfQ.2pgi0lruJn5cDJMGs7gyX95AGintUx6oYjNRW9gg0Hw'
 
 
+const hAuth=()=>({'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`,'Content-Type':'application/json'})
 const hAdmin=()=>({'apikey':SKEY,'Authorization':`Bearer ${SKEY}`,'Content-Type':'application/json'})
+const chk401=r=>{if(r.status===401){localStorage.removeItem('ax_sess');SESSION=null;toast('Sessão expirada. Faça login novamente.','err');setTimeout(()=>location.reload(),1200);throw new Error('Sessão expirada')}return r}
 
 
 
@@ -302,9 +315,25 @@ const togglePwd=(inputId,btn)=>{
 const closeM=id=>document.getElementById(id).classList.remove('open')
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mback.open').forEach(m=>m.classList.remove('open'))})
 
-// Chamado pelo auth.js após autenticação
+const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
+
+
+const init=async()=>{
+  document.querySelector('.sidebar').style.display='none'
+  const saved=localStorage.getItem('ax_sess')
+  if(saved){
+    try{SESSION=JSON.parse(saved);const r=await fetch(`${SURL}/auth/v1/user`,{headers:{'apikey':AKEY,'Authorization':`Bearer ${SESSION.access_token}`}});if(r.ok){await posLogin();return}}catch{}
+    localStorage.removeItem('ax_sess');SESSION=null
+  }
+  location.href='dashboard.html'
+}
+
 async function onPostLogin() {
   renderSidebar('usuarios')
+  if (PERFIL !== 'Administrador') {
+    document.getElementById('screen-negado').style.display = 'block'
+    return
+  }
   await carregarUsuarios()
 }
 
