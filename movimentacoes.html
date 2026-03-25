@@ -75,6 +75,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .pb.on{background:#2E6BE6!important;border-color:#2E6BE6!important}
 .fsel:focus{border-color:#2E6BE6!important}
 .sinput:focus{border-color:#2E6BE6!important;box-shadow:0 0 0 3px #EFF6FF!important}
+.col-item{min-width:180px}
 </style>
 </head>
 <body>
@@ -108,9 +109,9 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
             <th onclick="srt('data_movimentacao')">Data</th>
             <th>Item</th>
             <th class="col-status">Status</th>
-            <th class="col-resp">Responsável</th>
             <th class="col-cli">Cliente</th>
             <th class="col-local">Localização</th>
+            <th class="col-resp">Responsável</th>
             <th>Registrado por</th>
           </tr></thead>
           <tbody id="tbody"></tbody>
@@ -185,14 +186,14 @@ const renderTabela=rows=>{
     // FIX: usar fval() em vez de esc(valor||'—') — evita entidade HTML escapada
     return`<tr style="cursor:pointer" onclick="location.href='detalhe-item.html#${m.item_id}'">
       <td class="dim" style="white-space:nowrap">${fdt(m.data_movimentacao)}</td>
-            <td>
-        <div class="mono">${esc(m.codigo_interno_snapshot||'')}</div>
-        <div style="font-size:11px;color:var(--tx3)">${esc(m.item_modelo||'')}</div>
+      <td class="col-item">
+        <div style="font-weight:500;color:var(--tx);font-size:13px">${esc(m.serial_snapshot||m.codigo_interno_snapshot||'—')}</div>
+        <div style="font-size:13px;color:var(--tx3)">${esc(m.item_modelo||'')}</div>
       </td>
       <td class="col-status">${statusChange}</td>
-      <td class="col-resp dim">${fval(m.responsavel_novo_snapshot)}</td>
       <td class="col-cli dim">${fval(m.cliente_novo_snapshot)}</td>
       <td class="col-local dim">${fval(m.localizacao_nova)}</td>
+      <td class="col-resp dim">${fval(m.responsavel_novo_snapshot)}</td>
       <td class="dim">${fval(m.usuario_nome)}</td>
     </tr>`
   }).join('')
