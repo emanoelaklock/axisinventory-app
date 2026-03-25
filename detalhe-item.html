@@ -771,27 +771,31 @@ const carregarAnexos = async (id) => {
       el.innerHTML = '<div class="card empty"><div class="empty-icon">📎</div>Nenhum anexo</div>'
       return
     }
-    el.innerHTML = `<div class="card" style="padding:14px"><div class="anx-grid">${
-      anx.map(a => {
-        const isImg = (a.tipo === 'imagem') || (a.arquivo||'').startsWith('data:image')
-        const thumb = isImg
-          ? `<div class="anx-thumb" onclick="openLB('${a.arquivo.replace(/'/g,"\\'")}')"><img src="${a.arquivo}" alt="" loading="lazy"/></div>`
-          : `<div class="anx-thumb" onclick="abrirAnexo('${a.id}')">${TIPO_ICON[a.tipo]||'📎'}</div>`
-        const label = isImg ? 'Imagem' : a.tipo === 'checklist_devolucao' ? 'Checklist Devolução' : a.tipo === 'pdf' ? 'PDF' : (a.tipo || 'Arquivo')
-        const data  = fdt(a.data_upload)
-        return `<div class="anx-card">
-          ${thumb}
-          <div class="anx-info">
-            <div class="anx-tipo">${esc(label)}</div>
-            <div class="anx-nome">${data}</div>
-          </div>
-          <div class="anx-actions">
-            <button class="anx-btn anx-btn-open" onclick="${isImg ? `openLB('${a.arquivo.replace(/'/g,"\\'")}')` : `abrirAnexo('${a.id}')`}">Abrir</button>
-            <button class="anx-btn anx-btn-del" onclick="excluirAnexo('${a.id}')">Excluir</button>
-          </div>
-        </div>`
-      }).join('')
-    }</div></div>`
+    const _grid = document.createElement('div')
+    _grid.className = 'card'; _grid.style.padding = '14px'
+    const _inner = document.createElement('div')
+    _inner.className = 'anx-grid'
+    anx.forEach(a => {
+      const _isImg = (a.tipo === 'imagem') || (a.arquivo||'').startsWith('data:image')
+      const _label = _isImg ? 'Imagem' : a.tipo === 'checklist_devolucao' ? 'Checklist Devolucao' : a.tipo === 'pdf' ? 'PDF' : (a.tipo || 'Arquivo')
+      const _card = document.createElement('div'); _card.className = 'anx-card'
+      const _thumb = document.createElement('div'); _thumb.className = 'anx-thumb'
+      if(_isImg){
+        const _img = document.createElement('img')
+        _img.src = a.arquivo; _img.alt = ''; _img.loading = 'lazy'
+        _thumb.appendChild(_img)
+        _thumb.onclick = () => openLB(a.arquivo)
+      } else {
+        _thumb.textContent = TIPO_ICON[a.tipo] || '...'
+        _thumb.onclick = () => { if(a.tipo === 'checklist_devolucao') mostrarChecklist(a.arquivo); else abrirAnexo(a.id) }
+      }
+      _card.innerHTML = '<div class="anx-info"><div class="anx-tipo">'+esc(_label)+'</div><div class="anx-nome">'+fdt(a.data_upload)+'</div></div><div class="anx-actions"><button class="anx-btn anx-btn-open">Ver</button><button class="anx-btn anx-btn-del">Excluir</button></div>'
+      _card.insertBefore(_thumb, _card.firstChild)
+      _card.querySelector('.anx-btn-open').onclick = () => { if(_isImg) openLB(a.arquivo); else if(a.tipo === 'checklist_devolucao') mostrarChecklist(a.arquivo); else abrirAnexo(a.id) }
+      _card.querySelector('.anx-btn-del').onclick = () => excluirAnexo(a.id)
+      _inner.appendChild(_card)
+    })
+    _grid.appendChild(_inner); el.innerHTML = ''; el.appendChild(_grid)
   } catch(e) {
     el.innerHTML = `<div class="card empty"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
   }
