@@ -54,7 +54,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .empty-icon{font-size:28px;margin-bottom:8px}.empty-t{font-size:14px;font-weight:600;color:var(--tx2);margin-bottom:3px}
 .sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bd) 50%,var(--sur2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;height:13px;display:inline-block}
 @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.tipo-icon{font-size:16px;margin-right:4px}
+
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
 @keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
@@ -93,16 +93,6 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input class="sinput" id="q" type="search" placeholder="Código, serial, modelo..." oninput="onQ(this.value)"/>
       </div>
-      <select class="fsel" id="f-tipo" onchange="onF()">
-        <option value="">Tipo</option>
-        <option>Entrada estoque</option><option>Reserva</option>
-        <option>Envio cliente</option><option>Retorno cliente</option>
-        <option>Envio técnico</option><option>Retorno técnico</option>
-        <option>Envio inspeção</option><option>Resultado inspeção</option>
-        <option>Envio RMA</option><option>Retorno RMA</option>
-        <option>Substituição RMA</option><option>Baixa</option>
-        <option>Ajuste administrativo</option>
-      </select>
       <input type="date" class="finput-date" id="f-de" onchange="onF()" title="Data inicial"/>
       <input type="date" class="finput-date" id="f-ate" onchange="onF()" title="Data final"/>
       <button class="btn btn-sm" id="btn-clear" onclick="limparF()" style="display:none">
@@ -143,11 +133,10 @@ const POR_PAG=30
 const fval=v=>v ? esc(v) : '<span style="color:var(--tx3)">—</span>'
 
 const fdt=iso=>{if(!iso)return'—';const d=new Date(iso);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
-let QS={busca:'',tipo:'',de:'',ate:'',sortCol:'data_movimentacao',sortAsc:false,pagina:0,total:0}
+let QS={busca:'',de:'',ate:'',sortCol:'data_movimentacao',sortAsc:false,pagina:0,total:0}
 const buildQ=()=>{
   const from=QS.pagina*POR_PAG,to=from+POR_PAG-1
   let q='vw_movimentacoes_completo?select=*'
-  if(QS.tipo)q+=`&tipo_movimentacao=eq.${encodeURIComponent(QS.tipo)}`
   if(QS.de)q+=`&data_movimentacao=gte.${QS.de}T00:00:00`
   if(QS.ate)q+=`&data_movimentacao=lte.${QS.ate}T23:59:59`
   if(QS.busca){const b=encodeURIComponent(`%${QS.busca}%`);q+=`&or=(codigo_interno_snapshot.ilike.${b},serial_snapshot.ilike.${b},item_modelo.ilike.${b},responsavel_novo_snapshot.ilike.${b},cliente_novo_snapshot.ilike.${b})`}
@@ -172,42 +161,32 @@ const carregar=async(reset=false)=>{
 }
 let qt=null
 const onQ=v=>{clearTimeout(qt);qt=setTimeout(()=>{QS.busca=v.trim();QS.pagina=0;carregar()},280)}
-const onF=()=>{
-  QS.tipo=document.getElementById('f-tipo').value
-  QS.de=document.getElementById('f-de').value
-  QS.ate=document.getElementById('f-ate').value
-  QS.pagina=0;carregar()
-  const temF=QS.tipo||QS.de||QS.ate
+const onF=()=>{carregar()
+  const temF=QS.de||QS.ate
   document.getElementById('btn-clear').style.display=temF?'':'none'
-  document.getElementById('f-tipo').classList.toggle('on',!!QS.tipo)
-}
+  }
 const limparF=()=>{
-  QS.tipo='';QS.de='';QS.ate='';QS.busca='';QS.pagina=0
+  QS.de='';QS.ate='';QS.busca='';QS.pagina=0
   document.getElementById('q').value=''
-  document.getElementById('f-tipo').value=''
-  document.getElementById('f-de').value=''
+    document.getElementById('f-de').value=''
   document.getElementById('f-ate').value=''
   document.getElementById('btn-clear').style.display='none'
-  document.getElementById('f-tipo').classList.remove('on')
-  carregar()
+    carregar()
 }
 const srt=col=>{if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc;else{QS.sortCol=col;QS.sortAsc=false};QS.pagina=0;carregar()}
-const TIPO_ICONS={'Entrada estoque':'📦','Reserva':'🔒','Envio cliente':'🚚','Retorno cliente':'↩️','Envio técnico':'🔧','Retorno técnico':'↩️','Envio inspeção':'🔬','Resultado inspeção':'📋','Envio RMA':'⚠️','Retorno RMA':'✅','Substituição RMA':'🔄','Baixa':'🗑️','Ajuste administrativo':'⚙️'}
 const SM={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Em Demonstração':'#0D9488','Em Demonstração':'#0D9488','Aguardando Inspeção':'#2E6BE6','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
 const sbadge=(s)=>{const c=SM[s]||'#71717A';return`<span class="badge" style="background:${c}18;color:${c}">${esc(s||'—')}</span>`}
 const renderSkel=()=>{document.getElementById('tbody').innerHTML=Array(8).fill(0).map(()=>`<tr>${Array(7).fill(0).map(()=>`<td><span class="sk" style="width:${40+Math.random()*60}px"></span></td>`).join('')}<td></td></tr>`).join('')}
 const renderTabela=rows=>{
   if(!rows.length){document.getElementById('tbody').innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-t">Nenhuma movimentação encontrada</div><div>Ajuste os filtros ou o período</div></div></td></tr>';return}
   document.getElementById('tbody').innerHTML=rows.map(m=>{
-    const icon=TIPO_ICONS[m.tipo_movimentacao]||'•'
     const statusChange=m.status_anterior&&m.status_anterior!==m.status_novo
       ?`${sbadge(m.status_anterior)}<span class="arrow">→</span>${sbadge(m.status_novo)}`
       :sbadge(m.status_novo)
     // FIX: usar fval() em vez de esc(valor||'—') — evita entidade HTML escapada
     return`<tr style="cursor:pointer" onclick="location.href='detalhe-item.html#${m.item_id}'">
       <td class="dim" style="white-space:nowrap">${fdt(m.data_movimentacao)}</td>
-      <td><span class="tipo-icon">${icon}</span>${esc(m.tipo_movimentacao)}</td>
-      <td>
+            <td>
         <div class="mono">${esc(m.codigo_interno_snapshot||'')}</div>
         <div style="font-size:11px;color:var(--tx3)">${esc(m.item_modelo||'')}</div>
       </td>
