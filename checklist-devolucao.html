@@ -355,11 +355,22 @@ async function buscarSerial(){
         res.innerHTML='<div style="padding:12px;font-size:13px;color:var(--tx3)">Nenhum equipamento encontrado</div>'
         res.style.display='block'; return
       }
-      res.innerHTML = data.map(d=>`
-        <div class="ac-item" onclick="selecionarItem('${d.id}','${(d.serial||d.codigo_interno||'').replace(/'/g,"\\'")}','${(d.modelo||'').replace(/'/g,"\\'")}')">
-          <div class="ac-serial">${d.serial||d.codigo_interno||'—'}</div>
-          <div class="ac-modelo">${d.modelo||''} ${d.part_number?'· '+d.part_number:''}</div>
-        </div>`).join('')
+      const items = data.map(d=>{
+        const div = document.createElement('div')
+        div.className = 'ac-item'
+        div.dataset.id = d.id
+        div.dataset.serial = d.serial||d.codigo_interno||''
+        div.dataset.modelo = d.modelo||''
+        div.innerHTML = '<div class="ac-serial">'+(d.serial||d.codigo_interno||'—')+'</div><div class="ac-modelo">'+(d.modelo||'')+( d.part_number ? ' · '+d.part_number : '')+'</div>'
+        div.onclick = () => selecionarItem(d.id, d.serial||d.codigo_interno||'', d.modelo||'')
+        return div.outerHTML
+      })
+      res.innerHTML = items.join('')
+      // Reanexar eventos (outerHTML perde os onclick)
+      res.querySelectorAll('.ac-item').forEach((el,i)=>{
+        const d = data[i]
+        el.onclick = () => selecionarItem(d.id, d.serial||d.codigo_interno||'', d.modelo||'')
+      })
       res.style.display='block'
     }catch(e){
       res.style.display='none'
@@ -524,7 +535,7 @@ async function enviar(){
       ].filter(Boolean).join(' | ')
 
       const resumo = [
-        `📋 CHECKLIST DE DEVOLUÇÃO`,
+        'CHECKLIST DE DEVOLUCAO',
         `Data: ${data} | Empresa: ${nomeCli}`,
         `Tipo: ${tipo} | Serial: ${serial}`,
         obs   ? `Defeito/Obs: ${obs}` : null,
