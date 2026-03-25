@@ -190,6 +190,11 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 </div>
 
 <script>
+var MEU_ID = null
+var editUsrId = null
+var pwdUsrId = null
+
+
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY4MTc0MiwiZXhwIjoyMDg5MjU3NzQyfQ.2pgi0lruJn5cDJMGs7gyX95AGintUx6oYjNRW9gg0Hw'
 
 
@@ -316,6 +321,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelect
 
 async function onPostLogin() {
   renderSidebar('usuarios')
+  MEU_ID = SESSION.user.id
   if (PERFIL !== 'Administrador') {
     document.getElementById('screen-negado').style.display = 'block'
     return
