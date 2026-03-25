@@ -178,7 +178,7 @@ let QS = { busca:'', de:'', ate:'', tipo:'', pagina:0, total:0 }
 let todosRows = []
 let rowsFiltrados = []
 
-// ── CARREGAR ──────────────────────────────────────────────────────
+// -- CARREGAR ------------------------------------------------------
 async function carregar() {
   renderSkel()
   try {
@@ -191,12 +191,12 @@ async function carregar() {
     todosRows = await r.json()
     aplicarFiltros()
   } catch(e) {
-    document.getElementById('tbody').innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">⚠️</div><div class="empty-t">${esc(e.message)}</div></div></td></tr>`
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">(!!)</div><div class="empty-t">${esc(e.message)}</div></div></td></tr>`
     toast(e.message, 'err')
   }
 }
 
-// ── FILTROS ───────────────────────────────────────────────────────
+// -- FILTROS -------------------------------------------------------
 function aplicarFiltros() {
   const q = QS.busca.toLowerCase()
   rowsFiltrados = todosRows.filter(r => {
@@ -236,15 +236,15 @@ const limparF = () => {
   aplicarFiltros()
 }
 
-// ── RENDERIZAR TABELA ─────────────────────────────────────────────
+// -- RENDERIZAR TABELA ---------------------------------------------
 const fdt = iso => {
-  if (!iso) return '—'
+  if (!iso) return '--'
   const [y,m,d] = iso.split('T')[0].split('-')
   return `${d}/${m}/${y}`
 }
 
 const tipoBadge = t => {
-  if (!t) return '<span style="color:var(--tx3)">—</span>'
+  if (!t) return '<span style="color:var(--tx3)">--</span>'
   const m = {'Câmera':['#dbeafe','#1d4ed8'],'Intercom':['#e0e7ff','#4338ca'],'Controle de Acesso':['#fef9c3','#854d0e'],'Áudio':['#dcfce7','#15803d'],'Wearable':['#fce7f3','#9d174d'],'Acessório':['#f3f4f6','#374151'],'Outro':['#f3f4f6','#374151']}
   const [bg,c] = m[t] || ['#f3f4f6','#374151']
   return `<span class="badge" style="background:${bg};color:${c}">${esc(t)}</span>`
@@ -261,7 +261,7 @@ const renderTabela = () => {
   const pagina = rowsFiltrados.slice(ini, ini + POR_PAG)
 
   if (!pagina.length) {
-    document.getElementById('tbody').innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-t">Nenhum checklist encontrado</div><div>Ajuste os filtros</div></div></td></tr>`
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">[ ]</div><div class="empty-t">Nenhum checklist encontrado</div><div>Ajuste os filtros</div></div></td></tr>`
     document.getElementById('pag').style.display = 'none'
     return
   }
@@ -269,11 +269,11 @@ const renderTabela = () => {
   document.getElementById('tbody').innerHTML = pagina.map(r => `
     <tr>
       <td class="dim" style="white-space:nowrap">${fdt(r.data_checklist)}</td>
-      <td style="font-weight:500;color:var(--tx)">${esc(r.cliente||'—')}</td>
+      <td style="font-weight:500;color:var(--tx)">${esc(r.cliente||'--')}</td>
       <td>${tipoBadge(r.tipo_equipamento)}</td>
-      <td><span class="mono">${esc(r.serial||'—')}</span></td>
-      <td class="dim">${esc(r.modelo||'—')}</td>
-      <td class="dim">${esc(r.responsavel||'—')}</td>
+      <td><span class="mono">${esc(r.serial||'--')}</span></td>
+      <td class="dim">${esc(r.modelo||'--')}</td>
+      <td class="dim">${esc(r.responsavel||'--')}</td>
       <td><button class="btn btn-sm btn-p" onclick="abrirModal(${r.id})">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         Ver
@@ -281,23 +281,23 @@ const renderTabela = () => {
     </tr>`).join('')
 
   const end = Math.min(ini + POR_PAG, QS.total)
-  document.getElementById('pag-info').textContent = `${ini+1}–${end} de ${QS.total}`
+  document.getElementById('pag-info').textContent = `${ini+1}-${end} de ${QS.total}`
   document.getElementById('pag').style.display = 'flex'
 }
 
-// ── PAGINAÇÃO ─────────────────────────────────────────────────────
+// -- PAGINAÇÃO -----------------------------------------------------
 const renderPag = () => {
   const total = Math.ceil(QS.total / POR_PAG)
   if (total <= 1) { document.getElementById('pag-ctrl').innerHTML=''; return }
   const p = []
-  p.push(`<button class="pb" onclick="irP(${QS.pagina-1})" ${QS.pagina===0?'disabled':''}>‹</button>`)
+  p.push(`<button class="pb" onclick="irP(${QS.pagina-1})" ${QS.pagina===0?'disabled':''}>&lsaquo;</button>`)
   for (let i=0;i<total;i++) {
     if (i===0||i===total-1||Math.abs(i-QS.pagina)<=2)
       p.push(`<button class="pb ${i===QS.pagina?'on':''}" onclick="irP(${i})">${i+1}</button>`)
     else if (Math.abs(i-QS.pagina)===3)
-      p.push(`<span style="color:var(--tx3);font-size:11px;padding:0 2px">…</span>`)
+      p.push(`<span style="color:var(--tx3);font-size:11px;padding:0 2px">...</span>`)
   }
-  p.push(`<button class="pb" onclick="irP(${QS.pagina+1})" ${QS.pagina>=total-1?'disabled':''}>›</button>`)
+  p.push(`<button class="pb" onclick="irP(${QS.pagina+1})" ${QS.pagina>=total-1?'disabled':''}>&rsaquo;</button>`)
   document.getElementById('pag-ctrl').innerHTML = p.join('')
 }
 
@@ -309,7 +309,7 @@ window.irP = p => {
   window.scrollTo({top:0,behavior:'smooth'})
 }
 
-// ── MODAL ─────────────────────────────────────────────────────────
+// -- MODAL ---------------------------------------------------------
 const dotCls = v => {
   if (!v) return 'dot-na'
   const s = v.toLowerCase()
@@ -320,7 +320,7 @@ const dotCls = v => {
 }
 
 const df = (label, valor) =>
-  `<div class="df"><label>${label}</label><span>${valor ? esc(String(valor)) : '<span style="color:var(--tx3)">—</span>'}</span></div>`
+  `<div class="df"><label>${label}</label><span>${valor ? esc(String(valor)) : '<span style="color:var(--tx3)">--</span>'}</span></div>`
 
 const da = (label, valor) =>
   `<div class="df"><label>${label}</label><div class="arow"><div class="dot ${dotCls(valor)}"></div><span>${valor ? esc(valor) : 'N/A'}</span></div></div>`
@@ -329,7 +329,7 @@ function abrirModal(id) {
   const r = todosRows.find(x => x.id === id)
   if (!r) return
 
-  document.getElementById('modal-titulo').textContent = `${r.cliente||''}  ·  ${fdt(r.data_checklist)}`
+  document.getElementById('modal-titulo').textContent = `${r.cliente||''}  -  ${fdt(r.data_checklist)}`
 
   const fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
 
@@ -376,7 +376,7 @@ function fecharModalFora(e) {
   if (e.target === document.getElementById('overlay')) fecharModal()
 }
 
-// ── AUTH CALLBACK (padrão do projeto) ────────────────────────────
+// -- AUTH CALLBACK (padrão do projeto) ----------------------------
 async function onPostLogin() {
   renderSidebar('checklists-devolucao')
   await carregar()
