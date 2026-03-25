@@ -310,7 +310,6 @@ const togglePwd=(inputId,btn)=>{
 const closeM=id=>document.getElementById(id).classList.remove('open')
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mback.open').forEach(m=>m.classList.remove('open'))})
 
-const toast=(msg,tipo='info',dur=4000)=>{const el=document.createElement('div');el.className=`toast ${tipo}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),dur)}
 
 
 
