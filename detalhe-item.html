@@ -78,7 +78,7 @@
 .anx-actions{display:flex;gap:4px;padding:6px 7px 7px;border-top:1px solid var(--bd)}
 .anx-btn{flex:1;padding:4px 6px;border-radius:6px;border:1px solid transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center}
 .anx-btn-open{color:var(--ac);background:var(--acl);border-color:var(--acm)}.anx-btn-open:hover{background:var(--ac);color:#fff}
-.anx-btn-del{color:var(--tx3);background:var(--sur2);border-color:var(--bd)}.anx-btn-del:hover{background:var(--re);color:#fff;border-color:var(--re)}
+
 .card{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:16px;box-shadow:var(--sh)}
 .btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sur);color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
 .btn:hover{background:var(--sur2);border-color:var(--bd2);color:var(--tx)}
@@ -122,35 +122,43 @@
 .toast.ok{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border:1px solid var(--acm)}
-.chkdev-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.55);z-index:500;align-items:center;justify-content:center;padding:16px}
-.chkdev-overlay.open{display:flex}
-.chkdev-modal{background:var(--sur);border-radius:16px;width:100%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.28);display:flex;flex-direction:column;animation:mup2 .2s ease}
-@keyframes mup2{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
-.chkdev-hd{background:linear-gradient(135deg,#1B2A4A 0%,#2E6BE6 100%);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;position:sticky;top:0}
-.chkdev-hd h2{margin:0;font-size:15px;font-weight:700;color:#fff}
-.chkdev-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
-.chkdev-close:hover{background:rgba(255,255,255,.32)}
-.chkdev-bd{padding:20px 22px;flex:1}
-.chkdev-ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 22px 16px;border-top:1px solid var(--bd)}
-.chkdev-sec-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#2E6BE6;padding-bottom:6px;border-bottom:2px solid #EFF6FF;margin:16px 0 12px}
-.chkdev-sec-title:first-child{margin-top:0}
-.chkdev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-bottom:4px}
-@media(max-width:480px){.chkdev-grid{grid-template-columns:1fr}}
-.chk-field label{display:block;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.chk-field span{font-size:13px;color:var(--tx)}
-.chk-field em{color:var(--tx3);font-style:normal}
-.chkdev-acess-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:4px}
-@media(max-width:480px){.chkdev-acess-grid{grid-template-columns:1fr}}
-.chk-acess{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:8px;border:1px solid var(--bd);background:var(--sur2)}
-.chk-alabel{font-size:11px;font-weight:600;color:var(--tx2);flex:1}
-.chk-aval{font-size:11px;font-weight:700}
-.chk-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.chk-dot-ok{background:#22c55e}.chk-dot-nok{background:#ef4444}.chk-dot-warn{background:#f59e0b}.chk-dot-na{background:#d1d5db}
-.chk-obs{font-size:13px;color:var(--tx);white-space:pre-wrap;background:var(--sur2);border-radius:8px;padding:10px 12px;margin-bottom:4px}
-.chk-fotos{display:flex;gap:8px;flex-wrap:wrap}
-.chk-fotos a{border-radius:9px;overflow:hidden;border:2px solid var(--bd);transition:border-color .15s}
-.chk-fotos a:hover{border-color:#2E6BE6}
-.chk-fotos img{width:110px;height:82px;object-fit:cover;display:block}
+.chk-sub-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--r) var(--r) 0 0;border:1px solid var(--bd);border-bottom:none;background:var(--sur2)}
+.chk-sub-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:7px}
+.chk-tipo-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot-dev{background:#0D9488}.dot-insp{background:#2E6BE6}
+.chk-sub-body{border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);overflow:hidden}
+.chk-sub-body .chk-card{border-radius:0;border-left:none;border-right:none;border-top:none;margin-bottom:0;border-bottom:1px solid var(--bd)}
+.chk-sub-body .chk-card:last-child{border-bottom:none}
+.chkd-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.55);z-index:500;align-items:center;justify-content:center;padding:16px}
+.chkd-overlay.open{display:flex}
+.chkd-modal{background:var(--sur);border-radius:16px;width:100%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.28);display:flex;flex-direction:column;animation:chkdup .2s ease}
+@keyframes chkdup{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.chkd-hd{background:linear-gradient(135deg,#0D9488 0%,#0891B2 100%);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;flex-shrink:0;position:sticky;top:0}
+.chkd-hd h2{margin:0;font-size:15px;font-weight:700;color:#fff}
+.chkd-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.chkd-close:hover{background:rgba(255,255,255,.32)}
+.chkd-bd{padding:20px 22px;flex:1}
+.chkd-ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 22px 16px;border-top:1px solid var(--bd);flex-shrink:0}
+.chkd-sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#0D9488;padding-bottom:6px;border-bottom:2px solid rgba(13,148,136,.15);margin:16px 0 12px}
+.chkd-sec:first-child{margin-top:0}
+.chkd-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
+.chkd-field label{display:block;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.chkd-field span{font-size:13px;color:var(--tx)}
+.chkd-field em{color:var(--tx3);font-style:normal}
+.chkd-acess-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.chkd-acess{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:8px;border:1px solid var(--bd);background:var(--sur2)}
+.chkd-alabel{font-size:11px;font-weight:600;color:var(--tx2);flex:1}
+.chkd-aval{font-size:11px;font-weight:700}
+.chkd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.chkd-dot-ok{background:#22c55e}.chkd-dot-nok{background:#ef4444}.chkd-dot-warn{background:#f59e0b}.chkd-dot-na{background:#d1d5db}
+.chkd-val-ok{color:#15803d}.chkd-val-nok{color:#DC2626}.chkd-val-warn{color:#D97706}.chkd-val-na{color:var(--tx3)}
+.chkd-obs{font-size:13px;color:var(--tx);white-space:pre-wrap;background:var(--sur2);border-radius:8px;padding:10px 12px}
+.chkd-fotos{display:flex;gap:8px;flex-wrap:wrap}
+.chkd-fotos a{border-radius:9px;overflow:hidden;border:2px solid var(--bd);transition:border-color .15s;display:block}
+.chkd-fotos a:hover{border-color:#0D9488}
+.chkd-fotos img{width:110px;height:82px;object-fit:cover;display:block}
+@media(max-width:480px){.chkd-grid,.chkd-acess-grid{grid-template-columns:1fr}}
+@media print{.chkd-hd,.chkd-ft{display:none!important}.chkd-overlay{position:static;background:none!important;display:block!important}}
 @media(max-width:600px){.page{padding:12px 12px 60px}.hero{padding:16px}.hero-acts .btn span{display:none}.info-grid{grid-template-columns:1fr 1fr}.frow{grid-template-columns:1fr}.tabs-bar{gap:0}.tab-btn{padding:8px 12px;font-size:12px}}
 
 /* ── SIDEBAR GLOBAL ─── */
@@ -285,10 +293,7 @@ body.has-sidebar{display:flex;min-height:100vh}
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         Checklists <span class="tab-count" id="chk-count">0</span>
       </button>
-      <button class="tab-btn" data-tab="tab-anexos" onclick="switchTab('tab-anexos')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-        Anexos <span class="tab-count" id="anx-count">0</span>
-      </button>
+
     </div>
 
     <!-- TAB: TIMELINE -->
@@ -302,28 +307,34 @@ body.has-sidebar{display:flex;min-height:100vh}
     <!-- TAB: CHECKLISTS -->
     <div class="tab-pane" id="tab-checklists">
       <div class="section">
-        <div class="sec-head">
-          <div class="sec-title">Checklists de inspeção</div>
-          <button class="btn btn-sm" onclick="window.open('checklist-axis.html?item='+ITEM_ID,'_blank')">+ Novo</button>
+
+        <!-- Devolução -->
+        <div class="chk-sub-hd">
+          <div class="chk-sub-title">
+            <span class="chk-tipo-dot dot-dev"></span>
+            Devolução
+            <span class="tab-count" id="chk-dev-count" style="background:rgba(13,148,136,.12);color:#0D9488">0</span>
+          </div>
         </div>
-        <div id="chk-content"><div class="card empty"><div class="empty-icon">✅</div>Nenhum checklist registrado</div></div>
+        <div class="chk-sub-body" id="chk-dev-content">
+          <div class="card empty" style="border:none;border-radius:0"><div class="empty-icon">📋</div>Nenhum checklist de devolução</div>
+        </div>
+
+        <!-- Inspeção -->
+        <div class="chk-sub-hd" style="margin-top:14px">
+          <div class="chk-sub-title">
+            <span class="chk-tipo-dot dot-insp"></span>
+            Inspeção
+            <span class="tab-count" id="chk-insp-count" style="background:rgba(46,107,230,.1);color:#2E6BE6">0</span>
+          </div>
+        </div>
+        <div class="chk-sub-body" id="chk-insp-content">
+          <div class="card empty" style="border:none;border-radius:0"><div class="empty-icon">✅</div>Nenhum checklist de inspeção</div>
+        </div>
+
       </div>
     </div>
 
-    <!-- TAB: ANEXOS -->
-    <div class="tab-pane" id="tab-anexos">
-      <div class="section">
-        <div class="sec-head">
-          <div class="sec-title">Anexos</div>
-          <label class="btn btn-sm" style="cursor:pointer">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Incluir
-            <input type="file" style="display:none" id="anx-file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" onchange="uploadAnexos(this.files)"/>
-          </label>
-        </div>
-        <div id="anx-content"><div class="card empty"><div class="empty-icon">📎</div>Nenhum anexo</div></div>
-      </div>
-    </div>
 
   </div><!-- /state-content -->
 </div></div><!-- /page -->
@@ -594,7 +605,6 @@ const carregarItem = async (id) => {
     await Promise.all([
       carregarTimeline(id),
       carregarChecklists(id),
-      carregarAnexos(id),
       carregarDropdowns(),
     ])
   } catch(e) {
@@ -741,83 +751,94 @@ const carregarTimeline = async (id) => {
 // CHECKLISTS
 // ════════════════════════════════════════════════════════════
 const carregarChecklists = async (id) => {
-  const el = document.getElementById('chk-content')
   try {
-    const chks = await get(
-      `checklists_axis?item_id=eq.${id}&order=data_checklist.desc&select=*`
-    )
-    document.getElementById('chk-count').textContent = chks.length
-    if (!chks.length) {
-      el.innerHTML = '<div class="card empty"><div class="empty-icon">✅</div>Nenhum checklist registrado</div>'
-      return
+    const [devs, insp] = await Promise.all([
+      get(`checklists_devolucao?item_id=eq.${id}&order=created_at.desc&select=*`),
+      get(`checklists_axis?item_id=eq.${id}&order=data_checklist.desc&select=*`)
+    ])
+    document.getElementById('chk-count').textContent = devs.length + insp.length
+    document.getElementById('chk-dev-count').textContent = devs.length
+    document.getElementById('chk-insp-count').textContent = insp.length
+
+    // ── Devolução ────────────────────────────────────────────────────────────
+    const elDev = document.getElementById('chk-dev-content')
+    if (!devs.length) {
+      elDev.innerHTML = '<div class="card empty" style="border:none;border-radius:0"><div class="empty-icon">📋</div>Nenhum checklist de devolução</div>'
+    } else {
+      elDev.innerHTML = devs.map(d => {
+        const fotos = [d.foto_1, d.foto_2, d.foto_3].filter(Boolean)
+          .map(f => `<img class="chk-foto" src="${f}" onclick="openLB('${f}')" alt="Foto" loading="lazy"/>`).join('')
+        return `<div class="chk-card" style="cursor:pointer" onclick="abrirChkDevPorId('${d.id}')">
+          <div>
+            <div class="chk-date">${fdt(d.data_checklist)} <span style="font-size:11px;color:var(--tx3)">por ${esc(d.responsavel||'—')}</span></div>
+            <div class="chk-sub">${esc(d.cliente||'')}${d.tipo_equipamento ? ' · '+esc(d.tipo_equipamento) : ''}</div>
+            ${d.observacoes ? `<div class="chk-obs">${esc(d.observacoes)}</div>` : ''}
+            ${fotos ? `<div class="chk-fotos">${fotos}</div>` : ''}
+          </div>
+          <div><button class="btn btn-sm" style="background:rgba(13,148,136,.08);color:#0D9488;border-color:rgba(13,148,136,.2);font-size:11px"
+            onclick="event.stopPropagation();abrirChkDevPorId('${d.id}')">Ver</button></div>
+        </div>`
+      }).join('')
     }
-    el.innerHTML = chks.map(c => {
-      const mans = (c.manutencoes||[]).map(m => `<span class="chk-man">${esc(m)}</span>`).join('')
-      const fotos = [c.foto_1, c.foto_2, c.foto_3].filter(Boolean)
-        .map(f => `<img class="chk-foto" src="${f}" onclick="openLB('${f}')" alt="Foto" loading="lazy"/>`)
-        .join('')
-      return `<div class="chk-card">
-        <div>
-          <div class="chk-date">${fdt(c.data_checklist)} <span style="font-size:11px;color:var(--tx3)">por ${esc(c.responsavel||'—')}</span></div>
-          <div class="chk-sub">${esc(c.origem||'')}${c.rma ? ' · RMA: ' + esc(c.rma) : ''}</div>
-          ${mans ? `<div class="chk-mans">${mans}</div>` : ''}
-          ${c.observacoes ? `<div class="chk-obs">${esc(c.observacoes)}</div>` : ''}
-          ${fotos ? `<div class="chk-fotos">${fotos}</div>` : ''}
-        </div>
-        <div style="text-align:right">
-          <span style="font-size:11px;color:var(--tx3)">${esc(c.tipo_equipamento||'')}</span>
-        </div>
-      </div>`
-    }).join('')
+
+    // ── Inspeção ─────────────────────────────────────────────────────────────
+    const elInsp = document.getElementById('chk-insp-content')
+    if (!insp.length) {
+      elInsp.innerHTML = '<div class="card empty" style="border:none;border-radius:0"><div class="empty-icon">✅</div>Nenhum checklist de inspeção</div>'
+    } else {
+      elInsp.innerHTML = insp.map(ch => {
+        const mans = (ch.manutencoes||[]).map(m => `<span class="chk-man">${esc(m)}</span>`).join('')
+        const fotos = [ch.foto_1, ch.foto_2, ch.foto_3].filter(Boolean)
+          .map(f => `<img class="chk-foto" src="${f}" onclick="openLB('${f}')" alt="Foto" loading="lazy"/>`).join('')
+        return `<div class="chk-card">
+          <div>
+            <div class="chk-date">${fdt(ch.data_checklist)} <span style="font-size:11px;color:var(--tx3)">por ${esc(ch.responsavel||'—')}</span></div>
+            <div class="chk-sub">${esc(ch.origem||'')}${ch.rma ? ' · RMA: '+esc(ch.rma) : ''}</div>
+            ${mans ? `<div class="chk-mans">${mans}</div>` : ''}
+            ${ch.observacoes ? `<div class="chk-obs">${esc(ch.observacoes)}</div>` : ''}
+            ${fotos ? `<div class="chk-fotos">${fotos}</div>` : ''}
+          </div>
+          <div style="text-align:right"><span style="font-size:11px;color:var(--tx3)">${esc(ch.tipo_equipamento||'')}</span></div>
+        </div>`
+      }).join('')
+    }
   } catch(e) {
-    el.innerHTML = `<div class="card empty"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
+    document.getElementById('chk-dev-content').innerHTML =
+      `<div class="card empty" style="border:none"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
   }
 }
 
-// ════════════════════════════════════════════════════════════
-// ANEXOS
-// ════════════════════════════════════════════════════════════
-
-const mostrarChecklist = async (arquivo) => {
-  // arquivo = 'checklist_devolucao:<uuid>'
-  var chkId = arquivo.replace('checklist_devolucao:', '').trim()
-  if (!chkId) { toast('ID do checklist invalido', 'err'); return }
+const abrirChkDevPorId = async (id) => {
   try {
-    var rows = await get('checklists_devolucao?id=eq.' + chkId + '&select=*')
+    const rows = await get('checklists_devolucao?id=eq.' + id + '&select=*')
     if (!rows || !rows.length) { toast('Checklist nao encontrado', 'err'); return }
-    var r = rows[0]
-    abrirModalChkDev(r)
-  } catch(e) {
-    toast('Erro ao carregar checklist: ' + e.message, 'err')
-  }
+    renderModalChkDev(rows[0])
+  } catch(e) { toast('Erro: ' + e.message, 'err') }
 }
 
-var abrirModalChkDev = function(r) {
-  var fdt2 = function(iso) {
-    if (!iso) return '--'
-    var p = iso.split('T')[0].split('-')
-    return p[2]+'/'+p[1]+'/'+p[0]
+const renderModalChkDev = (r) => {
+  const fdt2 = iso => { if (!iso) return '--'; const p = iso.split('T')[0].split('-'); return p[2]+'/'+p[1]+'/'+p[0] }
+  const dotA = v => {
+    if (!v) return {c:'chkd-dot-na',v:'chkd-val-na',l:'N/A'}
+    const s = v.toLowerCase()
+    if (s==='incluso')    return {c:'chkd-dot-ok',  v:'chkd-val-ok',   l:v}
+    if (s==='danificado') return {c:'chkd-dot-warn', v:'chkd-val-warn', l:v}
+    if (s===('n\u00e3o incluso')||s==='nao incluso') return {c:'chkd-dot-nok',v:'chkd-val-nok',l:v}
+    return {c:'chkd-dot-na',v:'chkd-val-na',l:v}
   }
-  var dotInfo = function(v) {
-    if (!v) return {cls:'chk-dot-na', label:'N/A'}
-    var s = v.toLowerCase()
-    if (s==='incluso')   return {cls:'chk-dot-ok',   label:v}
-    if (s==='danificado') return {cls:'chk-dot-warn', label:v}
-    if (s==='n\u00e3o incluso'||s==='nao incluso') return {cls:'chk-dot-nok', label:v}
-    return {cls:'chk-dot-na', label:v}
+  const dotSN = v => {
+    if (!v) return {c:'chkd-dot-na',v:'chkd-val-na',l:'N/A'}
+    const s = v.toLowerCase()
+    if (s==='sim') return {c:'chkd-dot-ok', v:'chkd-val-ok',  l:v}
+    if (s===('n\u00e3o')||s==='nao') return {c:'chkd-dot-nok',v:'chkd-val-nok',l:v}
+    return {c:'chkd-dot-na',v:'chkd-val-na',l:v}
   }
-  var mf = function(label, valor) {
-    return '<div class="chk-field"><label>'+label+'</label><span>'+(valor ? esc(String(valor)) : '<em>--</em>')+'</span></div>'
-  }
-  var af = function(label, valor) {
-    var d = dotInfo(valor)
-    return '<div class="chk-acess"><div class="chk-dot '+d.cls+'"></div><span class="chk-alabel">'+label+'</span><span class="chk-aval">'+esc(d.label)+'</span></div>'
-  }
-  var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
-
-  var html = ''
-  html += '<div class="chk-sec-title">Identifica\u00e7\u00e3o</div>'
-  html += '<div class="chkdev-grid">'
+  const mf  = (lbl,val) => `<div class="chkd-field"><label>${lbl}</label><span>${val ? esc(String(val)) : '<em>--</em>'}</span></div>`
+  const af  = (lbl,val) => { const d=dotA(val);  return `<div class="chkd-acess"><div class="chkd-dot ${d.c}"></div><span class="chkd-alabel">${lbl}</span><span class="chkd-aval ${d.v}">${esc(d.l)}</span></div>` }
+  const snf = (lbl,val) => { const d=dotSN(val); return `<div class="chkd-acess"><div class="chkd-dot ${d.c}"></div><span class="chkd-alabel">${lbl}</span><span class="chkd-aval ${d.v}">${esc(d.l)}</span></div>` }
+  const fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
+  let html = ''
+  html += '<div class="chkd-sec">Identifica\u00e7\u00e3o</div><div class="chkd-grid">'
   html += mf('Data', fdt2(r.data_checklist))
   html += mf('Cliente', r.cliente)
   html += mf('Tipo de Equipamento', r.tipo_equipamento)
@@ -827,148 +848,34 @@ var abrirModalChkDev = function(r) {
   html += mf('Origem', r.origem)
   html += mf('Registrado em', r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : null)
   html += '</div>'
-  html += '<div class="chk-sec-title">Acess\u00f3rios e Componentes</div>'
-  html += '<div class="chkdev-acess-grid">'
-  html += af('Weathershield / Tampa', r.weathershield)
-  html += af('Suporte de Montagem', r.suporte_montagem)
-  html += af('Cabo de Alimenta\u00e7\u00e3o / PoE', r.cabo_alimentacao)
-  html += af('Conector / Plug', r.conector_plug)
-  html += af('Gasket / Veda\u00e7\u00e3o', r.gasket_vedacao)
+  html += '<div class="chkd-sec">Acess\u00f3rios e Componentes</div><div class="chkd-acess-grid">'
+  html += af('Weathershield',                      r.weathershield_tampa)
+  html += af('Suporte de Montagem',                r.suporte_montagem)
+  html += af('Base Traseira (Back Box)',            r.base_traseira)
+  html += af('Borracha de Veda\u00e7\u00e3o',      r.borracha_vedacao)
+  html += af('Borracha Veda\u00e7\u00e3o Cabo',    r.borracha_vedacao_cabo)
+  html += snf('Falta Parafuso',                    r.falta_parafuso)
+  html += snf('Troca da Base Traseira (Back Box)', r.troca_base_traseira)
   html += '</div>'
-  if (r.demais_acessorios) {
-    html += '<div class="chk-sec-title">Demais Acess\u00f3rios</div>'
-    html += '<div class="chk-obs">'+esc(r.demais_acessorios)+'</div>'
-  }
-  if (r.observacoes) {
-    html += '<div class="chk-sec-title">Observa\u00e7\u00f5es / Defeito</div>'
-    html += '<div class="chk-obs">'+esc(r.observacoes)+'</div>'
-  }
+  if (r.demais_acessorios) html += '<div class="chkd-sec">Demais Acess\u00f3rios</div><div class="chkd-obs">'+esc(r.demais_acessorios)+'</div>'
+  if (r.observacoes)       html += '<div class="chkd-sec">Observa\u00e7\u00f5es / Defeito</div><div class="chkd-obs">'+esc(r.observacoes)+'</div>'
   if (fotos.length) {
-    html += '<div class="chk-sec-title">Fotos</div>'
-    html += '<div class="chk-fotos">'
-    fotos.forEach(function(u,i) {
-      html += '<a href="'+u+'" target="_blank" rel="noopener"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy"/></a>'
-    })
+    html += '<div class="chkd-sec">Fotos</div><div class="chkd-fotos">'
+    fotos.forEach((u,i) => { html += `<a href="${u}" target="_blank" rel="noopener"><img src="${u}" alt="Foto ${i+1}" loading="lazy"/></a>` })
     html += '</div>'
   }
-
-  document.getElementById('chkdev-titulo').textContent = (r.cliente||'--') + '  ·  ' + fdt2(r.data_checklist)
-  document.getElementById('chkdev-corpo').innerHTML = html
-  document.getElementById('chkdev-overlay').classList.add('open')
+  document.getElementById('chkd-titulo').textContent = (r.cliente||'--') + ' \u00b7 ' + fdt2(r.data_checklist)
+  document.getElementById('chkd-corpo').innerHTML = html
+  document.getElementById('chkd-overlay').classList.add('open')
   document.body.style.overflow = 'hidden'
 }
-const TIPO_ICON = { imagem:'🖼️', pdf:'📄', checklist_devolucao:'📋', outro:'📎' }
 
-const carregarAnexos = async (id) => {
-  const el = document.getElementById('anx-content')
-  try {
-    const anx = await get(
-      `anexos?item_id=eq.${id}&order=data_upload.desc&select=*`
-    )
-    document.getElementById('anx-count').textContent = anx.length
-    if (!anx.length) {
-      el.innerHTML = '<div class="card empty"><div class="empty-icon">📎</div>Nenhum anexo</div>'
-      return
-    }
-    const _grid = document.createElement('div')
-    _grid.className = 'card'; _grid.style.padding = '14px'
-    const _inner = document.createElement('div')
-    _inner.className = 'anx-grid'
-    anx.forEach(a => {
-      const _isImg = (a.tipo === 'imagem') || (a.arquivo||'').startsWith('data:image')
-      const _label = _isImg ? 'Imagem' : a.tipo === 'checklist_devolucao' ? 'Checklist Devolu\u00e7\u00e3o' : a.tipo === 'pdf' ? 'PDF' : (a.tipo || 'Arquivo')
-      const _card = document.createElement('div'); _card.className = 'anx-card'
-      const _thumb = document.createElement('div'); _thumb.className = 'anx-thumb'
-      if(_isImg){
-        const _img = document.createElement('img')
-        _img.src = a.arquivo; _img.alt = ''; _img.loading = 'lazy'
-        _thumb.appendChild(_img)
-        _thumb.onclick = () => openLB(a.arquivo)
-      } else {
-        _thumb.textContent = TIPO_ICON[a.tipo] || '...'
-        _thumb.onclick = () => { if(a.tipo === 'checklist_devolucao') mostrarChecklist(a.arquivo); else abrirAnexo(a.id) }
-      }
-      _card.innerHTML = '<div class="anx-info"><div class="anx-tipo">'+esc(_label)+'</div><div class="anx-nome">'+fdt(a.data_upload)+'</div></div><div class="anx-actions"><button class="anx-btn anx-btn-open">Ver</button><button class="anx-btn anx-btn-del">Excluir</button></div>'
-      _card.insertBefore(_thumb, _card.firstChild)
-      _card.querySelector('.anx-btn-open').onclick = () => { if(_isImg) openLB(a.arquivo); else if(a.tipo === 'checklist_devolucao') mostrarChecklist(a.arquivo); else abrirAnexo(a.id) }
-      _card.querySelector('.anx-btn-del').onclick = () => excluirAnexo(a.id)
-      _inner.appendChild(_card)
-    })
-    _grid.appendChild(_inner); el.innerHTML = ''; el.appendChild(_grid)
-  } catch(e) {
-    el.innerHTML = `<div class="card empty"><div class="empty-icon">⚠️</div>${esc(e.message)}</div>`
-  }
-}
+// ════════════════════════════════════════════════════════════
+// ANEXOS
+// ════════════════════════════════════════════════════════════
 
-const uploadAnexos = async (files) => {
-  if (!files || !files.length) return
-  if (!ITEM_ID) return
 
-  let ok = 0, erros = 0
-  for (const file of files) {
-    try {
-      const base64 = await new Promise((res, rej) => {
-        const reader = new FileReader()
-        reader.onload  = e => res(e.target.result)
-        reader.onerror = () => rej(new Error('Erro ao ler arquivo'))
-        reader.readAsDataURL(file)
-      })
 
-      const tipo = file.type.startsWith('image/') ? 'imagem'
-                 : file.type === 'application/pdf' ? 'pdf'
-                 : 'outro'
-
-      const r = await fetch(`${SURL}/rest/v1/anexos`, {
-        method: 'POST',
-        headers: { ...hAuth(), 'Prefer': 'return=minimal' },
-        body: JSON.stringify({
-          item_id:   ITEM_ID,
-          arquivo:   base64,
-          tipo,
-          usuario_id: SESSION?.user?.id || null,
-        })
-      })
-      if (!r.ok) throw new Error((await r.json())?.message || 'Erro')
-      ok++
-    } catch(e) {
-      erros++
-      toast(`Erro ao enviar ${file.name}: ${e.message}`, 'err')
-    }
-  }
-
-  if (ok) {
-    toast(`${ok} anexo(s) incluído(s) ✓`, 'ok')
-    await carregarAnexos(ITEM_ID)
-  }
-  document.getElementById('anx-file-input').value = ''
-}
-
-const abrirAnexo = (id) => {
-  get(`anexos?id=eq.${id}&select=arquivo,tipo`).then(rows => {
-    if (!rows.length) return
-    const a = rows[0]
-    const link = document.createElement('a')
-    link.href = a.arquivo
-    link.target = '_blank'
-    link.download = `anexo_${id.slice(0,8)}`
-    link.click()
-  }).catch(e => toast(e.message, 'err'))
-}
-
-const excluirAnexo = async (id) => {
-  if (!confirm('Excluir este anexo? Esta ação não pode ser desfeita.')) return
-  try {
-    const r = await fetch(`${SURL}/rest/v1/anexos?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: hAuth()
-    })
-    if (!r.ok) throw new Error('Erro ao excluir')
-    toast('Anexo excluído', 'ok')
-    await carregarAnexos(ITEM_ID)
-  } catch(e) {
-    toast(e.message, 'err')
-  }
-}
 
 // ════════════════════════════════════════════════════════════
 // DROPDOWNS
@@ -1228,11 +1135,10 @@ const switchTab = (tabId) => {
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === tabId)
   })
-  ;['tab-timeline','tab-checklists','tab-anexos'].forEach(id => {
+  ;['tab-timeline','tab-checklists'].forEach(id => {
     const el = document.getElementById(id)
     if (el) el.style.display = id === tabId ? '' : 'none'
   })
-  if (tabId === 'tab-anexos' && ITEM_ID) carregarAnexos(ITEM_ID)
   if (tabId === 'tab-checklists' && ITEM_ID) carregarChecklists(ITEM_ID)
 }
 
@@ -1373,28 +1279,28 @@ renderSidebar('equipamentos')
 initAuth()
 </script>
 <!-- Modal Checklist de Devolução -->
-<div class="chkdev-overlay" id="chkdev-overlay" onclick="if(event.target===this)fecharChkDev()">
-  <div class="chkdev-modal">
-    <div class="chkdev-hd">
-      <h2 id="chkdev-titulo">Checklist de Devolução</h2>
-      <button class="chkdev-close" onclick="fecharChkDev()" title="Fechar">×</button>
+<div class="chkd-overlay" id="chkd-overlay"
+  onclick="if(event.target===this){document.getElementById('chkd-overlay').classList.remove('open');document.body.style.overflow=''}">
+  <div class="chkd-modal">
+    <div class="chkd-hd">
+      <h2 id="chkd-titulo">Checklist de Devolução</h2>
+      <button class="chkd-close" title="Fechar"
+        onclick="document.getElementById('chkd-overlay').classList.remove('open');document.body.style.overflow=''">×</button>
     </div>
-    <div class="chkdev-bd" id="chkdev-corpo"></div>
-    <div class="chkdev-ft">
-      <button class="btn btn-sm" onclick="fecharChkDev()">Fechar</button>
-      <button class="btn btn-sm btn-p" onclick="window.print()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    <div class="chkd-bd" id="chkd-corpo"></div>
+    <div class="chkd-ft">
+      <button class="btn btn-sm"
+        onclick="document.getElementById('chkd-overlay').classList.remove('open');document.body.style.overflow=''">Fechar</button>
+      <button class="btn btn-sm" style="background:#0D9488;border-color:#0D9488;color:#fff" onclick="window.print()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
         Imprimir
       </button>
     </div>
   </div>
 </div>
-
-<script>
-function fecharChkDev() {
-  document.getElementById('chkdev-overlay').classList.remove('open')
-  document.body.style.overflow = ''
-}
-</script>
 </body>
 </html>
