@@ -117,14 +117,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 
 .btn-novo{background:#1B2A4A;border-color:#1B2A4A;color:#fff;font-weight:600}
 .btn-novo:hover{background:#2E6BE6;border-color:#2E6BE6;color:#fff}
-.iframe-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.6);z-index:400;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto}
-.iframe-overlay.open{display:flex}
-.iframe-modal{background:#fff;border-radius:16px;width:100%;max-width:680px;box-shadow:0 32px 80px rgba(0,0,0,.3);overflow:hidden;animation:mup .22s ease;margin:auto}
-.iframe-modal-hd{background:linear-gradient(135deg,#1B2A4A 0%,#2E6BE6 100%);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
-.iframe-modal-hd span{color:#fff;font-size:15px;font-weight:700}
-.iframe-modal-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .15s}
-.iframe-modal-close:hover{background:rgba(255,255,255,.32)}
-.iframe-modal iframe{display:block;width:100%;border:none;min-height:600px}
+
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
 @keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
@@ -241,17 +234,6 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
         Sim, excluir
       </button>
     </div>
-  </div>
-</div>
-
-<!-- Modal iframe novo checklist -->
-<div class="iframe-overlay" id="iframe-overlay" onclick="fecharIframeOverlay(event)">
-  <div class="iframe-modal">
-    <div class="iframe-modal-hd">
-      <span>Novo Checklist de Devolução</span>
-      <button class="iframe-modal-close" onclick="fecharNovoChecklist()" title="Fechar">×</button>
-    </div>
-    <iframe id="checklist-iframe" src="" title="Novo Checklist"></iframe>
   </div>
 </div>
 
@@ -572,31 +554,22 @@ async function executarExclusao() {
 
 // -- NOVO CHECKLIST (iframe) ---------------------------------------
 function abrirNovoChecklist() {
-  var iframe = document.getElementById('checklist-iframe')
-  // Passa parametro para a pagina saber que esta dentro de um modal
-  iframe.src = 'checklist-devolucao.html?modal=1'
-  document.getElementById('iframe-overlay').classList.add('open')
-  document.body.style.overflow = 'hidden'
-}
-
-function fecharNovoChecklist() {
-  document.getElementById('iframe-overlay').classList.remove('open')
-  document.getElementById('checklist-iframe').src = ''
-  document.body.style.overflow = ''
-}
-
-function fecharIframeOverlay(e) {
-  if (e.target === document.getElementById('iframe-overlay')) fecharNovoChecklist()
-}
-
-// Ouve mensagem do iframe quando o checklist for enviado com sucesso
-window.addEventListener('message', function(e) {
-  if (e.data && e.data.type === 'checklist_saved') {
-    fecharNovoChecklist()
-    carregar()
-    toast('Checklist registrado com sucesso!', 'ok')
+  var popup = window.open(
+    'checklist-devolucao.html?modal=1',
+    'chk_dev',
+    'width=720,height=750,scrollbars=yes,resizable=yes'
+  )
+  // Ouve postMessage quando o checklist for salvo
+  var onMsg = function(e) {
+    if (e.data && e.data.type === 'checklist_saved') {
+      window.removeEventListener('message', onMsg)
+      if (popup && !popup.closed) popup.close()
+      carregar()
+      toast('Checklist registrado com sucesso!', 'ok')
+    }
   }
-})
+  window.addEventListener('message', onMsg)
+}
 
 // -- AUTH CALLBACK (padrao do projeto) ----------------------------
 async function onPostLogin() {
