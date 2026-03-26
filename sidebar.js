@@ -1,20 +1,19 @@
 /* ═══════════════════════════════════════════════
    Axis Inventory — sidebar.js
-   HTML da sidebar + toggle + submenus
+   HTML da sidebar + toggle + submenus + mobile
 ═══════════════════════════════════════════════ */
 
 function renderSidebar(paginaAtiva) {
   const container = document.getElementById('sidebar-container')
   if (!container) return
 
-  const isChk = paginaAtiva === 'checklists' || paginaAtiva === 'checklists-inspecao'
+  const isChk = paginaAtiva === 'checklists' || paginaAtiva === 'checklists-inspecao' || paginaAtiva === 'checklists-devolucao'
 
   const SVG = {
     dashboard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,
     equip:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
     mov:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
     chk:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
-    sub:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`,
     modelos:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
     empresas:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
     resp:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
@@ -97,7 +96,19 @@ function renderSidebar(paginaAtiva) {
       </div>
     </div>
   </div>
-</aside>`
+</aside>
+
+<!-- Overlay mobile (fecha sidebar ao clicar fora) -->
+<div class="sb-overlay" id="sb-overlay" onclick="closeMobileSidebar()"></div>
+
+<!-- Botão hamburger mobile -->
+<button class="sb-mobile-btn" id="sb-mobile-btn" onclick="toggleMobileSidebar()" aria-label="Menu">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <line x1="3" y1="6" x2="21" y2="6"/>
+    <line x1="3" y1="12" x2="21" y2="12"/>
+    <line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+</button>`
 }
 
 // Toggle submenu
@@ -110,7 +121,7 @@ function toggleSubmenu(id, btn) {
   if (chev) chev.classList.toggle('open', !isOpen)
 }
 
-// Toggle colapso da sidebar
+// Toggle colapso da sidebar (desktop)
 let _sidebarCollapsed = false
 function toggleSidebar() {
   _sidebarCollapsed = !_sidebarCollapsed
@@ -120,3 +131,26 @@ function toggleSidebar() {
     ? '<polyline points="9 18 15 12 9 6"/>'
     : '<polyline points="15 18 9 12 15 6"/>'
 }
+
+// Mobile sidebar
+function toggleMobileSidebar() {
+  const sb = document.getElementById('sidebar')
+  const ov = document.getElementById('sb-overlay')
+  if (!sb) return
+  const isOpen = sb.classList.contains('mobile-open')
+  sb.classList.toggle('mobile-open', !isOpen)
+  if (ov) ov.classList.toggle('open', !isOpen)
+}
+function closeMobileSidebar() {
+  const sb = document.getElementById('sidebar')
+  const ov = document.getElementById('sb-overlay')
+  if (sb) sb.classList.remove('mobile-open')
+  if (ov) ov.classList.remove('open')
+}
+// Fechar sidebar ao navegar no mobile
+document.addEventListener('click', function(e) {
+  if (window.innerWidth <= 768 && e.target.closest) {
+    const link = e.target.closest('a.sb-item, a.sb-subitem')
+    if (link) closeMobileSidebar()
+  }
+})
