@@ -435,6 +435,12 @@ var acessItem = function(label, valor) {
   return '<div class="acess-item"><div class="dot '+d.cls+'"></div><span class="alabel">'+label+'</span><span class="aval '+d.vcls+'">'+esc(d.label)+'</span></div>'
 }
 
+var dfSimNao = function(label, valor) {
+  var dot = !valor ? 'dot-na' : valor.toLowerCase() === 'sim' ? 'dot-ok' : valor.toLowerCase() === 'n\u00e3o' ? 'dot-nok' : 'dot-na'
+  var vcls = !valor ? 'val-na' : valor.toLowerCase() === 'sim' ? 'val-ok' : valor.toLowerCase() === 'n\u00e3o' ? 'val-nok' : 'val-na'
+  return '<div class="df"><label>'+label+'</label><div class="arow"><div class="dot '+dot+'"></div><span class="'+vcls+'">'+(valor ? esc(valor) : 'N/A')+'</span></div></div>'
+}
+
 function abrirModal(id) {
   var r = todosRows.find(function(x){ return String(x.id) === String(id) })
   if (!r) return
@@ -467,11 +473,13 @@ function abrirModal(id) {
   html += '<div class="msec">'
   html += '<div class="msec-title">Acess\u00f3rios e Componentes</div>'
   html += '<div class="acess-grid">'
-  html += acessItem('Weathershield / Tampa',     r.weathershield)
-  html += acessItem('Suporte de Montagem',       r.suporte_montagem)
-  html += acessItem('Cabo de Alimenta\u00e7\u00e3o / PoE', r.cabo_alimentacao)
-  html += acessItem('Conector / Plug',           r.conector_plug)
-  html += acessItem('Gasket / Veda\u00e7\u00e3o',          r.gasket_vedacao)
+  html += acessItem('Weathershield',              r.weathershield_tampa)
+  html += acessItem('Suporte de Montagem',        r.suporte_montagem)
+  html += acessItem('Base Traseira (Back Box)',   r.base_traseira)
+  html += acessItem('Borracha de Veda\u00e7\u00e3o', r.borracha_vedacao)
+  html += acessItem('Borracha Veda\u00e7\u00e3o Cabo (Gasket Cable)', r.borracha_vedacao_cabo)
+  html += dfSimNao('Falta Parafuso',                    r.falta_parafuso)
+  html += dfSimNao('Troca da Base Traseira (Back Box)', r.troca_base_traseira)
   html += '</div>'
   if (r.demais_acessorios) {
     html += '<div style="margin-top:10px">'

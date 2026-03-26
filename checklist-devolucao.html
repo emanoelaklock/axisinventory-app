@@ -99,17 +99,8 @@ input[type=hidden]{display:none}
 .success-screen p{font-size:14px;color:var(--tx3);line-height:1.6}
 .btn-novo{margin-top:24px;padding:12px 28px;border:2px solid var(--blue);border-radius:var(--r);background:#fff;color:var(--blue);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
 </style>
-
 </head>
 <body>
-<script>
-if (new URLSearchParams(window.location.search).get('modal') === '1') {
-  document.addEventListener('DOMContentLoaded', function() {
-    var h = document.querySelector('.header')
-    if (h) h.style.display = 'none'
-  })
-}
-</script>
 
 <div class="header">
   <div class="header-logo">
@@ -185,7 +176,7 @@ if (new URLSearchParams(window.location.search).get('modal') === '1') {
       <div class="card-head"><h2>Acessórios e Componentes</h2></div>
       <div class="card-body">
         <div class="fg">
-          <label>Weathershield / Tampa</label>
+          <label>Weathershield</label>
           <div class="opts">
             <span class="opt" onclick="selOpt(this,'ws')">Incluso</span>
             <span class="opt" onclick="selOpt(this,'ws')">Não incluso</span>
@@ -205,17 +196,17 @@ if (new URLSearchParams(window.location.search).get('modal') === '1') {
           <input type="hidden" id="sup-val"/>
         </div>
         <div class="fg">
-          <label>Cabo de Alimentação / PoE</label>
+          <label>Base Traseira (Back Box)</label>
           <div class="opts">
-            <span class="opt" onclick="selOpt(this,'cabo')">Incluso</span>
-            <span class="opt" onclick="selOpt(this,'cabo')">Não incluso</span>
-            <span class="opt warn" onclick="selOpt(this,'cabo')">Danificado</span>
-            <span class="opt" onclick="selOpt(this,'cabo')">N/A</span>
+            <span class="opt" onclick="selOpt(this,'base')">Incluso</span>
+            <span class="opt" onclick="selOpt(this,'base')">Não incluso</span>
+            <span class="opt warn" onclick="selOpt(this,'base')">Danificado</span>
+            <span class="opt" onclick="selOpt(this,'base')">N/A</span>
           </div>
-          <input type="hidden" id="cabo-val"/>
+          <input type="hidden" id="base-val"/>
         </div>
         <div class="fg">
-          <label>Conector / Plug</label>
+          <label>Borracha de Vedação</label>
           <div class="opts">
             <span class="opt" onclick="selOpt(this,'plug')">Incluso</span>
             <span class="opt" onclick="selOpt(this,'plug')">Não incluso</span>
@@ -225,7 +216,7 @@ if (new URLSearchParams(window.location.search).get('modal') === '1') {
           <input type="hidden" id="plug-val"/>
         </div>
         <div class="fg">
-          <label>Gasket / Vedação</label>
+          <label>Borracha Vedação Cabo (Gasket Cable)</label>
           <div class="opts">
             <span class="opt" onclick="selOpt(this,'gask')">Incluso</span>
             <span class="opt" onclick="selOpt(this,'gask')">Não incluso</span>
@@ -233,6 +224,23 @@ if (new URLSearchParams(window.location.search).get('modal') === '1') {
             <span class="opt" onclick="selOpt(this,'gask')">N/A</span>
           </div>
           <input type="hidden" id="gask-val"/>
+        </div>
+        <div class="fg">
+          <label>Falta Parafuso</label>
+          <div class="opts">
+            <span class="opt" onclick="selOpt(this,'parafuso')">Sim</span>
+            <span class="opt" onclick="selOpt(this,'parafuso')">Não</span>
+          </div>
+          <input type="hidden" id="parafuso-val"/>
+        </div>
+        <div class="fg">
+          <label>Realizada a troca da Base Traseira (Back Box)</label>
+          <div class="opts">
+            <span class="opt" onclick="selOpt(this,'troca')">Sim</span>
+            <span class="opt" onclick="selOpt(this,'troca')">Não</span>
+            <span class="opt" onclick="selOpt(this,'troca')">N/A</span>
+          </div>
+          <input type="hidden" id="troca-val"/>
         </div>
         <div class="fg">
           <label>Demais acessórios / Observação</label>
@@ -473,12 +481,14 @@ async function enviar(){
       responsavel_id:       document.getElementById('f-resp').value || null,
       modelo:               document.getElementById('f-modelo').value.trim() || null,
       observacoes:          document.getElementById('f-obs').value.trim() || null,
-      // Acessórios
-      weathershield:        document.getElementById('ws-val').value || null,
-      suporte_montagem:     document.getElementById('sup-val').value || null,
-      cabo_alimentacao:     document.getElementById('cabo-val').value || null,
-      conector_plug:        document.getElementById('plug-val').value || null,
-      gasket_vedacao:       document.getElementById('gask-val').value || null,
+      // Acessórios (colunas renomeadas)
+      weathershield_tampa:   document.getElementById('ws-val').value || null,
+      suporte_montagem:      document.getElementById('sup-val').value || null,
+      base_traseira:         document.getElementById('base-val').value || null,
+      borracha_vedacao:      document.getElementById('plug-val').value || null,
+      borracha_vedacao_cabo: document.getElementById('gask-val').value || null,
+      falta_parafuso:        document.getElementById('parafuso-val').value || null,
+      troca_base_traseira:   document.getElementById('troca-val').value || null,
       demais_acessorios:    document.getElementById('f-acess').value.trim() || null,
       // Fotos
       foto_1: fotos[1] || null,
@@ -511,7 +521,7 @@ async function enviar(){
     document.getElementById('success-screen').style.display = 'block'
     document.getElementById('msg').className = 'msg'
     window.scrollTo({top:0,behavior:'smooth'})
-    // Se estiver dentro de um modal iframe, notifica o pai
+    // Notifica o iframe-modal pai
     var params = new URLSearchParams(window.location.search)
     if (params.get('modal') === '1' && window.parent !== window) {
       setTimeout(function() {
@@ -543,7 +553,7 @@ function novoChecklist(){
   document.getElementById('f-obs').value = ''
   document.getElementById('f-acess').value = ''
   document.getElementById('f-resp').selectedIndex = 0
-  ;['ws','sup','cabo','plug','gask'].forEach(k=>{
+  ;['ws','sup','base','plug','gask','parafuso','troca'].forEach(k=>{
     document.getElementById(k+'-val').value=''
     document.querySelectorAll(`[onclick*="'${k}'"]`).forEach(o=>o.classList.remove('on'))
   })
