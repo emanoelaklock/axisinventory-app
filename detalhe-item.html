@@ -751,8 +751,9 @@ const carregarChecklists = async (id) => {
   try {
     const [devs, insp] = await Promise.all([
       get(`checklists_devolucao?item_id=eq.${id}&order=created_at.desc&select=*`),
-      get(`checklists_axis?item_id=eq.${id}&order=data_checklist.desc&select=*`)
+      get(`checklists_axis?item_id=eq.${id}&order=data_checklist.desc&select=*,itens!item_id(codigo_interno,modelos(modelo))`)
     ])
+    todosInsp = insp // cache para abrirChkInspPorId
     document.getElementById('chk-count').textContent = devs.length + insp.length
     document.getElementById('chk-dev-count').textContent = devs.length
     document.getElementById('chk-insp-count').textContent = insp.length
@@ -787,7 +788,7 @@ const carregarChecklists = async (id) => {
         const mans = (ch.manutencoes||[]).map(m => `<span class="chk-man">${esc(m)}</span>`).join('')
         const fotos = [ch.foto_1, ch.foto_2, ch.foto_3].filter(Boolean)
           .map(f => `<img class="chk-foto" src="${f}" onclick="openLB('${f}')" alt="Foto" loading="lazy"/>`).join('')
-        return `<div class="chk-card">
+        return `<div class="chk-card" style="cursor:pointer" onclick="abrirChkInspPorId('${ch.id}')">
           <div>
             <div class="chk-date">${fdt(ch.data_checklist)} <span style="font-size:11px;color:var(--tx3)">por ${esc(ch.responsavel||'—')}</span></div>
             <div class="chk-sub">${esc(ch.origem||'')}${ch.rma ? ' · RMA: '+esc(ch.rma) : ''}</div>
@@ -795,7 +796,10 @@ const carregarChecklists = async (id) => {
             ${ch.observacoes ? `<div class="chk-obs">${esc(ch.observacoes)}</div>` : ''}
             ${fotos ? `<div class="chk-fotos">${fotos}</div>` : ''}
           </div>
-          <div style="text-align:right"><span style="font-size:11px;color:var(--tx3)">${esc(ch.tipo_equipamento||'')}</span></div>
+          <div style="flex-shrink:0">
+            <button class="btn btn-sm" style="background:rgba(46,107,230,.08);color:#2E6BE6;border-color:rgba(46,107,230,.2);font-size:11px"
+              onclick="event.stopPropagation();abrirChkInspPorId('${ch.id}')">Ver</button>
+          </div>
         </div>`
       }).join('')
     }
@@ -811,6 +815,60 @@ const abrirChkDevPorId = async (id) => {
     if (!rows || !rows.length) { toast('Checklist nao encontrado', 'err'); return }
     renderModalChkDev(rows[0])
   } catch(e) { toast('Erro: ' + e.message, 'err') }
+}
+
+const abrirChkInspPorId = async (id) => {
+  const row = (todosInsp || []).find(x => String(x.id) === String(id))
+  if (row) { renderModalChkInsp(row); return }
+  // fallback: buscar no banco se não tiver em cache
+  try {
+    const rows = await get('checklists_axis?id=eq.' + id + '&select=*,itens!item_id(codigo_interno,modelos(modelo))')
+    if (!rows || !rows.length) { toast('Checklist nao encontrado', 'err'); return }
+    renderModalChkInsp(rows[0])
+  } catch(e) { toast('Erro: ' + e.message, 'err') }
+}
+
+// Cache local dos checklists de inspeção (preenchido em carregarChecklists)
+var todosInsp = []
+
+const renderModalChkInsp = (ch) => {
+  const codigo = ch.itens && ch.itens.codigo_interno ? ch.itens.codigo_interno : '--'
+  const modelo = ch.modelo || (ch.itens && ch.itens.modelos ? ch.itens.modelos.modelo : '--')
+  const mf = (lbl, val) => `<div class="chkd-field"><label>${lbl}</label><span>${val ? esc(String(val)) : '<em>--</em>'}</span></div>`
+  const fotos = [ch.foto_1, ch.foto_2, ch.foto_3].filter(Boolean)
+  let html = ''
+  html += '<div class="chkd-sec" style="color:#2E6BE6;border-bottom-color:rgba(46,107,230,.15)">Identificação</div>'
+  html += '<div class="chkd-grid">'
+  html += mf('Data', fdt(ch.data_checklist))
+  html += mf('Código', codigo)
+  html += mf('Modelo', modelo)
+  html += mf('Serial', ch.serial)
+  html += mf('Responsável', ch.responsavel)
+  html += mf('Origem', ch.origem)
+  if (ch.rma) html += mf('RMA', ch.rma)
+  html += '</div>'
+  if (ch.manutencoes && ch.manutencoes.length) {
+    html += '<div class="chkd-sec" style="color:#2E6BE6;border-bottom-color:rgba(46,107,230,.15)">Manutenções Realizadas</div>'
+    html += '<div style="display:flex;flex-wrap:wrap;gap:5px">'
+    ch.manutencoes.forEach(m => { html += `<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--acl);color:var(--ac);border:1px solid var(--acm)">${esc(m)}</span>` })
+    html += '</div>'
+  }
+  if (ch.observacoes) {
+    html += '<div class="chkd-sec" style="color:#2E6BE6;border-bottom-color:rgba(46,107,230,.15)">Observações</div>'
+    html += `<div class="chkd-obs" style="margin-top:0">${esc(ch.observacoes)}</div>`
+  }
+  if (fotos.length) {
+    html += '<div class="chkd-sec" style="color:#2E6BE6;border-bottom-color:rgba(46,107,230,.15)">Fotos</div>'
+    html += '<div class="chkd-fotos">'
+    fotos.forEach((u, i) => { html += `<a href="${u}" target="_blank" rel="noopener"><img src="${u}" alt="Foto ${i+1}" loading="lazy"/></a>` })
+    html += '</div>'
+  }
+  // Reaproveita o modal de devolução mas ajusta o header para azul
+  document.getElementById('chkd-hd-inner').style.background = 'linear-gradient(135deg,#1B2A4A 0%,#2E6BE6 100%)'
+  document.getElementById('chkd-titulo').textContent = codigo + '  ·  ' + fdt(ch.data_checklist)
+  document.getElementById('chkd-corpo').innerHTML = html
+  document.getElementById('chkd-overlay').classList.add('open')
+  document.body.style.overflow = 'hidden'
 }
 
 const renderModalChkDev = (r) => {
@@ -1279,7 +1337,7 @@ initAuth()
 <div class="chkd-overlay" id="chkd-overlay"
   onclick="if(event.target===this){document.getElementById('chkd-overlay').classList.remove('open');document.body.style.overflow=''}">
   <div class="chkd-modal">
-    <div class="chkd-hd">
+    <div class="chkd-hd" id="chkd-hd-inner">
       <h2 id="chkd-titulo">Checklist de Devolução</h2>
       <button class="chkd-close" title="Fechar"
         onclick="document.getElementById('chkd-overlay').classList.remove('open');document.body.style.overflow=''">×</button>
