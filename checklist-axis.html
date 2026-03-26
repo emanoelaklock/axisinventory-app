@@ -72,7 +72,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="header no-print">
   <div class="header-brand">
     <div class="header-icon">📡</div>
-    <div><h1>Checklist Axis</h1><span>Inspeção de equipamento</span></div>
+    <div><h1>Checklist de Inspeção</h1><span>Axis Inventory · Inspeção de equipamentos</span></div>
   </div>
   <div class="header-btns">
     <button class="btn btn-sm" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff" onclick="window.location.href='https://axisinventory-app.vercel.app/axis-inventory.html'">← Voltar</button>
@@ -84,7 +84,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
   <div class="view-toggle no-print">
     <button class="btn btn-primary" id="btn-form" onclick="showView('form')">+ Novo checklist</button>
-
+    <button class="btn" id="btn-hist" onclick="showView('hist');loadHist()">📋 Ver checklists</button>
   </div>
 
   <div id="view-form">
