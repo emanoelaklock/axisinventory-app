@@ -384,10 +384,12 @@ const salvar = async (salvarECadastrarOutro) => {
   document.querySelectorAll('.field-error').forEach(el => el.style.display='none')
   document.querySelectorAll('.finput,.fselect').forEach(el => el.classList.remove('error'))
   document.getElementById('alert-err').style.display = 'none'
+  document.getElementById('alert-ok').style.display  = 'none'
   if (!validar()) return
 
   const btnId = salvarECadastrarOutro ? 'btn-salvar-novo' : 'btn-salvar'
   const btn   = document.getElementById(btnId)
+  const btnOriginalHTML = btn.innerHTML
   btn.disabled = true; btn.textContent = 'Salvando...'
 
   try {
@@ -425,7 +427,7 @@ const salvar = async (salvarECadastrarOutro) => {
 
     if (salvarECadastrarOutro) {
       toast(`Item ${codigo || ''} cadastrado! Cadastre o próximo.`, 'ok')
-      resetForm()
+      try { resetForm() } catch(re) { console.warn('resetForm:', re) }
     } else {
       document.getElementById('alert-ok').style.display = 'flex'
       document.getElementById('alert-ok').innerHTML = `✓ Item <strong>${esc(codigo||'')}</strong> cadastrado com sucesso! <a href="lista-itens.html" style="color:var(--gr);margin-left:8px;font-weight:600">Ver inventário</a>`
@@ -438,9 +440,7 @@ const salvar = async (salvarECadastrarOutro) => {
     window.scrollTo({top:0, behavior:'smooth'})
   } finally {
     btn.disabled = false
-    btn.innerHTML = btnId === 'btn-salvar-novo'
-      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Salvar e cadastrar outro'
-      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Salvar item'
+    btn.innerHTML = btnOriginalHTML
   }
 }
 
