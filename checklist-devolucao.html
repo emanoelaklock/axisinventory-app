@@ -21,6 +21,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .fg{display:flex;flex-direction:column;gap:5px}
 .fg label{font-size:10px;color:#8e96b0;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
 .fg input,.fg select,.fg textarea{padding:10px 13px;border-radius:10px;border:1.5px solid #dde2ef;font-size:14px;font-family:inherit;background:#fff;color:#0f1224;transition:border .15s}
+/* Select nativo Android — forçar aparência consistente */
+.fg select{
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  width:100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e96b0' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 13px center;
+  padding-right:36px;
+  cursor:pointer;
+}
 .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#202A44}
 .fg textarea{resize:vertical;min-height:60px}
 .fg input[readonly]{background:#f8f9fe;color:#4a5470}
