@@ -55,6 +55,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .success-icon{width:72px;height:72px;border-radius:50%;background:#d1fae5;border:2px solid #a7f3d0;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px}
 .success-screen h2{font-size:22px;font-weight:700;color:#0f1224;margin-bottom:8px}
 .success-screen p{font-size:14px;color:#8e96b0;line-height:1.6}
+.login-screen{display:none;position:fixed;inset:0;background:#f0f3f8;z-index:500;
+  display:none;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+.login-screen.open{display:flex}
+.login-card{background:#fff;border:1.5px solid #dde2ef;border-radius:16px;
+  padding:32px 28px;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.login-logo{width:48px;height:48px;background:#202A44;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px}
+.login-title{font-size:18px;font-weight:800;color:#202A44;text-align:center;margin-bottom:4px}
+.login-sub{font-size:12px;color:#8e96b0;text-align:center;margin-bottom:24px}
+.login-fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.login-fg label{font-size:10px;color:#8e96b0;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.login-fg input{padding:11px 13px;border-radius:10px;border:1.5px solid #dde2ef;
+  font-size:15px;font-family:inherit;background:#fff;color:#0f1224;transition:border .15s}
+.login-fg input:focus{outline:none;border-color:#202A44}
+.login-btn{width:100%;padding:13px;border:none;border-radius:10px;background:#202A44;
+  color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
+.login-btn:hover{background:#2e3d62}
+.login-btn:disabled{opacity:.5;cursor:default}
+.login-msg{font-size:13px;font-weight:500;text-align:center;padding:9px 12px;
+  border-radius:8px;margin-top:12px;display:none}
+.login-msg.err{background:#ffe4e6;color:#be123c;display:block}
 @media print{
   .no-print{display:none!important}
   body{background:#fff}
@@ -86,7 +107,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="btn btn-primary" style="margin-top:20px" onclick="novoChecklist()">+ Novo Checklist</button>
   </div>
 
-  <div id="form-wrap">
+  <div id="form-wrap" style="display:none">
 
     <div class="section">
       <div class="sec-title">Identificação</div>
@@ -224,58 +245,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
 <script>
-const SURL = 'https://adbskoverysjohhwadln.supabase.co'
-const AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkYnNrb3Zlcnlzam9oaHdhZGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODE3NDIsImV4cCI6MjA4OTI1Nzc0Mn0.qP8if_vGdrc0VD9F8dU0fln0MS1AhmwYm5NglTpHQv4'
-const QR_TOKEN = 'd2da7ace-8dab-43d8-8432-abe4c8348cdc' // token secreto validado pelo banco
 var fotos = {1:null,2:null,3:null}
-
-function getToken() {
-  // Supabase JS v2 com storageKey='ax_sess' salva no localStorage
-  // Tenta todas as chaves possíveis
-  var keys = ['ax_sess', 'sb-adbskoverysjohhwadln-auth-token']
-  for (var i = 0; i < keys.length; i++) {
-    var raw = localStorage.getItem(keys[i]) || sessionStorage.getItem(keys[i])
-    if (!raw) continue
-    try {
-      var p = JSON.parse(raw)
-      var token = p.access_token
-        || (p.session    && p.session.access_token)
-        || (p.currentSession && p.currentSession.access_token)
-      if (token) return token
-    } catch(e) {}
-  }
-  // Último recurso: token passado via URL (ex: ?token=xxx)
-  var params = new URLSearchParams(window.location.search)
-  if (params.get('token')) return params.get('token')
-  return AKEY
-}
-
-async function api(path, method, body) {
-  method = method || 'GET'
-  var token = getToken()
-  // Só adiciona Authorization se tiver token real (não é a própria AKEY)
-  var headers = { 'apikey': AKEY }
-  if (token && token !== AKEY) {
-    headers['Authorization'] = 'Bearer ' + token
-  }
-  if (body) {
-    headers['Content-Type'] = 'application/json'
-    headers['Prefer'] = 'return=representation'
-  }
-  var r = await fetch(SURL+'/rest/v1/'+path, {
-    method: method,
-    headers: headers,
-    body: body ? JSON.stringify(body) : null
-  })
-  if (r.status === 401) {
-    showMsg('Erro ao salvar. Verifique sua conexão e tente novamente.', 'err')
-    throw new Error('401')
-  }
-  var txt = await r.text(); var d; try{d=JSON.parse(txt)}catch(e){d=txt}
-  if (!r.ok) throw new Error(typeof d==='object'?(d.message||d.hint||JSON.stringify(d)):txt)
-  return d
-}
 
 function showMsg(txt, tipo) {
   var el = document.getElementById('msg')
@@ -303,7 +276,7 @@ function buscarSerial() {
   stimer = setTimeout(async function() {
     try {
       var rSerial = await fetch(SURL + '/rest/v1/vw_itens_completo?or=(serial.ilike.*'+encodeURIComponent(q)+'*,codigo_interno.ilike.*'+encodeURIComponent(q)+'*)&select=id,serial,codigo_interno,modelo,part_number&limit=10', {
-        headers: { 'apikey': AKEY, 'Accept': 'application/json' }
+        headers: { ...hAuth(), 'Accept': 'application/json' }
       })
       var data = rSerial.ok ? await rSerial.json() : []
       if (!data.length) { res.innerHTML='<div class="ac-item"><small>Nenhum equipamento encontrado</small></div>'; res.style.display='block'; return }
@@ -368,7 +341,6 @@ async function salvar() {
   if (!resp)    { showMsg('Selecione o responsável.','err'); return }
 
   var payload = {
-    token:                QR_TOKEN,
     data_checklist:       document.getElementById('f-data').value   || new Date().toISOString().split('T')[0],
     cliente:              cliente,
     tipo_equipamento:     document.getElementById('tipo-val').value  || null,
@@ -394,21 +366,13 @@ async function salvar() {
   try {
     showMsg('Salvando...','info')
     document.getElementById('btn-salvar').disabled = true
-    // Usar RPC SECURITY DEFINER — funciona sem autenticação (mobile/QR Code)
-    var rpcRes = await fetch(SURL + '/rest/v1/rpc/inserir_checklist_devolucao', {
+    var r = await fetch(SURL + '/rest/v1/checklists_devolucao', {
       method: 'POST',
-      headers: {
-        'apikey': AKEY,
-        'Content-Type': 'application/json',
-      },
+      headers: { ...hAuth(), 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify(payload)
     })
-    if (!rpcRes.ok) {
-      var errTxt = await rpcRes.text()
-      throw new Error(errTxt)
-    }
-    var rpcData = await rpcRes.json()
-    if (!rpcData.ok) throw new Error(rpcData.erro || 'Erro ao salvar')
+    chk401(r)
+    if (!r.ok) { var err = await r.json(); throw new Error(err.message || 'Erro ao salvar') }
     if (window.opener) window.opener.postMessage({type:'checklist_saved'}, '*')
     document.getElementById('form-wrap').style.display = 'none'
     document.getElementById('success-screen').style.display = 'block'
@@ -435,7 +399,7 @@ async function carregarResp() {
     // GET público: usa só apikey, sem Bearer token
     // evita conflito de role anon vs authenticated no PostgREST
     var r = await fetch(SURL + '/rest/v1/responsaveis?select=nome,cargo&ativo=eq.true&order=nome', {
-      headers: { 'apikey': AKEY, 'Accept': 'application/json' }
+      headers: { ...hAuth(), 'Accept': 'application/json' }
     })
     if (!r.ok) throw new Error('HTTP ' + r.status)
     var data = await r.json()
@@ -455,7 +419,7 @@ async function carregarResp() {
 async function carregarEmpresas() {
   try {
     var r = await fetch(SURL + '/rest/v1/clientes?select=nome&ativo=eq.true&order=nome', {
-      headers: { 'apikey': AKEY, 'Accept': 'application/json' }
+      headers: { ...hAuth(), 'Accept': 'application/json' }
     })
     if (!r.ok) throw new Error('HTTP ' + r.status)
     var data = await r.json()
@@ -470,9 +434,33 @@ async function carregarEmpresas() {
   }
 }
 
-document.getElementById('f-data').value = new Date().toISOString().split('T')[0]
-carregarResp()
-carregarEmpresas()
+async function onPostLogin() {
+  document.getElementById('form-wrap').style.display = 'block'
+  document.getElementById('f-data').value = new Date().toISOString().split('T')[0]
+  await Promise.all([carregarResp(), carregarEmpresas()])
+}
+
+initAuth()
 </script>
+<!-- Tela de Login embutida (auth.js exibe quando não há sessão) -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">📋</div>
+    <div class="login-title">Checklist de Devolução</div>
+    <div class="login-sub">Axis Inventory · Entre com suas credenciais</div>
+    <div class="login-fg">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email"/>
+    </div>
+    <div class="login-fg">
+      <label>Senha</label>
+      <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter') fazerLogin()"/>
+    </div>
+    <button class="login-btn" id="btn-login" onclick="fazerLogin()">Entrar</button>
+    <div class="login-msg" id="login-msg"></div>
+  </div>
+</div>
+
 </body>
 </html>
