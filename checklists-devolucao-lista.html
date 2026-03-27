@@ -418,9 +418,9 @@ var acessItem = function(label, valor) {
 }
 
 var dfSimNao = function(label, valor) {
-  var dot = !valor ? 'dot-na' : valor.toLowerCase() === 'sim' ? 'dot-ok' : valor.toLowerCase() === 'n\u00e3o' ? 'dot-nok' : 'dot-na'
-  var vcls = !valor ? 'val-na' : valor.toLowerCase() === 'sim' ? 'val-ok' : valor.toLowerCase() === 'n\u00e3o' ? 'val-nok' : 'val-na'
-  return '<div class="df"><label>'+label+'</label><div class="arow"><div class="dot '+dot+'"></div><span class="'+vcls+'">'+(valor ? esc(valor) : 'N/A')+'</span></div></div>'
+  var dot  = !valor ? 'dot-na' : valor.toLowerCase() === 'sim' ? 'dot-ok' : valor.toLowerCase() === 'não' ? 'dot-nok' : 'dot-na'
+  var vcls = !valor ? 'val-na' : valor.toLowerCase() === 'sim' ? 'val-ok' : valor.toLowerCase() === 'não' ? 'val-nok' : 'val-na'
+  return '<div class="acess-item"><div class="dot '+dot+'"></div><span class="alabel">'+label+'</span><span class="aval '+vcls+'">'+(valor ? esc(valor) : 'N/A')+'</span></div>'
 }
 
 function abrirModal(id) {
@@ -442,7 +442,7 @@ function abrirModal(id) {
   html += '<div class="msec-title">Identifica\u00e7\u00e3o</div>'
   html += '<div class="mgrid">'
   html += mfield('Data', fdt(r.data_checklist))
-  html += mfield('Cliente', r.cliente)
+  html += mfield('Empresa', r.cliente)
   html += mfield('Tipo de Equipamento', r.tipo_equipamento)
   html += mfield('Modelo', r.modelo)
   html += mfield('Serial', r.serial)
@@ -450,6 +450,14 @@ function abrirModal(id) {
   html += mfield('Origem', r.origem)
   html += mfield('Registrado em', r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : null)
   html += '</div></div>'
+
+  // Observações / Defeito — antes dos acessórios
+  if (r.observacoes) {
+    html += '<div class="msec">'
+    html += '<div class="msec-title">Observa\u00e7\u00f5es / Defeito</div>'
+    html += mfieldPre('Relato', r.observacoes)
+    html += '</div>'
+  }
 
   // Acessórios
   html += '<div class="msec">'
@@ -469,14 +477,6 @@ function abrirModal(id) {
     html += '</div>'
   }
   html += '</div>'
-
-  // Observações
-  if (r.observacoes) {
-    html += '<div class="msec">'
-    html += '<div class="msec-title">Observa\u00e7\u00f5es / Defeito</div>'
-    html += mfieldPre('Relato', r.observacoes)
-    html += '</div>'
-  }
 
   // Fotos
   var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
