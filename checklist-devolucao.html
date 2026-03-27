@@ -226,8 +226,23 @@ const AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 var fotos = {1:null,2:null,3:null}
 
 function getToken() {
-  var s = sessionStorage.getItem('ax_sess')
-  if (s) { try { return JSON.parse(s).access_token || AKEY } catch(e){} }
+  // Supabase JS v2 com storageKey='ax_sess' salva no localStorage
+  // Tenta todas as chaves possíveis
+  var keys = ['ax_sess', 'sb-adbskoverysjohhwadln-auth-token']
+  for (var i = 0; i < keys.length; i++) {
+    var raw = localStorage.getItem(keys[i]) || sessionStorage.getItem(keys[i])
+    if (!raw) continue
+    try {
+      var p = JSON.parse(raw)
+      var token = p.access_token
+        || (p.session    && p.session.access_token)
+        || (p.currentSession && p.currentSession.access_token)
+      if (token) return token
+    } catch(e) {}
+  }
+  // Último recurso: token passado via URL (ex: ?token=xxx)
+  var params = new URLSearchParams(window.location.search)
+  if (params.get('token')) return params.get('token')
   return AKEY
 }
 

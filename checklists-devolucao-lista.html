@@ -554,8 +554,21 @@ async function executarExclusao() {
 
 // -- NOVO CHECKLIST (iframe) ---------------------------------------
 function abrirNovoChecklist() {
+  // Passa o token autenticado via URL para o popup funcionar sem login proprio
+  var token = ''
+  try {
+    var keys = ['ax_sess', 'sb-adbskoverysjohhwadln-auth-token']
+    for (var ki = 0; ki < keys.length; ki++) {
+      var raw = localStorage.getItem(keys[ki])
+      if (!raw) continue
+      var p = JSON.parse(raw)
+      token = p.access_token || (p.session && p.session.access_token) || ''
+      if (token) break
+    }
+  } catch(e) {}
+  var url = 'checklist-devolucao.html?modal=1' + (token ? '&token=' + encodeURIComponent(token) : '')
   var popup = window.open(
-    'checklist-devolucao.html?modal=1',
+    url,
     'chk_dev',
     'width=720,height=750,scrollbars=yes,resizable=yes'
   )
