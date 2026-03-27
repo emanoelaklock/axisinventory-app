@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="theme.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-.s-en{--c:#059669;--b:rgba(5,150,105,.1)}.s-eu{--c:#D97706;--b:rgba(217,119,6,.1)}.s-rv{--c:#7C3AED;--b:rgba(124,58,237,.1)}.s-vd{--c:#0284C7;--b:rgba(2,132,199,.1)}.s-ct{--c:#6D28D9;--b:rgba(109,40,217,.1)}.s-lc{--c:#0891B2;--b:rgba(8,145,178,.1)}.s-dm{--c:#0D9488;--b:rgba(13,148,136,.1)}.s-ai{--c:#EA580C;--b:rgba(234,88,12,.1)}.s-fi{--c:#16A34A;--b:rgba(22,163,74,.1)}.s-rm{--c:#DC2626;--b:rgba(220,38,38,.1)}.s-sc{--c:#71717A;--b:rgba(113,113,122,.1)}
+.s-en{--c:#2E7D32;--b:#E8F5E9}.s-eu{--c:#558B2F;--b:#F1F8E9}.s-rv{--c:#F9A825;--b:#FFF8E1}.s-vd{--c:#424242;--b:#EEEEEE}.s-ct{--c:#1565C0;--b:#E3F2FD}.s-lc{--c:#0277BD;--b:#E1F5FE}.s-dm{--c:#00796B;--b:#E0F2F1}.s-ai{--c:#EF6C00;--b:#FFF3E0}.s-fi{--c:#455A64;--b:#ECEFF1}.s-rm{--c:#6A1B9A;--b:#F3E5F5}.s-sc{--c:#212121;--b:#E0E0E0}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--b);color:var(--c)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--c);flex-shrink:0}
 .page{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
@@ -769,7 +769,7 @@ const carregarChecklists = async (id) => {
         return `<div class="chk-card" style="cursor:pointer" onclick="abrirChkDevPorId('${d.id}')">
           <div>
             <div class="chk-date">${fdt(d.data_checklist)} <span style="font-size:11px;color:var(--tx3)">por ${esc(d.responsavel||'—')}</span></div>
-            <div class="chk-sub">${esc(d.cliente||'')}${d.tipo_equipamento ? ' · '+esc(d.tipo_equipamento) : ''}</div>
+            <div class="chk-sub">${esc(d.cliente||'--')}${d.tipo_equipamento ? ' · '+esc(d.tipo_equipamento) : ''}</div>
             ${d.observacoes ? `<div class="chk-obs">${esc(d.observacoes)}</div>` : ''}
             ${fotos ? `<div class="chk-fotos">${fotos}</div>` : ''}
           </div>
@@ -895,7 +895,7 @@ const renderModalChkDev = (r) => {
   let html = ''
   html += '<div class="chkd-sec">Identifica\u00e7\u00e3o</div><div class="chkd-grid">'
   html += mf('Data', fdt2(r.data_checklist))
-  html += mf('Cliente', r.cliente)
+  html += mf('Empresa', r.cliente)
   html += mf('Tipo de Equipamento', r.tipo_equipamento)
   html += mf('Modelo', r.modelo)
   html += mf('Serial', r.serial)

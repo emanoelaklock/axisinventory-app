@@ -92,7 +92,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="sec-title">Identificação</div>
       <div class="grid">
         <div class="fg"><label>1. Data *</label><input type="date" id="f-data"/></div>
-        <div class="fg"><label>2. Cliente *</label><input id="f-cliente" placeholder="Ex: BMW - Araquari"/></div>
+        <div class="fg">
+            <label>2. Empresa *</label>
+            <select id="f-cliente"><option value="">Selecione a empresa...</option></select>
+          </div>
       </div>
     </div>
 
@@ -358,7 +361,7 @@ async function salvar() {
   var cliente = document.getElementById('f-cliente').value.trim()
   var resp    = document.getElementById('f-resp').value
   if (!serial)  { showMsg('Informe o número de série.','err'); return }
-  if (!cliente) { showMsg('Informe o cliente.','err'); return }
+  if (!cliente) { showMsg('Selecione a empresa.','err'); return }
   if (!resp)    { showMsg('Selecione o responsável.','err'); return }
 
   var payload = {
@@ -431,8 +434,27 @@ async function carregarResp() {
   }
 }
 
+async function carregarEmpresas() {
+  try {
+    var r = await fetch(SURL + '/rest/v1/clientes?select=nome&ativo=eq.true&order=nome', {
+      headers: { 'apikey': AKEY, 'Accept': 'application/json' }
+    })
+    if (!r.ok) throw new Error('HTTP ' + r.status)
+    var data = await r.json()
+    var sel = document.getElementById('f-cliente')
+    sel.innerHTML = '<option value="">Selecione a empresa...</option>'
+    data.forEach(function(e) {
+      sel.innerHTML += '<option value="' + e.nome + '">' + e.nome + '</option>'
+    })
+  } catch(err) {
+    var sel = document.getElementById('f-cliente')
+    if (sel) sel.innerHTML = '<option value="">-- Erro ao carregar empresas --</option>'
+  }
+}
+
 document.getElementById('f-data').value = new Date().toISOString().split('T')[0]
 carregarResp()
+carregarEmpresas()
 </script>
 </body>
 </html>
