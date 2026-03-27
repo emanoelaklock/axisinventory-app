@@ -28,6 +28,7 @@ tr:hover td{background:rgba(46,107,230,.04)}
 .p-lab{background:rgba(124,58,237,.1);color:#7C3AED}
 .p-tec{background:rgba(8,145,178,.1);color:#0891B2}
 .p-cons{background:var(--sur2);color:var(--tx3)}
+.p-chk{background:rgba(13,148,136,.1);color:#0D9488}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
 .dot-on{background:var(--gr)}.dot-off{background:var(--tx3)}
 .acts{display:flex;gap:4px;opacity:0;transition:opacity .15s}
@@ -91,7 +92,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
   <div class="topbar">
     <span class="topbar-title">Usuários</span>
     <div class="topbar-r">
-      <button class="btn btn-p btn-sm" onclick="abrirNovoUsuario()">
+      <button class="btn btn-p btn-sm" onclick="abrirNovo()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Novo usuário
       </button>
@@ -148,6 +149,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
           <option value="Técnico">Técnico — movimentação técnica</option>
           <option value="Laboratório">Laboratório — inspeção e RMA</option>
           <option value="Consulta">Consulta — somente leitura</option>
+          <option value="Checklist">Checklist — somente checklist de devolução</option>
         </select>
       </div>
       <div class="fg" id="f-senha-wrap">
@@ -207,7 +209,7 @@ const carregarUsuarios=async()=>{
     chk401(r);const users=await r.json();if(!r.ok)throw new Error(users?.message||'Erro')
     document.getElementById('usr-count').textContent=users.length
     if(!users.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--tx3)">Nenhum usuário cadastrado</td></tr>';return}
-    const PCLS={'Administrador':'p-admin','Almoxarifado':'p-almo','Técnico':'p-tec','Laboratório':'p-lab','Consulta':'p-cons'}
+    const PCLS={'Administrador':'p-admin','Almoxarifado':'p-almo','Técnico':'p-tec','Laboratório':'p-lab','Consulta':'p-cons','Checklist':'p-chk'}
     tbody.innerHTML=users.map(u=>`<tr>
       <td style="font-weight:500;color:var(--tx)">${esc(u.nome||'—')}</td>
       <td style="font-size:12px;color:var(--tx3)">${esc(u.email||'—')}</td>
