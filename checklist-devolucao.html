@@ -127,57 +127,61 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <label>6. Origem do equipamento</label>
         <input id="f-origem" placeholder="Ex: Retorno de locação"/>
       </div>
+      <div class="fg" style="margin-top:14px">
+        <label>7. Observações / Defeito</label>
+        <textarea id="f-obs" placeholder="Descreva defeitos, avarias ou observações relevantes..."></textarea>
+      </div>
     </div>
 
     <div class="section">
       <div class="sec-title">Acessórios e Componentes</div>
       <div class="grid">
         <div class="fg">
-          <label>7. Weathershield</label>
+          <label>8. Weathershield</label>
           <div class="opts"><span class="opt" onclick="selOpt(this,'ws')">Incluso</span><span class="opt" onclick="selOpt(this,'ws')">Não incluso</span><span class="opt" onclick="selOpt(this,'ws')">Danificado</span><span class="opt" onclick="selOpt(this,'ws')">N/A</span></div>
           <input type="hidden" id="ws-val"/>
         </div>
         <div class="fg">
-          <label>8. Suporte de Montagem</label>
+          <label>9. Suporte de Montagem</label>
           <div class="opts"><span class="opt" onclick="selOpt(this,'sup')">Incluso</span><span class="opt" onclick="selOpt(this,'sup')">Não incluso</span><span class="opt" onclick="selOpt(this,'sup')">Danificado</span><span class="opt" onclick="selOpt(this,'sup')">N/A</span></div>
           <input type="hidden" id="sup-val"/>
         </div>
         <div class="fg">
-          <label>9. Base Traseira (Back Box)</label>
+          <label>10. Base Traseira (Back Box)</label>
           <div class="opts"><span class="opt" onclick="selOpt(this,'base')">Incluso</span><span class="opt" onclick="selOpt(this,'base')">Não incluso</span><span class="opt" onclick="selOpt(this,'base')">Danificado</span><span class="opt" onclick="selOpt(this,'base')">N/A</span></div>
           <input type="hidden" id="base-val"/>
         </div>
         <div class="fg">
-          <label>10. Borracha de Vedação</label>
+          <label>11. Borracha de Vedação</label>
           <div class="opts"><span class="opt" onclick="selOpt(this,'plug')">Incluso</span><span class="opt" onclick="selOpt(this,'plug')">Não incluso</span><span class="opt" onclick="selOpt(this,'plug')">Danificado</span><span class="opt" onclick="selOpt(this,'plug')">N/A</span></div>
           <input type="hidden" id="plug-val"/>
         </div>
         <div class="fg" style="grid-column:1/-1">
-          <label>11. Borracha Vedação Cabo (Gasket Cable)</label>
+          <label>12. Borracha Vedação Cabo (Gasket Cable)</label>
           <div class="opts"><span class="opt" onclick="selOpt(this,'gask')">Incluso</span><span class="opt" onclick="selOpt(this,'gask')">Não incluso</span><span class="opt" onclick="selOpt(this,'gask')">Danificado</span><span class="opt" onclick="selOpt(this,'gask')">N/A</span></div>
           <input type="hidden" id="gask-val"/>
         </div>
       </div>
       <div class="grid" style="margin-top:14px">
         <div class="fg">
-          <label>12. Falta Parafuso?</label>
+          <label>13. Falta Parafuso?</label>
           <div class="opts"><span class="opt" onclick="selOpt(this,'parafuso')">Sim</span><span class="opt" onclick="selOpt(this,'parafuso')">Não</span></div>
           <input type="hidden" id="parafuso-val"/>
         </div>
         <div class="fg">
-          <label>13. Troca da Base Traseira (Back Box)?</label>
+          <label>14. Troca da Base Traseira (Back Box)?</label>
           <div class="opts"><span class="opt" onclick="selOpt(this,'troca')">Sim</span><span class="opt" onclick="selOpt(this,'troca')">Não</span><span class="opt" onclick="selOpt(this,'troca')">N/A</span></div>
           <input type="hidden" id="troca-val"/>
         </div>
       </div>
       <div class="fg" style="margin-top:14px">
-        <label>14. Demais Acessórios</label>
+        <label>15. Demais Acessórios</label>
         <textarea id="f-acess" placeholder="Liste acessórios adicionais..."></textarea>
       </div>
     </div>
 
     <div class="section">
-      <div class="sec-title">15. Fotos</div>
+      <div class="sec-title">16. Fotos</div>
       <p style="font-size:12px;color:#8e96b0;margin-bottom:12px">Foto frontal + etiqueta serial + eventuais danos visíveis.</p>
       <div class="fotos">
         <div class="fslot" id="fslot1" onclick="document.getElementById('fi1').click()">
@@ -205,13 +209,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="sec-title">Finalização</div>
       <div class="grid">
         <div class="fg">
-          <label>16. Responsável *</label>
+          <label>17. Responsável *</label>
           <select id="f-resp"><option value="">Selecione...</option></select>
         </div>
-        <div class="fg">
-          <label>17. Observações / Defeito</label>
-          <textarea id="f-obs" placeholder="Descreva defeitos ou observações..."></textarea>
-        </div>
+
       </div>
     </div>
 
