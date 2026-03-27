@@ -296,7 +296,10 @@ function buscarSerial() {
   if (q.length < 2) { res.style.display='none'; return }
   stimer = setTimeout(async function() {
     try {
-      var data = await api('vw_itens_completo?or=(serial.ilike.*'+encodeURIComponent(q)+'*,codigo_interno.ilike.*'+encodeURIComponent(q)+'*)&select=id,serial,codigo_interno,modelo,part_number&limit=10')
+      var rSerial = await fetch(SURL + '/rest/v1/vw_itens_completo?or=(serial.ilike.*'+encodeURIComponent(q)+'*,codigo_interno.ilike.*'+encodeURIComponent(q)+'*)&select=id,serial,codigo_interno,modelo,part_number&limit=10', {
+        headers: { 'apikey': AKEY, 'Accept': 'application/json' }
+      })
+      var data = rSerial.ok ? await rSerial.json() : []
       if (!data.length) { res.innerHTML='<div class="ac-item"><small>Nenhum equipamento encontrado</small></div>'; res.style.display='block'; return }
       res.innerHTML = ''
       data.forEach(function(e) {
@@ -408,12 +411,23 @@ function fecharJanela() {
 
 async function carregarResp() {
   try {
-    var data = await api('responsaveis?select=id,nome,cargo&ativo=eq.true&order=nome')
+    // GET público: usa só apikey, sem Bearer token
+    // evita conflito de role anon vs authenticated no PostgREST
+    var r = await fetch(SURL + '/rest/v1/responsaveis?select=nome,cargo&ativo=eq.true&order=nome', {
+      headers: { 'apikey': AKEY, 'Accept': 'application/json' }
+    })
+    if (!r.ok) throw new Error('HTTP ' + r.status)
+    var data = await r.json()
     var sel = document.getElementById('f-resp')
-    sel.innerHTML = '<option value="">Selecione...</option>'
-    data.forEach(function(r){ sel.innerHTML+='<option value="'+r.nome+'">'+r.nome+(r.cargo?' · '+r.cargo:'')+'</option>' })
+    sel.innerHTML = '<option value="">Selecione o responsável...</option>'
+    data.forEach(function(r) {
+      sel.innerHTML += '<option value="' + r.nome + '">' + r.nome + (r.cargo ? ' · ' + r.cargo : '') + '</option>'
+    })
   } catch(err) {
-    document.getElementById('f-resp').innerHTML='<option value="">Selecione...</option><option disabled>Erro ao carregar</option>'
+    // Fallback: exibir erro no select
+    var sel = document.getElementById('f-resp')
+    if (sel) sel.innerHTML = '<option value="">-- Erro ao carregar responsáveis --</option>'
+    showMsg('Não foi possível carregar responsáveis: ' + err.message, 'err')
   }
 }
 
