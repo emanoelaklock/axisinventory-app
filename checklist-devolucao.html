@@ -253,9 +253,10 @@ function getToken() {
 async function api(path, method, body) {
   method = method || 'GET'
   var token = getToken()
-  var headers = {
-    'apikey': AKEY,
-    'Authorization': 'Bearer ' + token,
+  // Só adiciona Authorization se tiver token real (não é a própria AKEY)
+  var headers = { 'apikey': AKEY }
+  if (token && token !== AKEY) {
+    headers['Authorization'] = 'Bearer ' + token
   }
   if (body) {
     headers['Content-Type'] = 'application/json'
@@ -267,7 +268,7 @@ async function api(path, method, body) {
     body: body ? JSON.stringify(body) : null
   })
   if (r.status === 401) {
-    showMsg('Erro de autenticação (401). Tente fechar e reabrir esta janela.', 'err')
+    showMsg('Erro ao salvar. Verifique sua conexão e tente novamente.', 'err')
     throw new Error('401')
   }
   var txt = await r.text(); var d; try{d=JSON.parse(txt)}catch(e){d=txt}
