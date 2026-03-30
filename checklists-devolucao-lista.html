@@ -108,34 +108,21 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 /* Print */
 @media print {
   body > *{display:none!important}
-  #chk-print-area{display:block!important;position:fixed;top:0;left:0;width:100%;background:#fff;z-index:9999}
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-}
-@page{size:A4 portrait;margin:10mm 12mm}
-
-.btn-novo{background:#1B2A4A;border-color:#1B2A4A;color:#fff;font-weight:600}
-/* Print A4 devolução */
-#chk-print-area{display:none;font-family:Arial,Helvetica,sans-serif;font-size:10.5px;color:#111;background:#fff;width:100%;box-sizing:border-box}
-#chk-pr-header{display:flex;align-items:center;gap:12px;border-bottom:3px solid #1B2A4A;padding-bottom:8px;margin-bottom:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-#chk-pr-logo{width:40px;height:40px;background:#1B2A4A;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-#chk-pr-title{font-size:16px;font-weight:800;color:#1B2A4A;line-height:1.2}
-#chk-pr-sub{font-size:10px;color:#555;margin-top:3px}
-#chk-pr-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;width:100%}
-.chk-pr-cell{border:1px solid #bbb;border-radius:4px;overflow:hidden;width:100%;box-sizing:border-box}
-.chk-pr-cell.full{grid-column:1/-1}
-.chk-pr-lbl{background:#dde4f0;padding:5px 9px;font-size:8.5px;font-weight:800;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #bbb;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.chk-pr-val{padding:5px 8px;font-size:10px;color:#111;min-height:22px;word-break:break-word;line-height:1.4}
-.chk-pr-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.dot-ok-pr{background:#2E7D32}.dot-nok-pr{background:#C62828}.dot-na-pr{background:#9E9E9E}
-#chk-pr-fotos-sec{margin-bottom:8px}
-.chk-pr-sec-lbl{font-size:9px;font-weight:800;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
-#chk-pr-fotos{display:flex;gap:8px;flex-wrap:wrap}
-#chk-pr-fotos img{width:150px;height:112px;object-fit:cover;border-radius:5px;border:1px solid #bbb}
-#chk-pr-footer{display:flex;justify-content:space-between;align-items:flex-end;border-top:1.5px solid #bbb;padding-top:8px;margin-top:6px}
+  #chk-print-area{display:none;font-family:Arial,Helvetica,sans-serif;background:#fff;width:100%;box-sizing:border-box}
+#chk-pr-header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #1B2A4A;padding-bottom:12px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#chk-pr-logo{width:44px;height:44px;background:#1B2A4A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#chk-pr-title{font-size:20px;font-weight:800;color:#1B2A4A;line-height:1.2}
+#chk-pr-sub{font-size:12px;color:#666;margin-top:2px}
+#chk-pr-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;width:100%}
+#chk-pr-fotos-sec{margin-bottom:16px}
+.chk-pr-sec-lbl{font-size:10px;font-weight:700;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+#chk-pr-fotos{display:flex;gap:10px;flex-wrap:wrap}
+#chk-pr-fotos img{width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
+#chk-pr-footer{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid #ddd;padding-top:12px;margin-top:24px}
 #chk-pr-assin{text-align:center}
-#chk-pr-assin-linha{width:200px;border-top:1px solid #333;margin:32px auto 4px}
-#chk-pr-resp{font-size:9px;color:#555}
-#chk-pr-rodape{font-size:8px;color:#999;text-align:right;line-height:1.6}
+#chk-pr-assin-linha{width:200px;border-top:1px solid #333;margin:40px auto 4px}
+#chk-pr-resp{font-size:12px;color:#666}
+#chk-pr-rodape{font-size:10px;color:#999;text-align:right}
 .btn-novo:hover{background:#2E6BE6;border-color:#2E6BE6;color:#fff}
 
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
@@ -614,63 +601,56 @@ function imprimirModal() {
   var r = todosRows.find(function(x){ return String(x.id) === String(modalIdAtual) })
   if (!r) return
 
-  var fdt2 = function(d) {
-    if (!d) return '—'
-    return new Date(d + 'T12:00:00').toLocaleDateString('pt-BR')
+  var dt = r.data_checklist ? new Date(r.data_checklist + 'T12:00:00').toLocaleDateString('pt-BR') : '—'
+
+  var field = function(lbl, val, full) {
+    return '<div style="border:1px solid #ddd;border-radius:6px;overflow:hidden' + (full ? ';grid-column:1/-1' : '') + '">' +
+      '<div style="background:#f0f3f8;padding:5px 10px;font-size:10px;font-weight:700;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;-webkit-print-color-adjust:exact;print-color-adjust:exact">' + lbl + '</div>' +
+      '<div style="padding:8px 10px;font-size:13px;color:#0f1224;min-height:28px">' + (val || '—') + '</div></div>'
   }
-  var dotCls = function(val) {
-    if (!val) return 'dot-na-pr'
+
+  var dotVal = function(val) {
+    if (!val) return 'N/A'
     var v = val.toLowerCase()
-    if (v === 'incluso')     return 'dot-ok-pr'
-    if (v === 'não incluso' || v === 'danificado') return 'dot-nok-pr'
-    return 'dot-na-pr'
+    var cor = v==='incluso' ? '#22c55e' : v==='danificado' ? '#f59e0b' : v==='não incluso'||v==='nao incluso' ? '#ef4444' : '#9ca3af'
+    return '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+cor+';margin-right:6px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact"></span>' + val
   }
-  var cell = function(lbl, val, full) {
-    return '<div class="chk-pr-cell' + (full ? ' full' : '') + '">' +
-      '<div class="chk-pr-lbl">' + lbl + '</div>' +
-      '<div class="chk-pr-val">' + (val || '—') + '</div></div>'
-  }
-  var acessCell = function(lbl, val) {
-    return '<div class="chk-pr-cell"><div class="chk-pr-lbl">' + lbl + '</div>' +
-      '<div class="chk-pr-val"><span class="chk-pr-dot ' + dotCls(val) + '"></span>' + (val || 'N/A') + '</div></div>'
-  }
-  var simNaoCell = function(lbl, val) {
-    var d = (!val) ? 'dot-na-pr' : val.toLowerCase() === 'sim' ? 'dot-ok-pr' : val.toLowerCase() === 'não' ? 'dot-nok-pr' : 'dot-na-pr'
-    return '<div class="chk-pr-cell"><div class="chk-pr-lbl">' + lbl + '</div>' +
-      '<div class="chk-pr-val"><span class="chk-pr-dot ' + d + '"></span>' + (val || 'N/A') + '</div></div>'
+
+  var simNaoVal = function(val) {
+    if (!val) return 'N/A'
+    var cor = val.toLowerCase()==='sim' ? '#22c55e' : val.toLowerCase()==='não' ? '#ef4444' : '#9ca3af'
+    return '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+cor+';margin-right:6px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact"></span>' + val
   }
 
   var fields =
-    cell('Data',              fdt2(r.data_checklist)) +
-    cell('Empresa',           r.cliente) +
-    cell('Tipo de Equipamento', r.tipo_equipamento) +
-    cell('Modelo',            r.modelo) +
-    cell('Serial',            r.serial) +
-    cell('Responsável',       r.responsavel) +
-    cell('Origem',            r.origem) +
-    cell('Registrado em',     r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : null) +
-    (r.observacoes ? cell('Observações / Defeito', r.observacoes, true) : '') +
-    acessCell('Weathershield',              r.weathershield_tampa) +
-    acessCell('Suporte de Montagem',        r.suporte_montagem) +
-    acessCell('Base Traseira (Back Box)',   r.base_traseira) +
-    acessCell('Borracha de Vedação',        r.borracha_vedacao) +
-    acessCell('Borracha Vedação Cabo',      r.borracha_vedacao_cabo) +
-    simNaoCell('Falta Parafuso',            r.falta_parafuso) +
-    simNaoCell('Troca da Base Traseira',    r.troca_base_traseira) +
-    (r.demais_acessorios ? cell('Demais Acessórios', r.demais_acessorios, true) : '')
+    field('1. Data',              dt) +
+    field('2. Empresa',           r.cliente) +
+    field('3. Tipo de Equipamento', r.tipo_equipamento) +
+    field('4. Modelo',            r.modelo) +
+    field('5. Serial',            r.serial) +
+    field('6. Responsável',       r.responsavel) +
+    field('7. Origem',            r.origem) +
+    (r.observacoes ? field('8. Observações / Defeito', r.observacoes, true) : '') +
+    field('9. Weathershield',     dotVal(r.weathershield_tampa)) +
+    field('10. Suporte Montagem', dotVal(r.suporte_montagem)) +
+    field('11. Base Traseira',    dotVal(r.base_traseira)) +
+    field('12. Borracha Vedação', dotVal(r.borracha_vedacao)) +
+    field('13. Gasket Cable',     dotVal(r.borracha_vedacao_cabo)) +
+    field('14. Falta Parafuso',   simNaoVal(r.falta_parafuso)) +
+    field('15. Troca Base Traseira', simNaoVal(r.troca_base_traseira)) +
+    (r.demais_acessorios ? field('16. Demais Acessórios', r.demais_acessorios, true) : '')
 
-  var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
+  var fts = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
 
   document.getElementById('chk-pr-sub').textContent =
-    'Data: ' + fdt2(r.data_checklist) + '  ·  Empresa: ' + (r.cliente||'—') +
-    '  ·  Responsável: ' + (r.responsavel||'—')
+    'Data: ' + dt + '  ·  Empresa: ' + (r.cliente||'—') + '  ·  Responsável: ' + (r.responsavel||'—')
   document.getElementById('chk-pr-fields').innerHTML = fields
-  document.getElementById('chk-pr-resp').textContent = r.responsavel||'—'
+  document.getElementById('chk-pr-resp').textContent = r.responsavel || '—'
   document.getElementById('chk-pr-rodape').innerHTML =
     'Axis Inventory · Checklist de Devolução<br>Impresso em ' + new Date().toLocaleString('pt-BR')
   document.getElementById('chk-pr-fotos').innerHTML =
-    fotos.map(function(f){ return '<img src="'+f+'">' }).join('')
-  document.getElementById('chk-pr-fotos-sec').style.display = fotos.length ? '' : 'none'
+    fts.map(function(f){ return '<img src="'+f+'" style="width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>' }).join('')
+  document.getElementById('chk-pr-fotos-sec').style.display = fts.length ? '' : 'none'
 
   window.print()
 }
