@@ -76,6 +76,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .mans-wrap{display:flex;flex-wrap:wrap;gap:5px}
 @media(max-width:500px){.mgrid{grid-template-columns:1fr}}
 @media print{#sidebar-container,#tc,.toolbar,.page-head,.tcard{display:none!important}.overlay{display:block!important;position:static;background:none!important;padding:0}.modal{box-shadow:none;max-height:none;border:none}.modal-hd{position:static}.modal-ft,.modal-close{display:none!important}}
+.btn-del{background:rgba(220,38,38,.08);color:#DC2626;border-color:rgba(220,38,38,.2)}.btn-del:hover{background:#DC2626;color:#fff;border-color:#DC2626}
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
 @keyframes tin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
@@ -156,6 +157,10 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
     </div>
     <div class="modal-bd" id="modal-corpo"></div>
     <div class="modal-ft">
+      <button class="btn btn-sm btn-del" id="btn-excluir" onclick="confirmarExclusao()" style="display:none;margin-right:auto">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Excluir
+      </button>
       <button class="btn btn-sm" onclick="fecharModal()">Fechar</button>
       <button class="btn btn-sm btn-p" onclick="window.print()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -308,6 +313,7 @@ window.irP = function(p) {
 
 // -- MODAL DETALHE -----------------------------------------------------
 function abrirModal(id) {
+  idAtualExcluir = id
   var r = todosRows.find(function(x){ return String(x.id) === String(id) })
   if (!r) return
 
@@ -364,11 +370,41 @@ function abrirModal(id) {
   document.getElementById('modal-corpo').innerHTML = html
   document.getElementById('overlay').classList.add('open')
   document.body.style.overflow = 'hidden'
+  // Mostrar botão Excluir só para Administrador
+  var btnExc = document.getElementById('btn-excluir')
+  if (btnExc) btnExc.style.display = (typeof PERFIL !== 'undefined' && PERFIL === 'Administrador') ? 'inline-flex' : 'none'
 }
 
 function fecharModal() {
   document.getElementById('overlay').classList.remove('open')
   document.body.style.overflow = ''
+}
+
+var idAtualExcluir = null
+
+function confirmarExclusao() {
+  var r = todosRows.find(function(x){ return String(x.id) === String(idAtualExcluir) })
+  if (!r) return
+  var msg = 'Excluir o checklist de ' + (r.serial||'') + ' (' + fdt(r.data_checklist) + ')? Esta ação não pode ser desfeita.'
+  if (!confirm(msg)) return
+  executarExclusao()
+}
+
+async function executarExclusao() {
+  if (!idAtualExcluir) return
+  try {
+    var r = await fetch(SURL + '/rest/v1/checklists_axis?id=eq.' + idAtualExcluir, {
+      method: 'DELETE',
+      headers: { ...hAuth(), 'Prefer': 'return=minimal' }
+    })
+    chk401(r)
+    if (r.status === 403 || (r.status >= 400 && !r.ok)) {
+      toast('Sem permissão para excluir.', 'err'); return
+    }
+    fecharModal()
+    toast('Checklist excluído.', 'ok')
+    await carregar()
+  } catch(e) { toast('Erro: ' + e.message, 'err') }
 }
 
 var openLB = function(src) { document.getElementById('lb-img').src = src; document.getElementById('lb').classList.add('open') }

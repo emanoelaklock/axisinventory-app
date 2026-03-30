@@ -433,7 +433,7 @@ function abrirModal(id) {
 
   // Botão excluir só para Administrador
   var btnExc = document.getElementById('btn-excluir')
-  btnExc.style.display = (window.PERFIL && window.PERFIL.toLowerCase() === 'administrador') ? 'inline-flex' : 'none'
+  btnExc.style.display = (typeof PERFIL !== 'undefined' && PERFIL === 'Administrador') ? 'inline-flex' : 'none'
 
   var html = ''
 
