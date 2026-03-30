@@ -75,7 +75,12 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .mfoto-grid img{width:110px;height:82px;object-fit:cover;display:block}
 .mans-wrap{display:flex;flex-wrap:wrap;gap:5px}
 @media(max-width:500px){.mgrid{grid-template-columns:1fr}}
-@media print{#sidebar-container,#tc,.toolbar,.page-head,.tcard{display:none!important}.overlay{display:block!important;position:static;background:none!important;padding:0}.modal{box-shadow:none;max-height:none;border:none}.modal-hd{position:static}.modal-ft,.modal-close{display:none!important}}
+@media print{
+  body > *{display:none!important}
+  #chk-print-area{display:block!important}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
+@page{size:A4 portrait;margin:6mm 8mm}
 .btn-del{background:rgba(220,38,38,.08);color:#DC2626;border-color:rgba(220,38,38,.2)}.btn-del:hover{background:#DC2626;color:#fff;border-color:#DC2626}
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
@@ -83,6 +88,28 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
+
+/* Print A4 Inspeção */
+#chk-print-area{display:none;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111;background:#fff;width:195mm;box-sizing:border-box}
+#chk-pr-header{display:flex;align-items:center;gap:12px;border-bottom:3px solid #202A44;padding-bottom:8px;margin-bottom:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#chk-pr-logo{width:40px;height:40px;background:#202A44;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#chk-pr-title{font-size:16px;font-weight:800;color:#202A44;line-height:1.2}
+#chk-pr-sub{font-size:10px;color:#555;margin-top:3px}
+#chk-pr-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:5px;width:100%}
+.chk-pr-cell{border:1px solid #bbb;border-radius:4px;overflow:hidden;width:100%;box-sizing:border-box}
+.chk-pr-cell.full{grid-column:1/-1}
+.chk-pr-lbl{background:#dde4f0;padding:4px 8px;font-size:8px;font-weight:800;color:#202A44;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #bbb;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.chk-pr-val{padding:5px 8px;font-size:10px;color:#111;min-height:22px;word-break:break-word;line-height:1.4}
+.chk-pr-tag{background:#dde4f0;color:#202A44;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;display:inline-block;margin:1px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#chk-pr-fotos-sec{margin-bottom:8px}
+.chk-pr-sec-lbl{font-size:9px;font-weight:800;color:#202A44;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+#chk-pr-fotos{display:flex;gap:8px;flex-wrap:wrap}
+#chk-pr-fotos img{width:150px;height:112px;object-fit:cover;border-radius:5px;border:1px solid #bbb}
+#chk-pr-footer{display:flex;justify-content:space-between;align-items:flex-end;border-top:1.5px solid #bbb;padding-top:8px;margin-top:6px}
+#chk-pr-assin{text-align:center}
+#chk-pr-assin-linha{width:200px;border-top:1px solid #333;margin:32px auto 4px}
+#chk-pr-resp{font-size:9px;color:#555}
+#chk-pr-rodape{font-size:8px;color:#999;text-align:right;line-height:1.6}
 </style>
 </head>
 <body>
@@ -162,7 +189,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
         Excluir
       </button>
       <button class="btn btn-sm" onclick="fecharModal()">Fechar</button>
-      <button class="btn btn-sm btn-p" onclick="window.print()">
+      <button class="btn btn-sm btn-p" onclick="imprimirModal()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         Imprimir
       </button>
@@ -416,8 +443,84 @@ async function onPostLogin() {
   await carregar()
 }
 
+function imprimirModal() {
+  var id = idAtualExcluir
+  var r = todosRows.find(function(x){ return String(x.id) === String(id) })
+  if (!r) return
+
+  var codigo = r.itens && r.itens.codigo_interno ? r.itens.codigo_interno : '--'
+  var modelo = r.modelo || (r.itens && r.itens.modelos && r.itens.modelos.modelo ? r.itens.modelos.modelo : '--')
+
+  var cell = function(lbl, val, full) {
+    return '<div class="chk-pr-cell' + (full ? ' full' : '') + '">' +
+      '<div class="chk-pr-lbl">' + lbl + '</div>' +
+      '<div class="chk-pr-val">' + (val ? String(val) : '—') + '</div></div>'
+  }
+  var tags = function(arr) {
+    if (!arr || !arr.length) return '—'
+    return arr.map(function(m){ return '<span class="chk-pr-tag">'+m+'</span>' }).join(' ')
+  }
+
+  var fields =
+    cell('Código Interno',   codigo) +
+    cell('Serial',           r.serial) +
+    cell('Modelo',           modelo) +
+    cell('Data',             fdt(r.data_checklist)) +
+    cell('Responsável',      r.responsavel) +
+    cell('Origem',           r.origem) +
+    cell('RMA',              r.rma || 'N/A') +
+    cell('Status Resultado', r.status_resultado || '—') +
+    cell('Weathershield',    r.weathershield) +
+    cell('Suporte Montagem', r.suporte_montagem) +
+    cell('Base Traseira',    r.base_traseira) +
+    cell('Borracha Vedação', r.borracha_vedacao) +
+    cell('Gasket Cable',     r.gasket_cable) +
+    cell('Demais Acessórios',r.demais_acessorios || '—', true) +
+    '<div class="chk-pr-cell full"><div class="chk-pr-lbl">Manutenções Realizadas</div>' +
+    '<div class="chk-pr-val">' + tags(r.manutencoes) + '</div></div>' +
+    (r.observacoes ? cell('Observações', r.observacoes, true) : '')
+
+  var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
+
+  document.getElementById('chk-pr-sub').textContent =
+    'Código: ' + codigo + '  ·  Serial: ' + (r.serial||'—') +
+    '  ·  Data: ' + fdt(r.data_checklist) + '  ·  Responsável: ' + (r.responsavel||'—')
+  document.getElementById('chk-pr-fields').innerHTML = fields
+  document.getElementById('chk-pr-resp').textContent = r.responsavel||'—'
+  document.getElementById('chk-pr-rodape').innerHTML =
+    'Axis Inventory · Checklist de Inspeção<br>Impresso em ' + new Date().toLocaleString('pt-BR')
+  document.getElementById('chk-pr-fotos').innerHTML =
+    fotos.map(function(f){ return '<img src="'+f+'">' }).join('')
+  document.getElementById('chk-pr-fotos-sec').style.display = fotos.length ? '' : 'none'
+
+  window.print()
+}
+
 renderSidebar('checklists-inspecao')
 initAuth()
 </script>
+<!-- Print A4 Checklist Inspeção -->
+<div id="chk-print-area">
+  <div id="chk-pr-header">
+    <div id="chk-pr-logo">📡</div>
+    <div>
+      <div id="chk-pr-title">Checklist de Inspeção — Axis Inventory</div>
+      <div id="chk-pr-sub"></div>
+    </div>
+  </div>
+  <div id="chk-pr-fields"></div>
+  <div id="chk-pr-fotos-sec" style="display:none">
+    <div class="chk-pr-sec-lbl">Fotos</div>
+    <div id="chk-pr-fotos"></div>
+  </div>
+  <div id="chk-pr-footer">
+    <div id="chk-pr-assin">
+      <div id="chk-pr-assin-linha"></div>
+      <div id="chk-pr-resp"></div>
+    </div>
+    <div id="chk-pr-rodape"></div>
+  </div>
+</div>
+
 </body>
 </html>
