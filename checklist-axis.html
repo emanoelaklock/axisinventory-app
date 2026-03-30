@@ -71,10 +71,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .popup-btn-novo{background:#f0f3f8;color:#202A44;border:1.5px solid #dde2ef}.popup-btn-novo:hover{background:#e2e8f0}
 @media print{
   .no-print{display:none!important}
-  body{background:#fff}
-  .header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .section{break-inside:avoid;border:1px solid #ddd}
-  .opt.sel,.opt.sel-green{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;margin:0;padding:0}
+  .wrap,.header,.view-toggle,.actions,.popup-overlay{display:none!important}
+  #print-area{display:block!important}
+  #print-style{display:none}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 </style>
 </head>
@@ -247,29 +248,53 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 </div>
 
-<!-- ÁREA IMPRESSÃO -->
+<!-- ÁREA IMPRESSÃO A4 -->
 <div id="print-area" style="display:none">
-  <div style="max-width:800px;margin:0 auto;padding:20px;font-family:Arial,sans-serif">
-    <div style="display:flex;align-items:center;gap:16px;border-bottom:3px solid #202A44;padding-bottom:12px;margin-bottom:20px">
-      <div style="width:44px;height:44px;background:#202A44;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;-webkit-print-color-adjust:exact;print-color-adjust:exact">📡</div>
-      <div>
-        <div style="font-size:20px;font-weight:800;color:#202A44">Checklist de Inspeção — AXIS</div>
-        <div id="pr-sub" style="font-size:12px;color:#666;margin-top:2px"></div>
-      </div>
-    </div>
-    <div id="pr-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"></div>
-    <div id="pr-fotos-sec" style="margin-bottom:16px">
-      <div style="font-size:10px;font-weight:700;color:#202A44;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Fotos</div>
-      <div id="pr-fotos" style="display:flex;gap:10px;flex-wrap:wrap"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:24px;border-top:1px solid #ddd;padding-top:12px">
-      <div style="text-align:center">
-        <div style="width:200px;border-top:1px solid #333;margin-bottom:4px;margin-top:40px"></div>
-        <div id="pr-resp-assin" style="font-size:12px;color:#666"></div>
-      </div>
-      <div id="pr-rodape" style="font-size:10px;color:#999;text-align:right"></div>
-    </div>
+<style id="print-style">
+@page{size:A4 portrait;margin:8mm 10mm}
+#print-area{font-family:Arial,Helvetica,sans-serif;font-size:9px;color:#111;background:#fff}
+#pr-header{display:flex;align-items:center;gap:10px;border-bottom:2.5px solid #202A44;padding-bottom:6px;margin-bottom:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#pr-logo{width:32px;height:32px;background:#202A44;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#pr-title{font-size:14px;font-weight:800;color:#202A44;line-height:1.2}
+#pr-sub{font-size:9px;color:#555;margin-top:2px}
+#pr-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:6px}
+.pr-cell{border:1px solid #ccc;border-radius:3px;overflow:hidden}
+.pr-cell.full{grid-column:1/-1}
+.pr-cell.half2{grid-column:span 2}
+.pr-lbl{background:#eef1f8;padding:3px 6px;font-size:7.5px;font-weight:700;color:#202A44;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #ccc}
+.pr-val{padding:4px 6px;font-size:9px;color:#111;min-height:18px;word-break:break-word}
+#pr-manut-sec .pr-val{display:flex;flex-wrap:wrap;gap:3px}
+.pr-tag{background:#e8edf7;color:#202A44;padding:2px 6px;border-radius:3px;font-size:8px;font-weight:600}
+#pr-fotos-sec{margin-bottom:6px}
+#pr-fotos-sec .pr-lbl{margin-bottom:4px;background:none;border:none;padding:0}
+#pr-fotos{display:flex;gap:6px;flex-wrap:wrap}
+#pr-fotos img{width:120px;height:90px;object-fit:cover;border-radius:4px;border:1px solid #ccc}
+#pr-footer{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid #ccc;padding-top:6px;margin-top:4px}
+#pr-assin{text-align:center}
+#pr-assin-linha{width:160px;border-top:1px solid #333;margin:24px auto 3px}
+#pr-resp-assin{font-size:8px;color:#555}
+#pr-rodape{font-size:7.5px;color:#999;text-align:right}
+</style>
+<div id="pr-header">
+  <div id="pr-logo">📡</div>
+  <div>
+    <div id="pr-title">Checklist de Inspeção — Axis Inventory</div>
+    <div id="pr-sub"></div>
   </div>
+</div>
+<div id="pr-fields"></div>
+<div id="pr-manut-sec" style="margin-bottom:6px"></div>
+<div id="pr-fotos-sec" style="display:none">
+  <div class="pr-lbl" style="font-size:8px;font-weight:700;color:#202A44;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Fotos</div>
+  <div id="pr-fotos"></div>
+</div>
+<div id="pr-footer">
+  <div id="pr-assin">
+    <div id="pr-assin-linha"></div>
+    <div id="pr-resp-assin"></div>
+  </div>
+  <div id="pr-rodape"></div>
+</div>
 </div>
 
 <script>
@@ -493,42 +518,78 @@ function filtrarHist(q){
 }
 
 function imprimir(chk){
-  const dt=chk.data_checklist?new Date(chk.data_checklist+'T12:00:00').toLocaleDateString('pt-BR'):'—';
-  document.getElementById('pr-sub').textContent='Data: '+dt+' · Responsável: '+(chk.responsavel||'—');
-  document.getElementById('pr-resp-assin').textContent=chk.responsavel||'—';
-  document.getElementById('pr-rodape').innerHTML='Axis Inventory<br>Impresso em '+new Date().toLocaleString('pt-BR');
-  const fields=[
-    {l:'1. Data',v:dt},{l:'2. Origem',v:chk.origem||'—'},
-    {l:'3. Tipo',v:chk.tipo_equipamento||'—'},{l:'4. Modelo',v:chk.modelo||'—'},
-    {l:'5. Número de Série',v:chk.serial||'—'},{l:'6. RMA',v:chk.rma||'N/A'},
-    {l:'7. Weathershield',v:chk.weathershield||'—'},{l:'8. Suporte de Montagem',v:chk.suporte_montagem||'—'},
-    {l:'9. Base Traseira',v:chk.base_traseira||'—'},{l:'10. Borracha de Vedação',v:chk.borracha_vedacao||'—'},
-    {l:'11. Gasket Cable',v:chk.gasket_cable||'—'},{l:'12. Demais Acessórios',v:chk.demais_acessorios||'—',full:true},
-    {l:'13. Manutenções',v:(chk.manutencoes||[]).join(', ')||'—',full:true},
-    {l:'15. Responsável',v:chk.responsavel||'—'},{l:'16. Observações',v:chk.observacoes||'—',full:true},
-  ];
-  document.getElementById('pr-fields').innerHTML=fields.map(f=>
-    '<div style="border:1px solid #ddd;border-radius:6px;overflow:hidden'+(f.full?';grid-column:1/-1':'')+'">'+
-    '<div style="background:#f0f3f8;padding:5px 10px;font-size:10px;font-weight:700;color:#202A44;text-transform:uppercase;letter-spacing:.05em">'+f.l+'</div>'+
-    '<div style="padding:7px 10px;font-size:13px;color:#0f1224;min-height:28px">'+f.v+'</div>'+
-    '</div>'
-  ).join('');
-  const fts=[chk.foto_1,chk.foto_2,chk.foto_3].filter(Boolean);
-  const pf=document.getElementById('pr-fotos');
-  pf.innerHTML=fts.map(f=>'<img src="'+f+'" style="width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>').join('');
-  document.getElementById('pr-fotos-sec').style.display=fts.length?'':'none';
-  document.getElementById('print-area').style.display='block';
-  document.getElementById('view-form').style.display='none';
-  document.getElementById('view-hist').style.display='none';
-  document.querySelector('.view-toggle').style.display='none';
-  document.querySelector('.header').style.display='none';
-  window.print();
-  setTimeout(()=>{
-    document.getElementById('print-area').style.display='none';
-    document.getElementById('view-form').style.display='block';
-    document.querySelector('.view-toggle').style.display='flex';
-    document.querySelector('.header').style.display='flex';
-  },500);
+  const dt = chk.data_checklist
+    ? new Date(chk.data_checklist+'T12:00:00').toLocaleDateString('pt-BR') : '—'
+
+  const fields = [
+    {l:'Data',             v: dt},
+    {l:'Origem',           v: chk.origem||'—'},
+    {l:'Tipo',             v: chk.tipo_equipamento||'—'},
+    {l:'Modelo',           v: chk.modelo||'—'},
+    {l:'Número de Série',  v: chk.serial||'—'},
+    {l:'RMA',              v: chk.rma||'N/A'},
+    {l:'Responsável',      v: chk.responsavel||'—'},
+    {l:'Status resultado', v: chk.status_resultado||'—'},
+    {l:'Weathershield',    v: chk.weathershield||'—'},
+    {l:'Suporte de Montagem', v: chk.suporte_montagem||'—'},
+    {l:'Base Traseira',    v: chk.base_traseira||'—'},
+    {l:'Borracha de Vedação', v: chk.borracha_vedacao||'—'},
+    {l:'Gasket Cable',     v: chk.gasket_cable||'—'},
+    {l:'Demais Acessórios',v: chk.demais_acessorios||'—', full:true},
+    {l:'Observações',      v: chk.observacoes||'—', full:true},
+  ]
+
+  const fts = [chk.foto_1, chk.foto_2, chk.foto_3].filter(Boolean)
+
+  // Montar células do grid
+  const cell = f => {
+    var cls = 'pr-cell' + (f.full ? ' full' : f.half2 ? ' half2' : '')
+    return '<div class="'+cls+'">'+
+      '<div class="pr-lbl">'+f.l+'</div>'+
+      '<div class="pr-val">'+(f.v||'—')+'</div></div>'
+  }
+
+  // Manutenções como tags separadas
+  var mans = chk.manutencoes && chk.manutencoes.length
+    ? chk.manutencoes.map(m=>'<span class="pr-tag">'+m+'</span>').join('')
+    : '<span style="color:#999">Nenhuma</span>'
+
+  // Preencher print-area
+  document.getElementById('pr-sub').textContent =
+    'Data: ' + dt + '  ·  Responsável: ' + (chk.responsavel||'—') +
+    '  ·  Status: ' + (chk.status_resultado||'—')
+  document.getElementById('pr-resp-assin').textContent = chk.responsavel||'—'
+  document.getElementById('pr-rodape').innerHTML =
+    'Axis Inventory · Checklist de Inspeção<br>Impresso em ' + new Date().toLocaleString('pt-BR')
+  document.getElementById('pr-fields').innerHTML = fields.map(cell).join('')
+  document.getElementById('pr-manut-sec').innerHTML =
+    '<div class="pr-cell full">'+
+    '<div class="pr-lbl">Manutenções realizadas</div>'+
+    '<div class="pr-val" style="display:flex;flex-wrap:wrap;gap:3px">'+mans+'</div></div>'
+  document.getElementById('pr-fotos').innerHTML = fts.map(f =>
+    '<img src="'+f+'">'
+  ).join('')
+  document.getElementById('pr-fotos-sec').style.display = fts.length ? '' : 'none'
+
+  // Mostrar print-area e ocultar resto
+  document.getElementById('print-area').style.display = 'block'
+  const vf = document.getElementById('view-form')
+  const vh = document.getElementById('view-hist')
+  const vt = document.querySelector('.view-toggle')
+  const hd = document.querySelector('.header')
+  if(vf) vf.style.display = 'none'
+  if(vh) vh.style.display = 'none'
+  if(vt) vt.style.display = 'none'
+  if(hd) hd.style.display = 'none'
+
+  window.print()
+
+  setTimeout(() => {
+    document.getElementById('print-area').style.display = 'none'
+    if(vf) vf.style.display = 'block'
+    if(vt) vt.style.display = 'flex'
+    if(hd) hd.style.display = 'flex'
+  }, 500)
 }
 function imprimirIdx(i){if(histData[i])imprimir(histData[i]);}
 
