@@ -446,7 +446,7 @@ async function salvar(){
   }
   try{
     showMsg('Salvando...','info')
-    document.querySelector('.actions .btn-primary').disabled=true
+    var btnSalvar=document.querySelector('.actions .btn-primary');if(btnSalvar)btnSalvar.disabled=true
     await api('checklists_axis','POST',payload)
     window._lastPayload=payload
     document.getElementById('popup-msg').textContent='Checklist de '+(serial)+' salvo com sucesso!'
@@ -455,7 +455,7 @@ async function salvar(){
     document.getElementById('msg').style.display='none'
   }catch(err){
     showMsg('Erro: '+err.message,'err')
-    document.querySelector('.actions .btn-primary').disabled=false
+    var btnSalvar2=document.querySelector('.actions .btn-primary');if(btnSalvar2)btnSalvar2.disabled=false
   }
 }
 
@@ -466,8 +466,10 @@ function popupImprimir(){
 function popupNovo(){
   document.getElementById('popup-sucesso').classList.remove('open')
   resetForm()
+  window._lastPayload=null
+  var btn=document.querySelector('.actions .btn-primary')
+  if(btn)btn.disabled=false
   window.scrollTo({top:0,behavior:'smooth'})
-  document.querySelector('.actions .btn-primary').disabled=false
 }
 
 // FIX: carregarResp agora usa getToken() corrigido — lê ax_sess
