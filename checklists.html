@@ -76,8 +76,10 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .mans-wrap{display:flex;flex-wrap:wrap;gap:5px}
 @media(max-width:500px){.mgrid{grid-template-columns:1fr}}
 @media print{
-  body > *{display:none!important}
-  #chk-print-area{display:block!important}
+  #sidebar-container,#tc,.toolbar,.page-head,.tcard,
+  .overlay,.modal-ft,.confirm-overlay,
+  .no-print{display:none!important}
+  #chk-print-area{display:block!important;position:fixed;top:0;left:0;width:100%}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 @page{size:A4 portrait;margin:6mm 8mm}
