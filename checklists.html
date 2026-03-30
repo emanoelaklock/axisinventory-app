@@ -75,6 +75,8 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .mfoto-grid img{width:110px;height:82px;object-fit:cover;display:block}
 .mans-wrap{display:flex;flex-wrap:wrap;gap:5px}
 @media(max-width:500px){.mgrid{grid-template-columns:1fr}}
+.chk-pr-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.dot-ok-pr{background:#2E7D32}.dot-nok-pr{background:#C62828}.dot-na-pr{background:#9E9E9E}
 @media print{
   #sidebar-container,#tc,.toolbar,.page-head,.tcard,
   .overlay,.modal-ft,.confirm-overlay,
@@ -468,10 +470,26 @@ function imprimirModal() {
   var codigo = r.itens && r.itens.codigo_interno ? r.itens.codigo_interno : '--'
   var modelo = r.modelo || (r.itens && r.itens.modelos && r.itens.modelos.modelo ? r.itens.modelos.modelo : '--')
 
+  var dotCls = function(val) {
+    if (!val) return 'dot-na-pr'
+    var v = val.toLowerCase()
+    if (v === 'incluso') return 'dot-ok-pr'
+    if (v === 'não incluso' || v === 'danificado') return 'dot-nok-pr'
+    return 'dot-na-pr'
+  }
   var cell = function(lbl, val, full) {
     return '<div class="chk-pr-cell' + (full ? ' full' : '') + '">' +
       '<div class="chk-pr-lbl">' + lbl + '</div>' +
-      '<div class="chk-pr-val">' + (val ? String(val) : '—') + '</div></div>'
+      '<div class="chk-pr-val">' + (val !== null && val !== undefined ? String(val) : '—') + '</div></div>'
+  }
+  var acessCell = function(lbl, val) {
+    return '<div class="chk-pr-cell"><div class="chk-pr-lbl">' + lbl + '</div>' +
+      '<div class="chk-pr-val"><span class="chk-pr-dot ' + dotCls(val) + '"></span>' + (val || 'N/A') + '</div></div>'
+  }
+  var statusBadge = function(val) {
+    if (!val) return '—'
+    var bg = {'Finalizada Inspeção':'#455A64','Em RMA / Assistência Técnica':'#6A1B9A','Estoque Usado':'#558B2F','Estoque Novo':'#2E7D32','Sucata':'#212121'}[val] || '#455A64'
+    return '<span style="background:'+bg+';color:#fff;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+val+'</span>'
   }
   var tags = function(arr) {
     if (!arr || !arr.length) return '—'
@@ -486,13 +504,13 @@ function imprimirModal() {
     cell('Responsável',      r.responsavel) +
     cell('Origem',           r.origem) +
     cell('RMA',              r.rma || 'N/A') +
-    cell('Status Resultado', r.status_resultado || '—') +
-    cell('Weathershield',    r.weathershield) +
-    cell('Suporte Montagem', r.suporte_montagem) +
-    cell('Base Traseira',    r.base_traseira) +
-    cell('Borracha Vedação', r.borracha_vedacao) +
-    cell('Gasket Cable',     r.gasket_cable) +
-    cell('Demais Acessórios',r.demais_acessorios || '—', true) +
+    cell('Status Resultado', statusBadge(r.status_resultado)) +
+    acessCell('Weathershield',    r.weathershield) +
+    acessCell('Suporte Montagem', r.suporte_montagem) +
+    acessCell('Base Traseira',    r.base_traseira) +
+    acessCell('Borracha Vedação', r.borracha_vedacao) +
+    acessCell('Gasket Cable',     r.gasket_cable) +
+    (r.demais_acessorios ? cell('Demais Acessórios', r.demais_acessorios, true) : '') +
     '<div class="chk-pr-cell full"><div class="chk-pr-lbl">Manutenções Realizadas</div>' +
     '<div class="chk-pr-val">' + tags(r.manutencoes) + '</div></div>' +
     (r.observacoes ? cell('Observações', r.observacoes, true) : '')
