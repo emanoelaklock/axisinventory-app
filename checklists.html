@@ -368,7 +368,28 @@ function abrirModal(id) {
   html += mf('Responsável', r.responsavel)
   html += mf('Origem', r.origem)
   if (r.rma) html += mf('RMA', r.rma)
+  if (r.status_resultado) html += mf('Status Resultado', r.status_resultado)
   html += '</div>'
+
+  // Observações
+  if (r.observacoes) {
+    html += '<div class="msec">Observações / Defeito</div>'
+    html += '<div class="mf full"><span style="white-space:pre-wrap">' + esc(r.observacoes) + '</span></div>'
+  }
+
+  // Acessórios
+  var temAcess = r.weathershield || r.suporte_montagem || r.base_traseira || r.borracha_vedacao || r.gasket_cable
+  if (temAcess) {
+    html += '<div class="msec">Acessórios e Componentes</div>'
+    html += '<div class="mgrid">'
+    if (r.weathershield)    html += mf('Weathershield', r.weathershield)
+    if (r.suporte_montagem) html += mf('Suporte de Montagem', r.suporte_montagem)
+    if (r.base_traseira)    html += mf('Base Traseira', r.base_traseira)
+    if (r.borracha_vedacao) html += mf('Borracha de Vedação', r.borracha_vedacao)
+    if (r.gasket_cable)     html += mf('Gasket Cable', r.gasket_cable)
+    html += '</div>'
+    if (r.demais_acessorios) html += '<div class="mf full" style="margin-top:10px">' + mf('Demais Acessórios', r.demais_acessorios) + '</div>'
+  }
 
   // Manutenções
   if (r.manutencoes && r.manutencoes.length) {
@@ -376,12 +397,6 @@ function abrirModal(id) {
     html += '<div class="mf full"><div class="mans-wrap">'
     r.manutencoes.forEach(function(m){ html += '<span class="man-tag">' + esc(m) + '</span> ' })
     html += '</div></div>'
-  }
-
-  // Observações
-  if (r.observacoes) {
-    html += '<div class="msec">Observações</div>'
-    html += '<div class="mf full"><span style="white-space:pre-wrap">' + esc(r.observacoes) + '</span></div>'
   }
 
   // Fotos
