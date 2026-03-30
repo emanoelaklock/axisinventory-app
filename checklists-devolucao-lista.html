@@ -105,10 +105,8 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .confirm-box p{margin:0 0 20px;font-size:13px;color:var(--tx3);line-height:1.5}
 .confirm-btns{display:flex;gap:8px;justify-content:center}
 
-/* Print */
-@media print {
-  body > *{display:none!important}
-  #chk-print-area{display:none;font-family:Arial,Helvetica,sans-serif;background:#fff;width:100%;box-sizing:border-box}
+/* Print A4 */
+#chk-print-area{display:none;font-family:Arial,Helvetica,sans-serif;background:#fff;width:100%;box-sizing:border-box}
 #chk-pr-header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #1B2A4A;padding-bottom:12px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #chk-pr-logo{width:44px;height:44px;background:#1B2A4A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #chk-pr-title{font-size:20px;font-weight:800;color:#1B2A4A;line-height:1.2}
@@ -124,6 +122,11 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 #chk-pr-resp{font-size:12px;color:#666}
 #chk-pr-rodape{font-size:10px;color:#999;text-align:right}
 .btn-novo:hover{background:#2E6BE6;border-color:#2E6BE6;color:#fff}
+
+/* Print */
+@media print {
+  body > *{display:none!important}
+  #chk-print-area{display:block!important;position:fixed;top:0;left:0;width:100%;background:#fff;z-index:9999}
 
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}

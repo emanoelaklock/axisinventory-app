@@ -77,11 +77,8 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 @media(max-width:500px){.mgrid{grid-template-columns:1fr}}
 .chk-pr-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .dot-ok-pr{background:#2E7D32}.dot-nok-pr{background:#C62828}.dot-na-pr{background:#9E9E9E}
-@media print{
-  #sidebar-container,#tc,.toolbar,.page-head,.tcard,
-  .overlay,.modal-ft,.confirm-overlay,
-  .no-print{display:none!important}
-  #chk-print-area{display:none;font-family:Arial,Helvetica,sans-serif;background:#fff;width:100%;box-sizing:border-box}
+/* Print A4 */
+#chk-print-area{display:none;font-family:Arial,Helvetica,sans-serif;background:#fff;width:100%;box-sizing:border-box}
 #chk-pr-header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #1B2A4A;padding-bottom:12px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #chk-pr-logo{width:44px;height:44px;background:#1B2A4A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #chk-pr-title{font-size:20px;font-weight:800;color:#1B2A4A;line-height:1.2}
@@ -96,6 +93,12 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 #chk-pr-assin-linha{width:200px;border-top:1px solid #333;margin:40px auto 4px}
 #chk-pr-resp{font-size:12px;color:#666}
 #chk-pr-rodape{font-size:10px;color:#999;text-align:right}
+
+@media print{
+  #sidebar-container,#tc,.toolbar,.page-head,.tcard,
+  .overlay,.modal-ft,.confirm-overlay,
+  .no-print{display:none!important}
+  #chk-print-area{display:block!important;position:fixed;top:0;left:0;width:100%;background:#fff;z-index:9999}
 </style>
 </head>
 <body>
