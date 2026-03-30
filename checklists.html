@@ -85,6 +85,15 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 @page{size:A4 portrait;margin:6mm 8mm}
+.acess-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+@media(max-width:520px){.acess-grid{grid-template-columns:1fr}}
+.acess-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--sur2)}
+.acess-item .alabel{font-size:11px;font-weight:600;color:var(--tx2);flex:1}
+.acess-item .aval{font-size:11px;font-weight:700;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-ok{background:#22c55e}.dot-nok{background:#ef4444}.dot-warn{background:#f59e0b}.dot-na{background:#d1d5db}
+.val-ok{color:#15803d}.val-nok{color:#DC2626}.val-warn{color:#D97706}.val-na{color:var(--tx3)}
+.status-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
 .btn-del{background:rgba(220,38,38,.08);color:#DC2626;border-color:rgba(220,38,38,.2)}.btn-del:hover{background:#DC2626;color:#fff;border-color:#DC2626}
 .tc{position:fixed;top:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:6px}
 .toast{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shl);animation:tin .2s ease;max-width:300px;border:1px solid}
@@ -370,7 +379,11 @@ function abrirModal(id) {
   html += mf('Responsável', r.responsavel)
   html += mf('Origem', r.origem)
   if (r.rma) html += mf('RMA', r.rma)
-  if (r.status_resultado) html += mf('Status Resultado', r.status_resultado)
+  if (r.status_resultado) {
+    var sbColors = {'Finalizada Inspeção':'#455A64;background:#ECEFF1','Em RMA / Assistência Técnica':'#6A1B9A;background:#F3E5F5','Estoque Usado':'#558B2F;background:#F1F8E9','Estoque Novo':'#2E7D32;background:#E8F5E9','Sucata':'#212121;background:#E0E0E0'}
+    var sbStyle = sbColors[r.status_resultado] || '#455A64;background:#ECEFF1'
+    html += '<div class="mf"><label>Status Resultado</label><span><span class="status-badge" style="color:'+sbStyle.split(';')[0]+';'+sbStyle.split(';')[1]+'">'+esc(r.status_resultado)+'</span></span></div>'
+  }
   html += '</div>'
 
   // Observações
@@ -380,17 +393,29 @@ function abrirModal(id) {
   }
 
   // Acessórios
-  var temAcess = r.weathershield || r.suporte_montagem || r.base_traseira || r.borracha_vedacao || r.gasket_cable
-  if (temAcess) {
-    html += '<div class="msec">Acessórios e Componentes</div>'
-    html += '<div class="mgrid">'
-    if (r.weathershield)    html += mf('Weathershield', r.weathershield)
-    if (r.suporte_montagem) html += mf('Suporte de Montagem', r.suporte_montagem)
-    if (r.base_traseira)    html += mf('Base Traseira', r.base_traseira)
-    if (r.borracha_vedacao) html += mf('Borracha de Vedação', r.borracha_vedacao)
-    if (r.gasket_cable)     html += mf('Gasket Cable', r.gasket_cable)
-    html += '</div>'
-    if (r.demais_acessorios) html += '<div class="mf full" style="margin-top:10px">' + mf('Demais Acessórios', r.demais_acessorios) + '</div>'
+  var dotInfo = function(v) {
+    if (!v) return {cls:'dot-na', vcls:'val-na', label:'N/A'}
+    var s = v.toLowerCase()
+    if (s==='incluso')     return {cls:'dot-ok',   vcls:'val-ok',   label:v}
+    if (s==='danificado')  return {cls:'dot-warn',  vcls:'val-warn', label:v}
+    if (s==='não incluso'||s==='nao incluso') return {cls:'dot-nok', vcls:'val-nok', label:v}
+    return {cls:'dot-na', vcls:'val-na', label:v}
+  }
+  var acessItem = function(label, valor) {
+    var d = dotInfo(valor)
+    return '<div class="acess-item"><div class="dot '+d.cls+'"></div><span class="alabel">'+esc(label)+'</span><span class="aval '+d.vcls+'">'+esc(d.label)+'</span></div>'
+  }
+  html += '<div class="msec">Acessórios e Componentes</div>'
+  html += '<div class="acess-grid">'
+  html += acessItem('Weathershield',     r.weathershield)
+  html += acessItem('Suporte de Montagem', r.suporte_montagem)
+  html += acessItem('Base Traseira',     r.base_traseira)
+  html += acessItem('Borracha de Vedação', r.borracha_vedacao)
+  html += acessItem('Gasket Cable',      r.gasket_cable)
+  html += '</div>'
+  if (r.demais_acessorios) {
+    html += '<div class="msec" style="margin-top:12px">Demais Acessórios</div>'
+    html += '<div class="mf full"><span style="white-space:pre-wrap">' + esc(r.demais_acessorios) + '</span></div>'
   }
 
   // Manutenções
