@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checklist Axis</title>
+<title>Checklist de Inspeção — Axis Inventory</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f3f8;color:#0f1224;min-height:100vh}
@@ -66,17 +66,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .popup-title{font-size:18px;font-weight:800;color:#202A44;margin-bottom:6px}
 .popup-sub{font-size:13px;color:#8e96b0;margin-bottom:24px;line-height:1.5}
 .popup-btns{display:flex;flex-direction:column;gap:10px}
-.popup-btn{width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;border:none;transition:all .15s}
+.popup-btn{width:100%;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;border:none;transition:all .15s}
 .popup-btn-print{background:#202A44;color:#fff}.popup-btn-print:hover{background:#2e3d62}
 .popup-btn-novo{background:#f0f3f8;color:#202A44;border:1.5px solid #dde2ef}.popup-btn-novo:hover{background:#e2e8f0}
 @media print{
-  .no-print{display:none!important}
-  body{background:#fff;margin:0;padding:0}
-  .wrap,.header,.view-toggle,.actions,.popup-overlay{display:none!important}
+  .no-print,.wrap,.header,.view-toggle,.actions,.popup-overlay{display:none!important}
   #print-area{display:block!important}
-  #print-style{display:none}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
+@page{size:A4 portrait;margin:6mm 8mm}
 </style>
 </head>
 <body>
@@ -248,81 +246,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 </div>
 
-<!-- ÁREA IMPRESSÃO A4 -->
-<div id="print-area" style="display:none">
-<style id="print-style">
-@page{size:A4 portrait;margin:6mm 8mm}
-#print-area{
-  font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111;background:#fff;
-  width:195mm;box-sizing:border-box;
-}
-#pr-header{
-  display:flex;align-items:center;gap:12px;
-  border-bottom:3px solid #202A44;padding-bottom:8px;margin-bottom:10px;
-  -webkit-print-color-adjust:exact;print-color-adjust:exact
-}
-#pr-logo{
-  width:40px;height:40px;background:#202A44;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
-  -webkit-print-color-adjust:exact;print-color-adjust:exact
-}
-#pr-title{font-size:16px;font-weight:800;color:#202A44;line-height:1.2}
-#pr-sub{font-size:10px;color:#555;margin-top:3px}
-#pr-fields{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:5px;margin-bottom:5px;width:100%
-}
-.pr-cell{border:1px solid #bbb;border-radius:4px;overflow:hidden;width:100%;box-sizing:border-box}
-.pr-cell.full{grid-column:1/-1}
-.pr-cell.half2{grid-column:span 2}
-.pr-lbl{
-  background:#dde4f0;padding:4px 8px;font-size:8px;font-weight:800;
-  color:#202A44;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #bbb;
-  -webkit-print-color-adjust:exact;print-color-adjust:exact
-}
-.pr-val{padding:5px 8px;font-size:10px;color:#111;min-height:22px;word-break:break-word;line-height:1.4}
-.pr-tag{
-  background:#dde4f0;color:#202A44;padding:2px 7px;
-  border-radius:3px;font-size:9px;font-weight:700;display:inline-block;margin:1px;
-  -webkit-print-color-adjust:exact;print-color-adjust:exact
-}
-#pr-manut-sec{margin-bottom:5px}
-#pr-fotos-sec{margin-bottom:8px}
-.pr-sec-label{
-  font-size:9px;font-weight:800;color:#202A44;text-transform:uppercase;
-  letter-spacing:.05em;margin-bottom:5px;
-}
-#pr-fotos{display:flex;gap:8px;flex-wrap:wrap}
-#pr-fotos img{width:150px;height:112px;object-fit:cover;border-radius:5px;border:1px solid #bbb}
-#pr-footer{
-  display:flex;justify-content:space-between;align-items:flex-end;
-  border-top:1.5px solid #bbb;padding-top:8px;margin-top:6px
-}
-#pr-assin{text-align:center}
-#pr-assin-linha{width:200px;border-top:1px solid #333;margin:32px auto 4px}
-#pr-resp-assin{font-size:9px;color:#555}
-#pr-rodape{font-size:8px;color:#999;text-align:right;line-height:1.6}
-</style>
-<div id="pr-header">
-  <div id="pr-logo">📡</div>
-  <div>
-    <div id="pr-title">Checklist de Inspeção — Axis Inventory</div>
-    <div id="pr-sub"></div>
+<!-- Popup sucesso -->
+<div class="popup-overlay" id="popup-sucesso">
+  <div class="popup-card">
+    <div class="popup-icon">✅</div>
+    <div class="popup-title">Checklist Concluído!</div>
+    <div class="popup-sub" id="popup-msg">O checklist foi salvo com sucesso.</div>
+    <div class="popup-btns">
+      <button class="popup-btn popup-btn-print" onclick="popupImprimir()">🖨️ Imprimir checklist</button>
+      <button class="popup-btn popup-btn-novo" onclick="popupNovo()">+ Novo checklist</button>
+    </div>
   </div>
 </div>
-<div id="pr-fields"></div>
-<div id="pr-manut-sec" style="margin-bottom:6px"></div>
-<div id="pr-fotos-sec" style="display:none">
-  <div class="pr-sec-label">Fotos</div>
-  <div id="pr-fotos"></div>
-</div>
-<div id="pr-footer">
-  <div id="pr-assin">
-    <div id="pr-assin-linha"></div>
-    <div id="pr-resp-assin"></div>
+
+<!-- Print A4 -->
+<div id="print-area" style="display:none;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111;background:#fff;width:195mm;box-sizing:border-box">
+  <style>
+  #print-area #pr-header{display:flex;align-items:center;gap:12px;border-bottom:3px solid #202A44;padding-bottom:8px;margin-bottom:10px}
+  #print-area #pr-logo{width:40px;height:40px;background:#202A44;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  #print-area #pr-title{font-size:16px;font-weight:800;color:#202A44;line-height:1.2}
+  #print-area #pr-sub{font-size:10px;color:#555;margin-top:3px}
+  #print-area #pr-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:5px;width:100%}
+  #print-area .pr-cell{border:1px solid #bbb;border-radius:4px;overflow:hidden;width:100%;box-sizing:border-box}
+  #print-area .pr-cell.full{grid-column:1/-1}
+  #print-area .pr-lbl{background:#dde4f0;padding:4px 8px;font-size:8px;font-weight:800;color:#202A44;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #bbb}
+  #print-area .pr-val{padding:5px 8px;font-size:10px;color:#111;min-height:22px;word-break:break-word;line-height:1.4}
+  #print-area .pr-tag{background:#dde4f0;color:#202A44;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;display:inline-block;margin:1px}
+  #print-area #pr-fotos-sec{margin-bottom:8px}
+  #print-area .pr-sec-lbl{font-size:9px;font-weight:800;color:#202A44;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+  #print-area #pr-fotos{display:flex;gap:8px;flex-wrap:wrap}
+  #print-area #pr-fotos img{width:150px;height:112px;object-fit:cover;border-radius:5px;border:1px solid #bbb}
+  #print-area #pr-footer{display:flex;justify-content:space-between;align-items:flex-end;border-top:1.5px solid #bbb;padding-top:8px;margin-top:6px}
+  #print-area #pr-assin{text-align:center}
+  #print-area #pr-assin-linha{width:200px;border-top:1px solid #333;margin:32px auto 4px}
+  #print-area #pr-resp-assin{font-size:9px;color:#555}
+  #print-area #pr-rodape{font-size:8px;color:#999;text-align:right;line-height:1.6}
+  </style>
+  <div id="pr-header">
+    <div id="pr-logo">📡</div>
+    <div><div id="pr-title">Checklist de Inspeção — Axis Inventory</div><div id="pr-sub"></div></div>
   </div>
-  <div id="pr-rodape"></div>
-</div>
+  <div id="pr-fields"></div>
+  <div id="pr-manut-sec"></div>
+  <div id="pr-fotos-sec" style="display:none">
+    <div class="pr-sec-lbl">Fotos</div>
+    <div id="pr-fotos"></div>
+  </div>
+  <div id="pr-footer">
+    <div id="pr-assin"><div id="pr-assin-linha"></div><div id="pr-resp-assin"></div></div>
+    <div id="pr-rodape"></div>
+  </div>
 </div>
 
 <script>
@@ -332,33 +305,29 @@ let fotos={1:null,2:null,3:null};
 let histData=[];
 
 function getToken(){
-  const keys = ['ax_sess', 'sb-adbskoverysjohhwadln-auth-token']
-  for (var i = 0; i < keys.length; i++) {
-    const raw = localStorage.getItem(keys[i]) || sessionStorage.getItem(keys[i])
-    if (!raw) continue
-    try {
-      const p = JSON.parse(raw)
-      const token = p.access_token
-        || (p.session && p.session.access_token)
-        || (p.currentSession && p.currentSession.access_token)
-      if (token) return token
-    } catch(e) {}
+  const keys=['ax_sess','sb-adbskoverysjohhwadln-auth-token']
+  for(const k of keys){
+    const raw=localStorage.getItem(k)||sessionStorage.getItem(k)
+    if(!raw)continue
+    try{
+      const p=JSON.parse(raw)
+      const t=p.access_token||(p.session&&p.session.access_token)||(p.currentSession&&p.currentSession.access_token)
+      if(t)return t
+    }catch(e){}
   }
   return AKEY
 }
 
-async function api(path, method, body) {
-  method = method || 'GET'
-  const token = getToken()
-  const headers = { 'apikey': AKEY }
-  if (token && token !== AKEY) headers['Authorization'] = 'Bearer ' + token
-  if (body) { headers['Content-Type'] = 'application/json'; headers['Prefer'] = 'return=representation' }
-  const r = await fetch(SURL+'/rest/v1/'+path, {
-    method, headers, body: body ? JSON.stringify(body) : null
-  })
-  if (r.status === 401) { showMsg('Sessão expirada. Faça login novamente.','err'); throw new Error('401') }
-  const txt = await r.text(); let d; try{d=JSON.parse(txt);}catch(e){d=txt;}
-  if (!r.ok) throw new Error(typeof d==='object'?(d.message||d.hint||JSON.stringify(d)):txt)
+async function api(path,method,body){
+  method=method||'GET'
+  const token=getToken()
+  const headers={'apikey':AKEY}
+  if(token&&token!==AKEY)headers['Authorization']='Bearer '+token
+  if(body){headers['Content-Type']='application/json';headers['Prefer']='return=representation'}
+  const r=await fetch(SURL+'/rest/v1/'+path,{method,headers,body:body?JSON.stringify(body):null})
+  if(r.status===401){showMsg('Sessão expirada.','err');throw new Error('401')}
+  const txt=await r.text();let d;try{d=JSON.parse(txt);}catch(e){d=txt;}
+  if(!r.ok)throw new Error(typeof d==='object'?(d.message||d.hint||JSON.stringify(d)):txt)
   return d
 }
 
@@ -374,7 +343,6 @@ function showView(v){
   document.getElementById('view-form').style.display=v==='form'?'block':'none';
   document.getElementById('view-hist').style.display=v==='hist'?'block':'none';
   document.getElementById('btn-form').className='btn'+(v==='form'?' btn-primary':'');
-  document.getElementById('btn-hist').className='btn'+(v==='hist'?' btn-primary':'');
 }
 
 function selOpt(el,group){
@@ -447,13 +415,13 @@ function resetForm(){
 }
 
 async function salvar(){
-  const serial=document.getElementById('f-serial').value.trim();
-  const resp=document.getElementById('f-resp').value;
-  const statusRes = document.getElementById('status-res-val').value
-  if(!serial){showMsg('Informe o número de série.','err');return;}
-  if(!resp){showMsg('Selecione o responsável.','err');return;}
-  if(!statusRes){showMsg('Selecione o status após inspeção.','err');return;}
-  const mans=[...document.querySelectorAll('#opts-man .opt.sel-green')].map(el=>el.textContent.trim());
+  const serial=document.getElementById('f-serial').value.trim()
+  const resp=document.getElementById('f-resp').value
+  const statusRes=document.getElementById('status-res-val').value
+  if(!serial){showMsg('Informe o número de série.','err');return}
+  if(!resp){showMsg('Selecione o responsável.','err');return}
+  if(!statusRes){showMsg('Selecione o status após inspeção (item 17).','err');return}
+  const mans=[...document.querySelectorAll('#opts-man .opt.sel-green')].map(el=>el.textContent.trim())
   const payload={
     data_checklist:document.getElementById('f-data').value||new Date().toISOString().split('T')[0],
     origem:document.getElementById('f-origem').value.trim()||null,
@@ -471,33 +439,35 @@ async function salvar(){
     manutencoes:mans.length?mans:null,
     responsavel:resp,
     observacoes:document.getElementById('f-obs').value.trim()||null,
-    status_resultado:document.getElementById('status-res-val').value||null,
+    status_resultado:statusRes,
     foto_1:fotos[1]||null,
     foto_2:fotos[2]||null,
     foto_3:fotos[3]||null,
-  };
+  }
   try{
-    showMsg('Salvando...','info');
-    await api('checklists_axis','POST',payload);
-    // Guardar payload para impressão e abrir popup
-    window._lastPayload = payload;
-    document.getElementById('popup-msg').textContent =
-      'Checklist de ' + (payload.serial||'') + ' salvo com sucesso.'
+    showMsg('Salvando...','info')
+    document.querySelector('.actions .btn-primary').disabled=true
+    await api('checklists_axis','POST',payload)
+    window._lastPayload=payload
+    document.getElementById('popup-msg').textContent='Checklist de '+(serial)+' salvo com sucesso!'
     document.getElementById('popup-sucesso').classList.add('open')
-    showMsg('','info');
-    document.getElementById('msg').style.display='none';
-  }catch(err){console.error('salvar:',err);showMsg('Erro: '+err.message,'err');}
+    showMsg('','info')
+    document.getElementById('msg').style.display='none'
+  }catch(err){
+    showMsg('Erro: '+err.message,'err')
+    document.querySelector('.actions .btn-primary').disabled=false
+  }
 }
 
 function popupImprimir(){
   document.getElementById('popup-sucesso').classList.remove('open')
-  if(window._lastPayload) imprimir(window._lastPayload)
+  if(window._lastPayload)imprimir(window._lastPayload)
 }
-
 function popupNovo(){
   document.getElementById('popup-sucesso').classList.remove('open')
   resetForm()
   window.scrollTo({top:0,behavior:'smooth'})
+  document.querySelector('.actions .btn-primary').disabled=false
 }
 
 // FIX: carregarResp agora usa getToken() corrigido — lê ax_sess
@@ -546,78 +516,30 @@ function filtrarHist(q){
 }
 
 function imprimir(chk){
-  const dt = chk.data_checklist
-    ? new Date(chk.data_checklist+'T12:00:00').toLocaleDateString('pt-BR') : '—'
-
-  const fields = [
-    {l:'Data',             v: dt},
-    {l:'Origem',           v: chk.origem||'—'},
-    {l:'Tipo',             v: chk.tipo_equipamento||'—'},
-    {l:'Modelo',           v: chk.modelo||'—'},
-    {l:'Número de Série',  v: chk.serial||'—'},
-    {l:'RMA',              v: chk.rma||'N/A'},
-    {l:'Responsável',      v: chk.responsavel||'—'},
-    {l:'Status resultado', v: chk.status_resultado||'—'},
-    {l:'Weathershield',    v: chk.weathershield||'—'},
-    {l:'Suporte de Montagem', v: chk.suporte_montagem||'—'},
-    {l:'Base Traseira',    v: chk.base_traseira||'—'},
-    {l:'Borracha de Vedação', v: chk.borracha_vedacao||'—'},
-    {l:'Gasket Cable',     v: chk.gasket_cable||'—'},
-    {l:'Demais Acessórios',v: chk.demais_acessorios||'—', full:true},
-    {l:'Observações',      v: chk.observacoes||'—', full:true},
-  ]
-
-  const fts = [chk.foto_1, chk.foto_2, chk.foto_3].filter(Boolean)
-
-  // Montar células do grid
-  const cell = f => {
-    var cls = 'pr-cell' + (f.full ? ' full' : f.half2 ? ' half2' : '')
-    return '<div class="'+cls+'">'+
-      '<div class="pr-lbl">'+f.l+'</div>'+
-      '<div class="pr-val">'+(f.v||'—')+'</div></div>'
-  }
-
-  // Manutenções como tags separadas
-  var mans = chk.manutencoes && chk.manutencoes.length
-    ? chk.manutencoes.map(m=>'<span class="pr-tag">'+m+'</span>').join('')
-    : '<span style="color:#999">Nenhuma</span>'
-
-  // Preencher print-area
-  document.getElementById('pr-sub').textContent =
-    'Data: ' + dt + '  ·  Responsável: ' + (chk.responsavel||'—') +
-    '  ·  Status: ' + (chk.status_resultado||'—')
-  document.getElementById('pr-resp-assin').textContent = chk.responsavel||'—'
-  document.getElementById('pr-rodape').innerHTML =
-    'Axis Inventory · Checklist de Inspeção<br>Impresso em ' + new Date().toLocaleString('pt-BR')
-  document.getElementById('pr-fields').innerHTML = fields.map(cell).join('')
-  document.getElementById('pr-manut-sec').innerHTML =
-    '<div class="pr-cell full">'+
-    '<div class="pr-lbl">Manutenções realizadas</div>'+
-    '<div class="pr-val" style="display:flex;flex-wrap:wrap;gap:3px">'+mans+'</div></div>'
-  document.getElementById('pr-fotos').innerHTML = fts.map(f =>
-    '<img src="'+f+'">'
-  ).join('')
-  document.getElementById('pr-fotos-sec').style.display = fts.length ? '' : 'none'
-
-  // Mostrar print-area e ocultar resto
-  document.getElementById('print-area').style.display = 'block'
-  const vf = document.getElementById('view-form')
-  const vh = document.getElementById('view-hist')
-  const vt = document.querySelector('.view-toggle')
-  const hd = document.querySelector('.header')
-  if(vf) vf.style.display = 'none'
-  if(vh) vh.style.display = 'none'
-  if(vt) vt.style.display = 'none'
-  if(hd) hd.style.display = 'none'
-
+  const dt=chk.data_checklist?new Date(chk.data_checklist+'T12:00:00').toLocaleDateString('pt-BR'):'—'
+  const cell=(lbl,val,full)=>'<div class="pr-cell'+(full?' full':'')+'"><div class="pr-lbl">'+lbl+'</div><div class="pr-val">'+(val||'—')+'</div></div>'
+  const mans=chk.manutencoes&&chk.manutencoes.length
+    ?chk.manutencoes.map(m=>'<span class="pr-tag">'+m+'</span>').join(' ')
+    :'—'
+  const fields=
+    cell('Data',dt)+cell('Serial',chk.serial)+cell('Modelo',chk.modelo)+
+    cell('Responsável',chk.responsavel)+cell('Origem',chk.origem)+cell('RMA',chk.rma||'N/A')+
+    cell('Status resultado',chk.status_resultado)+cell('Weathershield',chk.weathershield)+cell('Suporte Montagem',chk.suporte_montagem)+
+    cell('Base Traseira',chk.base_traseira)+cell('Borracha Vedação',chk.borracha_vedacao)+cell('Gasket Cable',chk.gasket_cable)+
+    cell('Demais Acessórios',chk.demais_acessorios,true)+
+    '<div class="pr-cell full"><div class="pr-lbl">Manutenções Realizadas</div><div class="pr-val">'+mans+'</div></div>'+
+    (chk.observacoes?cell('Observações',chk.observacoes,true):'')
+  const fts=[chk.foto_1,chk.foto_2,chk.foto_3].filter(Boolean)
+  document.getElementById('pr-sub').textContent='Data: '+dt+'  ·  Serial: '+(chk.serial||'—')+'  ·  Status: '+(chk.status_resultado||'—')
+  document.getElementById('pr-fields').innerHTML=fields
+  document.getElementById('pr-manut-sec').innerHTML=''
+  document.getElementById('pr-fotos').innerHTML=fts.map(f=>'<img src="'+f+'">').join('')
+  document.getElementById('pr-fotos-sec').style.display=fts.length?'':'none'
+  document.getElementById('pr-resp-assin').textContent=chk.responsavel||'—'
+  document.getElementById('pr-rodape').innerHTML='Axis Inventory · Checklist de Inspeção<br>Impresso em '+new Date().toLocaleString('pt-BR')
+  document.getElementById('print-area').style.display='block'
   window.print()
-
-  setTimeout(() => {
-    document.getElementById('print-area').style.display = 'none'
-    if(vf) vf.style.display = 'block'
-    if(vt) vt.style.display = 'flex'
-    if(hd) hd.style.display = 'flex'
-  }, 500)
+  setTimeout(()=>{document.getElementById('print-area').style.display='none'},500)
 }
 function imprimirIdx(i){if(histData[i])imprimir(histData[i]);}
 
@@ -625,22 +547,5 @@ function imprimirIdx(i){if(histData[i])imprimir(histData[i]);}
 document.getElementById('f-data').value=new Date().toISOString().split('T')[0];
 carregarResp();
 </script>
-<!-- Popup sucesso -->
-<div class="popup-overlay" id="popup-sucesso">
-  <div class="popup-card">
-    <div class="popup-icon">✅</div>
-    <div class="popup-title">Checklist registrado!</div>
-    <div class="popup-sub" id="popup-msg">O checklist foi salvo com sucesso.</div>
-    <div class="popup-btns">
-      <button class="popup-btn popup-btn-print" onclick="popupImprimir()">
-        🖨️ Imprimir checklist
-      </button>
-      <button class="popup-btn popup-btn-novo" onclick="popupNovo()">
-        + Novo checklist
-      </button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
