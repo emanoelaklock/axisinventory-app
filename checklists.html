@@ -52,31 +52,61 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .lb.open{display:flex}.lb img{max-width:92vw;max-height:88vh;border-radius:8px}
 .lb-x{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.15);color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 /* Modal detalhe inspeção */
+/* ── MODAL ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.52);z-index:200;align-items:center;justify-content:center;padding:16px}
 .overlay.open{display:flex}
-.modal{background:var(--sur);border-radius:16px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.28);display:flex;flex-direction:column;animation:mup .2s ease}
+.modal{background:var(--sur);border-radius:16px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.28);animation:mup .2s ease;display:flex;flex-direction:column}
 @keyframes mup{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-hd{background:linear-gradient(135deg,#1B2A4A 0%,#2E6BE6 100%);padding:18px 22px;display:flex;align-items:flex-start;justify-content:space-between;border-radius:16px 16px 0 0;position:sticky;top:0}
-.modal-hd h2{margin:0;font-size:15px;font-weight:700;color:#fff}
-.modal-hd .sub{font-size:11px;color:rgba(255,255,255,.65);margin-top:3px}
-.modal-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.modal-close:hover{background:rgba(255,255,255,.32)}
-.modal-bd{padding:20px 22px;flex:1}
-.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 22px 16px;border-top:1px solid var(--bd)}
-.msec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#2E6BE6;padding-bottom:6px;border-bottom:2px solid #EFF6FF;margin:16px 0 12px}
-.msec:first-child{margin-top:0}
-.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
-.mf label{display:block;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.mf span{font-size:13px;color:var(--tx)}.mf em{color:var(--tx3);font-style:normal}
-.mf.full{grid-column:1/-1}
-.mfoto-grid{display:flex;gap:8px;flex-wrap:wrap}
-.mfoto-grid a{border-radius:9px;overflow:hidden;border:2px solid var(--bd);transition:border-color .15s;display:block}
-.mfoto-grid a:hover{border-color:#2E6BE6}
-.mfoto-grid img{width:110px;height:82px;object-fit:cover;display:block}
-.mans-wrap{display:flex;flex-wrap:wrap;gap:5px}
-@media(max-width:500px){.mgrid{grid-template-columns:1fr}}
-.chk-pr-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.dot-ok-pr{background:#2E7D32}.dot-nok-pr{background:#C62828}.dot-na-pr{background:#9E9E9E}
+
+/* Header do modal com faixa colorida */
+.modal-hd{padding:0;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--sur);z-index:1;border-radius:16px 16px 0 0;overflow:hidden}
+.modal-hd-bar{background:linear-gradient(135deg,#1B2A4A 0%,#2E6BE6 100%);padding:18px 22px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.modal-hd-bar h2{margin:0;font-size:16px;font-weight:700;color:#fff;letter-spacing:-.01em;line-height:1.3}
+.modal-hd-bar .modal-sub{font-size:11px;color:rgba(255,255,255,.65);margin-top:3px}
+.modal-close{background:rgba(255,255,255,.15);border:none;cursor:pointer;color:#fff;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:background .15s}
+.modal-close:hover{background:rgba(255,255,255,.28)}
+
+.modal-bd{padding:22px 24px;flex:1}
+.modal-ft{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 24px 18px;border-top:1px solid var(--bd);position:sticky;bottom:0;background:var(--sur)}
+.modal-ft-left{display:flex;gap:8px}
+.modal-ft-right{display:flex;gap:8px}
+
+/* Seções do modal */
+.msec{margin-bottom:20px}
+.msec:last-child{margin-bottom:0}
+.msec-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#2E6BE6;padding-bottom:8px;border-bottom:2px solid #EFF6FF;margin-bottom:14px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px}
+@media(max-width:520px){.mgrid{grid-template-columns:1fr}}
+.mfield label{display:block;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.mfield .mval{font-size:13px;color:var(--tx);line-height:1.4}
+.mfield .mval.empty{color:var(--tx3);font-style:italic}
+.mfield.full{grid-column:1/-1}
+
+/* Acessórios */
+.acess-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:520px){.acess-grid{grid-template-columns:1fr}}
+.acess-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--sur2)}
+.acess-item .alabel{font-size:11px;font-weight:600;color:var(--tx2);flex:1}
+.acess-item .aval{font-size:11px;font-weight:700;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-ok{background:#22c55e}.dot-nok{background:#ef4444}.dot-warn{background:#f59e0b}.dot-na{background:#d1d5db}
+.val-ok{color:#15803d}.val-nok{color:#DC2626}.val-warn{color:#D97706}.val-na{color:var(--tx3)}
+
+/* Fotos */
+.foto-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.foto-grid a{display:block;border-radius:10px;overflow:hidden;border:2px solid var(--bd);transition:border-color .15s;flex-shrink:0}
+.foto-grid a:hover{border-color:#2E6BE6}
+.foto-grid a img{width:120px;height:90px;object-fit:cover;display:block}
+
+/* Confirm delete overlay */
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.6);z-index:400;align-items:center;justify-content:center;padding:16px}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:var(--sur);border-radius:14px;width:100%;max-width:380px;padding:28px 24px 20px;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center;animation:mup .18s ease}
+.confirm-icon{width:52px;height:52px;border-radius:50%;background:#FEF2F2;border:2px solid #FECACA;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px}
+.confirm-box h3{margin:0 0 8px;font-size:16px;font-weight:700;color:var(--tx)}
+.confirm-box p{margin:0 0 20px;font-size:13px;color:var(--tx3);line-height:1.5}
+.confirm-btns{display:flex;gap:8px;justify-content:center}
+
 /* Print A4 */
 #chk-print-area{display:none;font-family:Arial,Helvetica,sans-serif;background:#fff;width:100%;box-sizing:border-box}
 #chk-pr-header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #1B2A4A;padding-bottom:12px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -165,11 +195,13 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 <div class="overlay" id="overlay" onclick="if(event.target===this)fecharModal()">
   <div class="modal">
     <div class="modal-hd">
-      <div>
-        <h2 id="modal-titulo">Checklist de Inspeção</h2>
-        <div class="sub" id="modal-sub"></div>
+      <div class="modal-hd-bar">
+        <div>
+          <h2 id="modal-titulo">Checklist de Inspeção</h2>
+          <div class="modal-sub" id="modal-sub"></div>
+        </div>
+        <button class="modal-close" onclick="fecharModal()" title="Fechar">×</button>
       </div>
-      <button class="modal-close" onclick="fecharModal()" title="Fechar">×</button>
     </div>
     <div class="modal-bd" id="modal-corpo"></div>
     <div class="modal-ft">
@@ -329,46 +361,26 @@ window.irP = function(p) {
 
 // -- MODAL DETALHE -----------------------------------------------------
 function abrirModal(id) {
-  idAtualExcluir = id
   var r = todosRows.find(function(x){ return String(x.id) === String(id) })
   if (!r) return
+  idAtualExcluir = id
 
   var codigo = r.itens && r.itens.codigo_interno ? r.itens.codigo_interno : '--'
   var modelo = r.modelo || (r.itens && r.itens.modelos && r.itens.modelos.modelo ? r.itens.modelos.modelo : '--')
 
-  document.getElementById('modal-titulo').textContent = esc(codigo) + ' - ' + esc(modelo)
-  document.getElementById('modal-sub').textContent = fdt(r.data_checklist) + (r.responsavel ? '  -  ' + r.responsavel : '')
+  document.getElementById('modal-titulo').textContent = esc(codigo) + ' — ' + esc(modelo)
+  document.getElementById('modal-sub').textContent = fdt(r.data_checklist) + (r.responsavel ? '  ·  ' + r.responsavel : '')
 
-  var mf = function(lbl, val) {
-    return '<div class="mf"><label>' + lbl + '</label><span>' + (val ? esc(String(val)) : '<em>--</em>') + '</span></div>'
+  var btnExc = document.getElementById('btn-excluir')
+  if (btnExc) btnExc.style.display = (typeof PERFIL !== 'undefined' && PERFIL === 'Administrador') ? 'inline-flex' : 'none'
+
+  var mfield = function(label, val, full) {
+    var cls = 'mfield' + (full ? ' full' : '')
+    return '<div class="' + cls + '"><label>' + label + '</label><div class="mval' + (!val ? ' empty' : '') + '">' + esc(String(val || '—')) + '</div></div>'
   }
-
-  var html = ''
-
-  // Identificação
-  html += '<div class="msec">Identificação</div>'
-  html += '<div class="mgrid">'
-  html += mf('Data', fdt(r.data_checklist))
-  html += mf('Serial', r.serial)
-  html += mf('Modelo', modelo)
-  html += mf('Código Interno', codigo)
-  html += mf('Responsável', r.responsavel)
-  html += mf('Origem', r.origem)
-  if (r.rma) html += mf('RMA', r.rma)
-  if (r.status_resultado) {
-    var sbColors = {'Finalizada Inspeção':'#455A64;background:#ECEFF1','Em RMA / Assistência Técnica':'#6A1B9A;background:#F3E5F5','Estoque Usado':'#558B2F;background:#F1F8E9','Estoque Novo':'#2E7D32;background:#E8F5E9','Sucata':'#212121;background:#E0E0E0'}
-    var sbStyle = sbColors[r.status_resultado] || '#455A64;background:#ECEFF1'
-    html += '<div class="mf"><label>Status Resultado</label><span><span class="status-badge" style="color:'+sbStyle.split(';')[0]+';'+sbStyle.split(';')[1]+'">'+esc(r.status_resultado)+'</span></span></div>'
+  var mfieldPre = function(label, val) {
+    return '<div class="mfield full"><label>' + label + '</label><div class="mval" style="white-space:pre-wrap">' + esc(val || '—') + '</div></div>'
   }
-  html += '</div>'
-
-  // Observações
-  if (r.observacoes) {
-    html += '<div class="msec">Observações / Defeito</div>'
-    html += '<div class="mf full"><span style="white-space:pre-wrap">' + esc(r.observacoes) + '</span></div>'
-  }
-
-  // Acessórios
   var dotInfo = function(v) {
     if (!v) return {cls:'dot-na', vcls:'val-na', label:'N/A'}
     var s = v.toLowerCase()
@@ -379,47 +391,75 @@ function abrirModal(id) {
   }
   var acessItem = function(label, valor) {
     var d = dotInfo(valor)
-    return '<div class="acess-item"><div class="dot '+d.cls+'"></div><span class="alabel">'+esc(label)+'</span><span class="aval '+d.vcls+'">'+esc(d.label)+'</span></div>'
+    return '<div class="acess-item"><div class="dot ' + d.cls + '"></div><span class="alabel">' + esc(label) + '</span><span class="aval ' + d.vcls + '">' + esc(d.label) + '</span></div>'
   }
-  html += '<div class="msec">Acessórios e Componentes</div>'
+
+  var html = ''
+
+  // Identificação
+  html += '<div class="msec"><div class="msec-title">Identificação</div><div class="mgrid">'
+  html += mfield('Data', fdt(r.data_checklist))
+  html += mfield('Serial', r.serial)
+  html += mfield('Modelo', modelo)
+  html += mfield('Código Interno', codigo)
+  html += mfield('Responsável', r.responsavel)
+  html += mfield('Origem', r.origem)
+  if (r.rma) html += mfield('RMA', r.rma)
+  if (r.status_resultado) {
+    var sbColors = {'Finalizada Inspeção':'#455A64;background:#ECEFF1','Em RMA / Assistência Técnica':'#6A1B9A;background:#F3E5F5','Estoque Usado':'#558B2F;background:#F1F8E9','Estoque Novo':'#2E7D32;background:#E8F5E9','Sucata':'#212121;background:#E0E0E0'}
+    var sbStyle = sbColors[r.status_resultado] || '#455A64;background:#ECEFF1'
+    var parts = sbStyle.split(';')
+    html += '<div class="mfield"><label>Status Resultado</label><div class="mval"><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;color:' + parts[0] + ';' + parts[1] + '">' + esc(r.status_resultado) + '</span></div></div>'
+  }
+  html += '</div></div>'
+
+  // Observações
+  if (r.observacoes) {
+    html += '<div class="msec"><div class="msec-title">Observações / Defeito</div>'
+    html += mfieldPre('Relato', r.observacoes)
+    html += '</div>'
+  }
+
+  // Acessórios
+  html += '<div class="msec"><div class="msec-title">Acessórios e Componentes</div>'
   html += '<div class="acess-grid">'
-  html += acessItem('Weathershield',     r.weathershield)
+  html += acessItem('Weathershield',      r.weathershield)
   html += acessItem('Suporte de Montagem', r.suporte_montagem)
-  html += acessItem('Base Traseira',     r.base_traseira)
+  html += acessItem('Base Traseira',      r.base_traseira)
   html += acessItem('Borracha de Vedação', r.borracha_vedacao)
-  html += acessItem('Gasket Cable',      r.gasket_cable)
+  html += acessItem('Gasket Cable',       r.gasket_cable)
   html += '</div>'
   if (r.demais_acessorios) {
-    html += '<div class="msec" style="margin-top:12px">Demais Acessórios</div>'
-    html += '<div class="mf full"><span style="white-space:pre-wrap">' + esc(r.demais_acessorios) + '</span></div>'
+    html += '<div style="margin-top:10px">'
+    html += mfieldPre('Demais Acessórios', r.demais_acessorios)
+    html += '</div>'
   }
+  html += '</div>'
 
   // Manutenções
   if (r.manutencoes && r.manutencoes.length) {
-    html += '<div class="msec">Manutenções Realizadas</div>'
-    html += '<div class="mf full"><div class="mans-wrap">'
-    r.manutencoes.forEach(function(m){ html += '<span class="man-tag">' + esc(m) + '</span> ' })
+    html += '<div class="msec"><div class="msec-title">Manutenções Realizadas</div>'
+    html += '<div style="display:flex;flex-wrap:wrap;gap:6px">'
+    r.manutencoes.forEach(function(m) {
+      html += '<span style="background:var(--acl);color:var(--ac);border:1px solid var(--acm);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500">' + esc(m) + '</span>'
+    })
     html += '</div></div>'
   }
 
   // Fotos
   var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
   if (fotos.length) {
-    html += '<div class="msec">Fotos</div>'
-    html += '<div class="mfoto-grid">'
+    html += '<div class="msec"><div class="msec-title">Fotos</div>'
+    html += '<div class="foto-grid">'
     fotos.forEach(function(u, i) {
-      html += '<a href="' + u + '" target="_blank" rel="noopener" onclick="event.preventDefault();event.stopPropagation();openLB(\'' + u + '\')">'
-      html += '<img src="' + u + '" alt="Foto ' + (i + 1) + '" loading="lazy"/></a>'
+      html += '<a href="' + u + '" target="_blank" onclick="event.preventDefault();event.stopPropagation();openLB(\"' + u + '\")"><img src="' + u + '" alt="Foto ' + (i+1) + '" loading="lazy"/></a>'
     })
-    html += '</div>'
+    html += '</div></div>'
   }
 
   document.getElementById('modal-corpo').innerHTML = html
   document.getElementById('overlay').classList.add('open')
   document.body.style.overflow = 'hidden'
-  // Mostrar botão Excluir só para Administrador
-  var btnExc = document.getElementById('btn-excluir')
-  if (btnExc) btnExc.style.display = (typeof PERFIL !== 'undefined' && PERFIL === 'Administrador') ? 'inline-flex' : 'none'
 }
 
 function fecharModal() {
