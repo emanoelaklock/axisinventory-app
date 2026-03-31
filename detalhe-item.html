@@ -915,7 +915,7 @@ const renderModalChkInsp = (ch) => {
   if (fotos.length) {
     html += '<div class="chkd-sec">Fotos</div>'
     html += '<div class="chkd-fotos">'
-    fotos.forEach((u, i) => { html += `<a href="${u}" onclick="event.preventDefault();openLB('${u}')"><img src="${u}" alt="Foto ${i+1}" loading="lazy" style="cursor:pointer"/></a>` })
+    fotos.forEach((u, i) => { html += `<a href="${u}" target="_blank" rel="noopener"><img src="${u}" alt="Foto ${i+1}" loading="lazy" style="cursor:pointer;width:110px;height:82px;object-fit:cover;border-radius:8px;border:2px solid #ddd"/></a>` })
     html += '</div>'
   }
 
@@ -972,7 +972,7 @@ const renderModalChkDev = (r) => {
   if (r.observacoes)       html += '<div class="chkd-sec">Observa\u00e7\u00f5es / Defeito</div><div class="chkd-obs">'+esc(r.observacoes)+'</div>'
   if (fotos.length) {
     html += '<div class="chkd-sec">Fotos</div><div class="chkd-fotos">'
-    fotos.forEach((u,i) => { html += `<a href="${u}" onclick="event.preventDefault();openLB('${u}')"><img src="${u}" alt="Foto ${i+1}" loading="lazy" style="cursor:pointer"/></a>` })
+    fotos.forEach((u, i) => { html += `<a href="${u}" target="_blank" rel="noopener"><img src="${u}" alt="Foto ${i+1}" loading="lazy" style="cursor:pointer;width:110px;height:82px;object-fit:cover;border-radius:8px;border:2px solid #ddd"/></a>` })
     html += '</div>'
   }
   document.getElementById('chkd-titulo').textContent = (r.cliente||'--') + ' \u00b7 ' + fdt2(r.data_checklist)
