@@ -537,9 +537,22 @@ function imprimir(chk){
 
 function imprimirIdx(i){if(histData[i])imprimir(histData[i]);}
 
-// Init
-document.getElementById('f-data').value=new Date().toISOString().split('T')[0];
-carregarResp();
+// Init — carrega sessão e inicializa
+;(async function() {
+  // Aguarda sessão do Supabase
+  var sb = getSupabase()
+  var res = await sb.auth.getSession()
+  if (res.data && res.data.session) {
+    SESSION = res.data.session
+    PERFIL = 'Administrador' // será sobrescrito se necessário
+  } else {
+    // Sem sessão — redirecionar para login
+    location.href = 'dashboard.html'
+    return
+  }
+  document.getElementById('f-data').value = new Date().toISOString().split('T')[0]
+  await carregarResp()
+})()
 </script>
 </body>
 </html>
