@@ -495,7 +495,7 @@ function abrirModal(id) {
     html += '<div class="msec-title">Fotos</div>'
     html += '<div class="foto-grid">'
     fotos.forEach(function(u, i) {
-      html += '<a href="'+u+'" target="_blank" rel="noopener"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy"/></a>'
+      html += '<a href="'+u+'" target="_blank" rel="noopener"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy" style="cursor:pointer;width:110px;height:82px;object-fit:cover;border-radius:8px;border:2px solid #ddd"/></a>'
     })
     html += '</div></div>'
   }
