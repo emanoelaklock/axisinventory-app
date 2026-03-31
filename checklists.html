@@ -125,12 +125,13 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 #chk-pr-rodape{font-size:10px;color:#999;text-align:right}
 
 @media print{
-  #sidebar-container,#tc,.toolbar,.page-head,.tcard,
-  .overlay,.modal-ft,.confirm-overlay,
-  .no-print{display:none!important}
+  body > *{display:none!important}
   #chk-print-area{display:block!important;position:fixed;top:0;left:0;width:100%;background:#fff;z-index:9999}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
+@page{size:A4 portrait;margin:12mm 14mm}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 </head>
 <body>
 <div id="sidebar-container"></div>
@@ -365,39 +366,31 @@ function abrirModal(id) {
   var r = todosRows.find(function(x){ return String(x.id) === String(id) })
   if (!r) return
   idAtualExcluir = id
-
   var codigo = r.itens && r.itens.codigo_interno ? r.itens.codigo_interno : '--'
   var modelo = r.modelo || (r.itens && r.itens.modelos && r.itens.modelos.modelo ? r.itens.modelos.modelo : '--')
-
   document.getElementById('modal-titulo').textContent = esc(codigo) + ' — ' + esc(modelo)
   document.getElementById('modal-sub').textContent = fdt(r.data_checklist) + (r.responsavel ? '  ·  ' + r.responsavel : '')
-
   var btnExc = document.getElementById('btn-excluir')
   if (btnExc) btnExc.style.display = (typeof PERFIL !== 'undefined' && PERFIL === 'Administrador') ? 'inline-flex' : 'none'
-
   var mfield = function(label, val, full) {
-    var cls = 'mfield' + (full ? ' full' : '')
-    return '<div class="' + cls + '"><label>' + label + '</label><div class="mval' + (!val ? ' empty' : '') + '">' + esc(String(val || '—')) + '</div></div>'
+    return '<div class="mfield'+(full?' full':'')+'"><label>'+label+'</label><div class="mval'+(!val?' empty':'')+'">'+esc(String(val||'—'))+'</div></div>'
   }
   var mfieldPre = function(label, val) {
-    return '<div class="mfield full"><label>' + label + '</label><div class="mval" style="white-space:pre-wrap">' + esc(val || '—') + '</div></div>'
+    return '<div class="mfield full"><label>'+label+'</label><div class="mval" style="white-space:pre-wrap">'+esc(val||'—')+'</div></div>'
   }
   var dotInfo = function(v) {
-    if (!v) return {cls:'dot-na', vcls:'val-na', label:'N/A'}
+    if (!v) return {cls:'dot-na',vcls:'val-na',label:'N/A'}
     var s = v.toLowerCase()
-    if (s==='incluso')     return {cls:'dot-ok',   vcls:'val-ok',   label:v}
-    if (s==='danificado')  return {cls:'dot-warn',  vcls:'val-warn', label:v}
-    if (s==='não incluso'||s==='nao incluso') return {cls:'dot-nok', vcls:'val-nok', label:v}
-    return {cls:'dot-na', vcls:'val-na', label:v}
+    if (s==='incluso') return {cls:'dot-ok',vcls:'val-ok',label:v}
+    if (s==='danificado') return {cls:'dot-warn',vcls:'val-warn',label:v}
+    if (s==='não incluso'||s==='nao incluso') return {cls:'dot-nok',vcls:'val-nok',label:v}
+    return {cls:'dot-na',vcls:'val-na',label:v}
   }
   var acessItem = function(label, valor) {
     var d = dotInfo(valor)
-    return '<div class="acess-item"><div class="dot ' + d.cls + '"></div><span class="alabel">' + esc(label) + '</span><span class="aval ' + d.vcls + '">' + esc(d.label) + '</span></div>'
+    return '<div class="acess-item"><div class="dot '+d.cls+'"></div><span class="alabel">'+esc(label)+'</span><span class="aval '+d.vcls+'">'+esc(d.label)+'</span></div>'
   }
-
   var html = ''
-
-  // Identificação
   html += '<div class="msec"><div class="msec-title">Identificação</div><div class="mgrid">'
   html += mfield('Data', fdt(r.data_checklist))
   html += mfield('Serial', r.serial)
@@ -410,54 +403,34 @@ function abrirModal(id) {
     var sbColors = {'Finalizada Inspeção':'#455A64;background:#ECEFF1','Em RMA / Assistência Técnica':'#6A1B9A;background:#F3E5F5','Estoque Usado':'#558B2F;background:#F1F8E9','Estoque Novo':'#2E7D32;background:#E8F5E9','Sucata':'#212121;background:#E0E0E0'}
     var sbStyle = sbColors[r.status_resultado] || '#455A64;background:#ECEFF1'
     var parts = sbStyle.split(';')
-    html += '<div class="mfield"><label>Status Resultado</label><div class="mval"><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;color:' + parts[0] + ';' + parts[1] + '">' + esc(r.status_resultado) + '</span></div></div>'
+    html += '<div class="mfield"><label>Status Resultado</label><div class="mval"><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;color:'+parts[0]+';'+parts[1]+'">'+esc(r.status_resultado)+'</span></div></div>'
   }
   html += '</div></div>'
-
-  // Observações
   if (r.observacoes) {
     html += '<div class="msec"><div class="msec-title">Observações / Defeito</div>'
     html += mfieldPre('Relato', r.observacoes)
     html += '</div>'
   }
-
-  // Acessórios
-  html += '<div class="msec"><div class="msec-title">Acessórios e Componentes</div>'
-  html += '<div class="acess-grid">'
-  html += acessItem('Weathershield',      r.weathershield)
+  html += '<div class="msec"><div class="msec-title">Acessórios e Componentes</div><div class="acess-grid">'
+  html += acessItem('Weathershield', r.weathershield)
   html += acessItem('Suporte de Montagem', r.suporte_montagem)
-  html += acessItem('Base Traseira',      r.base_traseira)
+  html += acessItem('Base Traseira', r.base_traseira)
   html += acessItem('Borracha de Vedação', r.borracha_vedacao)
-  html += acessItem('Gasket Cable',       r.gasket_cable)
+  html += acessItem('Gasket Cable', r.gasket_cable)
   html += '</div>'
-  if (r.demais_acessorios) {
-    html += '<div style="margin-top:10px">'
-    html += mfieldPre('Demais Acessórios', r.demais_acessorios)
-    html += '</div>'
-  }
+  if (r.demais_acessorios) html += '<div style="margin-top:10px">'+mfieldPre('Demais Acessórios', r.demais_acessorios)+'</div>'
   html += '</div>'
-
-  // Manutenções
   if (r.manutencoes && r.manutencoes.length) {
-    html += '<div class="msec"><div class="msec-title">Manutenções Realizadas</div>'
-    html += '<div style="display:flex;flex-wrap:wrap;gap:6px">'
-    r.manutencoes.forEach(function(m) {
-      html += '<span style="background:var(--acl);color:var(--ac);border:1px solid var(--acm);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500">' + esc(m) + '</span>'
-    })
+    html += '<div class="msec"><div class="msec-title">Manutenções Realizadas</div><div style="display:flex;flex-wrap:wrap;gap:6px">'
+    r.manutencoes.forEach(function(m) { html += '<span style="background:var(--acl);color:var(--ac);border:1px solid var(--acm);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500">'+esc(m)+'</span>' })
     html += '</div></div>'
   }
-
-  // Fotos
   var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
   if (fotos.length) {
-    html += '<div class="msec"><div class="msec-title">Fotos</div>'
-    html += '<div class="foto-grid">'
-    fotos.forEach(function(u, i) {
-      html += '<a href="' + u + '" target="_blank" onclick="event.preventDefault();event.stopPropagation();openLB(\"' + u + '\")"><img src="' + u + '" alt="Foto ' + (i+1) + '" loading="lazy"/></a>'
-    })
+    html += '<div class="msec"><div class="msec-title">Fotos</div><div class="foto-grid">'
+    fotos.forEach(function(u,i){ html += '<a href="'+u+'" target="_blank" onclick="event.preventDefault();event.stopPropagation();openLB(\"'+u+'\")"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy"/></a>' })
     html += '</div></div>'
   }
-
   document.getElementById('modal-corpo').innerHTML = html
   document.getElementById('overlay').classList.add('open')
   document.body.style.overflow = 'hidden'
@@ -508,94 +481,36 @@ function imprimirModal() {
   var id = idAtualExcluir
   var r = todosRows.find(function(x){ return String(x.id) === String(id) })
   if (!r) return
-
   var codigo = r.itens && r.itens.codigo_interno ? r.itens.codigo_interno : '--'
   var modelo = r.modelo || (r.itens && r.itens.modelos && r.itens.modelos.modelo ? r.itens.modelos.modelo : '--')
-  var dt = r.data_checklist ? new Date(r.data_checklist + 'T12:00:00').toLocaleDateString('pt-BR') : '—'
+  var dt = r.data_checklist ? new Date(r.data_checklist+'T12:00:00').toLocaleDateString('pt-BR') : '—'
   var mans = r.manutencoes && r.manutencoes.length ? r.manutencoes.join(', ') : '—'
-
-  var field = function(lbl, val, full) {
-    return '<div style="border:1px solid #ddd;border-radius:6px;overflow:hidden' + (full ? ';grid-column:1/-1' : '') + '">' +
-      '<div style="background:#f0f3f8;padding:5px 10px;font-size:10px;font-weight:700;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;-webkit-print-color-adjust:exact;print-color-adjust:exact">' + lbl + '</div>' +
-      '<div style="padding:8px 10px;font-size:13px;color:#0f1224;min-height:28px">' + (val || '—') + '</div></div>'
-  }
-
-  var statusBadge = function(val) {
-    if (!val) return '—'
-    var colors = {'Finalizada Inspeção':'#455A64','Em RMA / Assistência Técnica':'#6A1B9A','Estoque Usado':'#558B2F','Estoque Novo':'#2E7D32','Sucata':'#212121'}
-    var bg = colors[val] || '#455A64'
-    return '<span style="background:'+bg+';color:#fff;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+val+'</span>'
-  }
-
-  var fields =
-    field('1. Código Interno',   codigo) +
-    field('2. Serial',            r.serial) +
-    field('3. Modelo',            modelo) +
-    field('4. Data',              dt) +
-    field('5. Responsável',       r.responsavel) +
-    field('6. Origem',            r.origem) +
-    field('7. RMA',               r.rma || 'N/A') +
-    field('8. Status Resultado',  statusBadge(r.status_resultado)) +
-    field('9. Weathershield',     r.weathershield) +
-    field('10. Suporte Montagem', r.suporte_montagem) +
-    field('11. Base Traseira',    r.base_traseira) +
-    field('12. Borracha Vedação', r.borracha_vedacao) +
-    field('13. Gasket Cable',     r.gasket_cable) +
-    field('14. Demais Acessórios', r.demais_acessorios || '—', true) +
-    field('15. Manutenções Realizadas', mans, true) +
-    (r.observacoes ? field('16. Observações', r.observacoes, true) : '')
-
-  var fts = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
-
-  document.getElementById('chk-pr-sub').textContent =
-    'Data: ' + dt + '  ·  Serial: ' + (r.serial||'—') + '  ·  Responsável: ' + (r.responsavel||'—')
+  var field = function(lbl,val,full){ return '<div style="border:1px solid #ddd;border-radius:6px;overflow:hidden'+(full?';grid-column:1/-1':'')+'"><div style="background:#f0f3f8;padding:5px 10px;font-size:10px;font-weight:700;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+lbl+'</div><div style="padding:8px 10px;font-size:13px;color:#0f1224;min-height:28px">'+(val||'—')+'</div></div>' }
+  var statusBadge = function(val){ if(!val)return'—'; var colors={'Finalizada Inspeção':'#455A64','Em RMA / Assistência Técnica':'#6A1B9A','Estoque Usado':'#558B2F','Estoque Novo':'#2E7D32','Sucata':'#212121'}; var bg=colors[val]||'#455A64'; return '<span style="background:'+bg+';color:#fff;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+val+'</span>' }
+  var fields = field('1. Código Interno',codigo)+field('2. Serial',r.serial)+field('3. Modelo',modelo)+field('4. Data',dt)+field('5. Responsável',r.responsavel)+field('6. Origem',r.origem)+field('7. RMA',r.rma||'N/A')+field('8. Status Resultado',statusBadge(r.status_resultado))+field('9. Weathershield',r.weathershield)+field('10. Suporte Montagem',r.suporte_montagem)+field('11. Base Traseira',r.base_traseira)+field('12. Borracha Vedação',r.borracha_vedacao)+field('13. Gasket Cable',r.gasket_cable)+(r.demais_acessorios?field('14. Demais Acessórios',r.demais_acessorios,true):'')+field('15. Manutenções',mans,true)+(r.observacoes?field('16. Observações',r.observacoes,true):'')
+  var fts = [r.foto_1,r.foto_2,r.foto_3].filter(Boolean)
+  document.getElementById('chk-pr-sub').textContent = 'Código: '+codigo+'  ·  Serial: '+(r.serial||'—')+'  ·  Data: '+dt+'  ·  Responsável: '+(r.responsavel||'—')
   document.getElementById('chk-pr-fields').innerHTML = fields
-  document.getElementById('chk-pr-resp').textContent = r.responsavel || '—'
-  document.getElementById('chk-pr-rodape').innerHTML =
-    'Axis Inventory · Checklist de Inspeção<br>Impresso em ' + new Date().toLocaleString('pt-BR')
-  document.getElementById('chk-pr-fotos').innerHTML =
-    fts.map(function(f){ return '<img src="'+f+'" style="width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>' }).join('')
-  document.getElementById('chk-pr-fotos-sec').style.display = fts.length ? '' : 'none'
+  document.getElementById('chk-pr-resp').textContent = r.responsavel||'—'
+  document.getElementById('chk-pr-rodape').innerHTML = 'Axis Inventory · Checklist de Inspeção<br>Impresso em '+new Date().toLocaleString('pt-BR')
+  document.getElementById('chk-pr-fotos').innerHTML = fts.map(function(f){ return '<img src="'+f+'" style="width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>' }).join('')
+  document.getElementById('chk-pr-fotos-sec').style.display = fts.length?'':'none'
+  gerarPDF('checklist-inspecao-'+(r.serial||'checklist')+'.pdf')
+}
 
-  gerarPDF('checklist-devolucao-' + (r.serial||'checklist') + '.pdf')
+function gerarPDF(nome) {
+  var el = document.getElementById('chk-print-area') || document.getElementById('print-area')
+  if (!el) return
+  el.style.display = 'block'
+  window.print()
+  setTimeout(function(){ el.style.display = 'none' }, 1000)
 }
 
 renderSidebar('checklists-inspecao')
 initAuth()
-
-function gerarPDF(nomeArquivo) {
-  var elId = document.getElementById('chk-print-area') ? 'chk-print-area' : 'print-area'
-  var el = document.getElementById(elId)
-  if (!el) return
-
-  // Mostrar elemento temporariamente para captura
-  el.style.cssText = 'display:block!important;position:absolute;top:0;left:0;width:210mm;padding:14mm;box-sizing:border-box;background:#fff;z-index:-9999'
-
-  var opt = {
-    margin: 0,
-    filename: nomeArquivo || 'checklist.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { 
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: false
-    },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }
-
-  html2pdf().set(opt).from(el).save().then(function() {
-    el.style.cssText = 'display:none'
-  }).catch(function(err) {
-    console.error('PDF erro:', err)
-    el.style.cssText = 'display:none'
-  })
-}
-
-
 </script>
 <!-- Print A4 Checklist Inspeção -->
-<div id="chk-print-area" style="display:none">
+<div id="chk-print-area">
   <div id="chk-pr-header">
     <div id="chk-pr-logo">📡</div>
     <div>

@@ -135,7 +135,6 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 <div id="sidebar-container"></div>
@@ -666,30 +665,11 @@ function gerarPDF(nomeArquivo) {
   var elId = document.getElementById('chk-print-area') ? 'chk-print-area' : 'print-area'
   var el = document.getElementById(elId)
   if (!el) return
-
-  // Mostrar elemento temporariamente para captura
-  el.style.cssText = 'display:block!important;position:absolute;top:0;left:0;width:210mm;padding:14mm;box-sizing:border-box;background:#fff;z-index:-9999'
-
-  var opt = {
-    margin: 0,
-    filename: nomeArquivo || 'checklist.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { 
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: false
-    },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }
-
-  html2pdf().set(opt).from(el).save().then(function() {
-    el.style.cssText = 'display:none'
-  }).catch(function(err) {
-    console.error('PDF erro:', err)
-    el.style.cssText = 'display:none'
-  })
+  el.style.display = 'block'
+  window.print()
+  setTimeout(function(){ el.style.display = 'none' }, 1000)
 }
+
 
 
 </script>
