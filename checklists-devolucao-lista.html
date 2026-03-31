@@ -135,6 +135,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 <div id="sidebar-container"></div>
@@ -223,8 +224,8 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
       <div class="modal-ft-right">
         <button class="btn btn-sm" onclick="fecharModal()">Fechar</button>
         <button class="btn btn-sm btn-p" onclick="imprimirModal()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          Imprimir
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Salvar PDF
         </button>
       </div>
     </div>
@@ -655,11 +656,27 @@ function imprimirModal() {
     fts.map(function(f){ return '<img src="'+f+'" style="width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>' }).join('')
   document.getElementById('chk-pr-fotos-sec').style.display = fts.length ? '' : 'none'
 
-  window.print()
+  gerarPDF('checklist-devolucao-' + (r.serial||'checklist') + '.pdf')
 }
 
 renderSidebar('checklists-devolucao')
 initAuth()
+
+function gerarPDF(nomeArquivo) {
+  var el = document.getElementById('chk-print-area') || document.getElementById('print-area')
+  if (!el) return
+  el.style.display = 'block'
+  var opt = {
+    margin: [10, 12, 10, 12],
+    filename: nomeArquivo || 'checklist.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }
+  html2pdf().set(opt).from(el).save().then(function() {
+    el.style.display = 'none'
+  })
+}
 </script>
 <!-- Print A4 Checklist Devolução -->
 <div id="chk-print-area">

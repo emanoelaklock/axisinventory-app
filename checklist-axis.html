@@ -78,6 +78,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -255,7 +256,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="popup-title">Checklist Concluído!</div>
     <div class="popup-sub" id="popup-msg">O checklist foi salvo com sucesso.</div>
     <div class="popup-btns">
-      <button class="popup-btn popup-btn-print" onclick="popupImprimir()">🖨️ Imprimir checklist</button>
+      <button class="popup-btn popup-btn-print" onclick="popupImprimir()">⬇️ Salvar PDF</button>
       <button class="popup-btn popup-btn-novo" onclick="popupNovo()">+ Novo checklist</button>
     </div>
   </div>
@@ -528,11 +529,7 @@ function imprimir(chk){
   document.getElementById('pr-rodape').innerHTML = 'Axis Inventory · Checklist de Inspeção<br>Impresso em '+new Date().toLocaleString('pt-BR')
   document.getElementById('pr-fotos').innerHTML = fts.map(function(f){ return '<img src="'+f+'" style="width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>' }).join('')
   document.getElementById('pr-fotos-sec').style.display = fts.length ? '' : 'none'
-  document.getElementById('print-area').style.display = 'block'
-  window.print()
-  setTimeout(function(){
-    document.getElementById('print-area').style.display = 'none'
-  }, 500)
+  gerarPDF('checklist-inspecao-' + (chk.serial||'checklist') + '.pdf')
 }
 
 function imprimirIdx(i){if(histData[i])imprimir(histData[i]);}
@@ -553,6 +550,22 @@ function imprimirIdx(i){if(histData[i])imprimir(histData[i]);}
   document.getElementById('f-data').value = new Date().toISOString().split('T')[0]
   await carregarResp()
 })()
+
+function gerarPDF(nomeArquivo) {
+  var el = document.getElementById('chk-print-area') || document.getElementById('print-area')
+  if (!el) return
+  el.style.display = 'block'
+  var opt = {
+    margin: [10, 12, 10, 12],
+    filename: nomeArquivo || 'checklist.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }
+  html2pdf().set(opt).from(el).save().then(function() {
+    el.style.display = 'none'
+  })
+}
 </script>
 </body>
 </html>
