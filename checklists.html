@@ -48,7 +48,7 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bd) 50%,var(--sur2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;height:13px;display:inline-block}
 @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
 /* Lightbox fotos */
-.lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;align-items:center;justify-content:center;cursor:zoom-out}
+.lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out}
 .lb.open{display:flex}.lb img{max-width:92vw;max-height:88vh;border-radius:8px}
 .lb-x{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.15);color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 /* Modal detalhe inspeção */
@@ -428,7 +428,7 @@ function abrirModal(id) {
   var fotos = [r.foto_1, r.foto_2, r.foto_3].filter(Boolean)
   if (fotos.length) {
     html += '<div class="msec"><div class="msec-title">Fotos</div><div class="foto-grid">'
-    fotos.forEach(function(u,i){ html += '<a href="'+u+'" target="_blank" rel="noopener"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy" style="cursor:pointer;width:110px;height:82px;object-fit:cover;border-radius:8px;border:2px solid #ddd"/></a>' })
+    fotos.forEach(function(u,i){ html += '<a href="#" onclick="event.preventDefault();openLB(\''+u+'\')"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy" style="cursor:pointer;width:110px;height:82px;object-fit:cover;border-radius:8px;border:2px solid #ddd"/></a>' })
     html += '</div></div>'
   }
   document.getElementById('modal-corpo').innerHTML = html

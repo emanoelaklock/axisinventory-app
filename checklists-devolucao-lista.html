@@ -137,6 +137,10 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
 .toast.ok{background:#F0FDF4;color:#16A34A;border-color:#BBF7D0}
 .toast.err{background:#FEF2F2;color:#DC2626;border-color:#FECACA}
 .toast.info{background:var(--acl);color:var(--ac);border-color:var(--acm)}
+.lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out}
+.lb.open{display:flex}
+.lb-x{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb img{max-width:92vw;max-height:92vh;border-radius:8px;box-shadow:0 0 60px rgba(0,0,0,.6)}
 </style>
 </head>
 <body>
@@ -498,7 +502,7 @@ function abrirModal(id) {
     html += '<div class="msec-title">Fotos</div>'
     html += '<div class="foto-grid">'
     fotos.forEach(function(u, i) {
-      html += '<a href="'+u+'" target="_blank" rel="noopener"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy" style="cursor:pointer;width:110px;height:82px;object-fit:cover;border-radius:8px;border:2px solid #ddd"/></a>'
+      html += '<a href="#" onclick="event.preventDefault();openLB(\''+u+'\')"><img src="'+u+'" alt="Foto '+(i+1)+'" loading="lazy" style="cursor:pointer;width:110px;height:82px;object-fit:cover;border-radius:8px;border:2px solid #ddd"/></a>'
     })
     html += '</div></div>'
   }
@@ -661,6 +665,10 @@ function imprimirModal() {
   gerarPDF('checklist-devolucao-' + (r.serial||'checklist') + '.pdf')
 }
 
+
+var openLB = function(src) { document.getElementById('lb-img').src = src; document.getElementById('lb').classList.add('open') }
+var closeLB = function() { document.getElementById('lb').classList.remove('open') }
+
 renderSidebar('checklists-devolucao')
 initAuth()
 
@@ -699,5 +707,11 @@ function gerarPDF(nomeArquivo) {
   </div>
 </div>
 
+
+<!-- Lightbox fotos -->
+<div class="lb" id="lb" onclick="closeLB()">
+  <button class="lb-x" onclick="closeLB()">✕</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
 </body>
 </html>
