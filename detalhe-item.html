@@ -158,15 +158,7 @@
 .chkd-fotos a:hover{border-color:#0D9488}
 .chkd-fotos img{width:110px;height:82px;object-fit:cover;display:block}
 @media(max-width:480px){.chkd-grid,.chkd-acess-grid{grid-template-columns:1fr}}
-@media print{
-  body > *{display:none!important}
-  .chkd-overlay{display:block!important;position:fixed!important;top:0!important;left:0!important;width:100%!important;height:100%!important;background:#fff!important;z-index:9999!important;overflow:visible!important;align-items:flex-start!important;padding:0!important}
-  .chkd-modal{display:flex!important;flex-direction:column!important;max-width:100%!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;border-radius:0!important;width:100%!important}
-  .chkd-hd,.chkd-ft{display:none!important}
-  .chkd-bd{padding:20px!important;overflow:visible!important}
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-}
-@page{size:A4 portrait;margin:12mm 14mm}
+/* @media print para checklist — gerenciado pelo chk-print-area abaixo */
 @media(max-width:600px){.page{padding:12px 12px 60px}.hero{padding:16px}.hero-acts .btn span{display:none}.info-grid{grid-template-columns:1fr 1fr}.frow{grid-template-columns:1fr}.tabs-bar{gap:0}.tab-btn{padding:8px 12px;font-size:12px}}
 
 /* ── SIDEBAR GLOBAL ─── */
@@ -204,6 +196,9 @@ body.has-sidebar{display:flex;min-height:100vh}
           <div class="hero-pn" id="h-pn"></div>
           <div class="hero-model" id="h-model">—</div>
           <div class="hero-serial" id="h-serial"><span id="h-serial-val">—</span></div>
+          <div id="h-serial-ant-wrap" style="display:none;font-size:11px;color:var(--tx3);margin-top:2px">
+            Serial anterior: <span id="h-serial-ant" style="font-family:var(--mono)">—</span>
+          </div>
           <div class="hero-code" id="h-codigo">—</div>
         </div>
         <div class="hero-acts">
@@ -220,6 +215,11 @@ body.has-sidebar{display:flex;min-height:100vh}
           <button class="btn" onclick="openQR()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             <span>QR Code</span>
+          </button>
+
+          <button class="btn" id="btn-rma" onclick="openRMA()" style="display:none;border-color:rgba(106,27,154,.3);color:#6A1B9A;background:rgba(106,27,154,.06)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <span>Sub. RMA</span>
           </button>
           <button class="btn" id="btn-excluir-item" onclick="excluirItem()" style="border-color:#FECACA;color:#DC2626;display:none">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
@@ -643,6 +643,12 @@ const renderHero = (i) => {
   set('topbar-codigo', i.codigo_interno)
   set('h-model', i.modelo || '—')
   set('h-serial-val', i.serial || '—')
+    if (i.serial_anterior) {
+      document.getElementById('h-serial-ant').textContent = i.serial_anterior
+      document.getElementById('h-serial-ant-wrap').style.display = ''
+    } else {
+      document.getElementById('h-serial-ant-wrap').style.display = 'none'
+    }
   document.getElementById('h-serial').style.display = i.serial ? '' : 'none'
   set('h-codigo', i.codigo_interno)
   document.getElementById('h-pn').textContent = i.part_number ? `PN: ${i.part_number}` : ''
@@ -676,6 +682,8 @@ const renderHero = (i) => {
     document.querySelector('button[onclick="openMov()"]').style.display = 'none'
   const btnExcluir = document.getElementById('btn-excluir-item')
   if (btnExcluir && PERFIL === 'Administrador') btnExcluir.style.display = ''
+  const btnRMA = document.getElementById('btn-rma')
+  if (btnRMA && PERFIL === 'Administrador') btnRMA.style.display = ''
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1133,6 +1141,7 @@ const imprimirQR = () => {
 @media print{
   body > *{display:none!important}
   #chk-print-area{display:block!important;position:fixed;top:0;left:0;width:100%;background:#fff;z-index:9999}
+  #chk-dev-print-area{display:block!important;position:fixed;top:0;left:0;width:100%;background:#fff;z-index:9999}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 @page{size:A4 portrait;margin:12mm 14mm}
@@ -1156,6 +1165,7 @@ const imprimirQR = () => {
 .btn-novo:hover{background:#2E6BE6;border-color:#2E6BE6;color:#fff}
 
 /* Print */
+
 </style>
     <div class="etq">
       <div class="etq-brand">📡 Axis Inventory</div>
@@ -1561,6 +1571,85 @@ const imprimirChkDev = () => {
   window.print()
   setTimeout(() => { el.style.display = 'none' }, 1000)
 }
+
+// ── Substituição RMA ──────────────────────────────────────────────────────────
+const openRMA = async () => {
+  if (!ITEM) return
+  document.getElementById('rma-serial-atual').textContent = ITEM.serial || '—'
+  document.getElementById('rma-serial-novo-label').textContent = '—'
+  document.getElementById('rma-serial-input').value = ''
+  document.getElementById('rma-motivo').value = ''
+  document.getElementById('rma-err').style.display = 'none'
+
+  // Carregar responsáveis no select
+  const sel = document.getElementById('rma-resp-select')
+  sel.innerHTML = '<option value="">— Manter atual —</option>'
+  try {
+    const rs = await fetch(`${SURL}/rest/v1/responsaveis?select=id,nome&ativo=eq.true&order=nome`, { headers: hAuth() })
+    const resps = await rs.json()
+    resps.forEach(r => {
+      const o = document.createElement('option')
+      o.value = r.id
+      o.textContent = r.nome
+      if (r.id === ITEM.responsavel_atual) o.selected = true
+      sel.appendChild(o)
+    })
+  } catch(e) {}
+
+  document.getElementById('rma-overlay').classList.add('open')
+  document.body.style.overflow = 'hidden'
+  setTimeout(() => document.getElementById('rma-serial-input').focus(), 100)
+}
+
+const fecharRMA = () => {
+  document.getElementById('rma-overlay').classList.remove('open')
+  document.body.style.overflow = ''
+}
+
+const confirmarRMA = async () => {
+  const serialNovo = document.getElementById('rma-serial-input').value.trim()
+  const motivo     = document.getElementById('rma-motivo').value.trim()
+  const respId     = document.getElementById('rma-resp-select').value
+  const errEl      = document.getElementById('rma-err')
+  const btn        = document.getElementById('btn-rma-confirmar')
+
+  if (!serialNovo) {
+    errEl.textContent = 'Informe o novo serial.'
+    errEl.style.display = 'block'
+    return
+  }
+
+  btn.textContent = 'Processando…'
+  btn.disabled = true
+  errEl.style.display = 'none'
+
+  try {
+    const r = await fetch(`${SURL}/rest/v1/rpc/substituir_serial_rma`, {
+      method: 'POST',
+      headers: hAuth(),
+      body: JSON.stringify({
+        p_item_id:        ITEM.id,
+        p_serial_novo:    serialNovo,
+        p_motivo:         motivo || null,
+        p_responsavel_id: respId || null
+      })
+    })
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({}))
+      throw new Error(d?.message || d?.hint || `Erro ${r.status}`)
+    }
+    fecharRMA()
+    toast('Serial substituído com sucesso! ✓', 'ok')
+    // Recarregar página para refletir novo serial
+    setTimeout(() => location.reload(), 800)
+  } catch(e) {
+    errEl.textContent = e.message
+    errEl.style.display = 'block'
+  } finally {
+    btn.textContent = 'Confirmar Substituição'
+    btn.disabled = false
+  }
+}
 </script>
 <!-- Modal Checklist de Devolução -->
 <div class="chkd-overlay" id="chkd-overlay"
@@ -1636,6 +1725,65 @@ const imprimirChkDev = () => {
 <div class="lb" id="lb" onclick="closeLB()">
   <button class="lb-x" onclick="closeLB()">✕</button>
   <img id="lb-img" src="" alt=""/>
+</div>
+
+<!-- Modal Substituição RMA -->
+<div class="mback" id="rma-overlay" onclick="if(event.target===this)fecharRMA()">
+  <div style="background:var(--sur);border-radius:16px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(15,21,35,.4);animation:modalIn .18s ease;overflow:hidden">
+    <div style="padding:18px 22px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--tx)">🔄 Substituição RMA</div>
+        <div style="font-size:12px;color:var(--tx3);margin-top:3px">O histórico e código interno serão preservados</div>
+      </div>
+      <button onclick="fecharRMA()" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;padding:0;line-height:1;margin-left:12px">×</button>
+    </div>
+    <div style="padding:20px 22px">
+      <!-- Info serial atual → novo -->
+      <div style="display:flex;align-items:center;gap:10px;background:var(--sur2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:18px">
+        <div style="flex:1">
+          <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em">Serial atual</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--tx);margin-top:2px" id="rma-serial-atual">—</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        <div style="flex:1">
+          <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em">Novo serial</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:600;color:#6A1B9A;margin-top:2px" id="rma-serial-novo-label">—</div>
+        </div>
+      </div>
+      <!-- Campos -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Novo serial *</label>
+          <input id="rma-serial-input" type="text" placeholder="Digite o novo número de série"
+            style="width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:9px;font-family:var(--mono);font-size:13px;color:var(--tx);background:var(--sur);outline:none;transition:border .15s;box-sizing:border-box"
+            oninput="document.getElementById('rma-serial-novo-label').textContent=this.value||'—'"
+            onfocus="this.style.borderColor='#2E6BE6'" onblur="this.style.borderColor='var(--bd)'"/>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Responsável</label>
+          <select id="rma-resp-select"
+            style="width:100%;padding:9px 28px 9px 12px;border:1.5px solid var(--bd);border-radius:9px;font-family:inherit;font-size:13px;color:var(--tx);background:var(--sur) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238A9BBB' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;outline:none;appearance:none;cursor:pointer;box-sizing:border-box">
+            <option value="">— Manter atual —</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Motivo / Observação</label>
+          <textarea id="rma-motivo" rows="2" placeholder="Ex: Câmera substituída em garantia pelo fabricante"
+            style="width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:9px;font-family:inherit;font-size:13px;color:var(--tx);background:var(--sur);outline:none;resize:vertical;transition:border .15s;box-sizing:border-box"
+            onfocus="this.style.borderColor='#2E6BE6'" onblur="this.style.borderColor='var(--bd)'"></textarea>
+        </div>
+      </div>
+      <div id="rma-err" style="display:none;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:8px;padding:8px 12px;font-size:12px;margin-top:12px"></div>
+    </div>
+    <div style="padding:12px 22px 18px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-sm" onclick="fecharRMA()">Cancelar</button>
+      <button class="btn btn-sm" id="btn-rma-confirmar" onclick="confirmarRMA()"
+        style="background:#6A1B9A;border-color:#6A1B9A;color:#fff">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Confirmar Substituição
+      </button>
+    </div>
+  </div>
 </div>
 </body>
 </html>
