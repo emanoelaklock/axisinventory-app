@@ -163,6 +163,26 @@
 
 /* ── SIDEBAR GLOBAL ─── */
 body.has-sidebar{display:flex;min-height:100vh}
+
+#chk-dev-print-area{display:none;font-family:Arial,Helvetica,sans-serif;background:#fff;width:100%;box-sizing:border-box}
+#chk-dev-pr-header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #1B2A4A;padding-bottom:12px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#chk-dev-pr-logo{width:44px;height:44px;background:#1B2A4A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#chk-dev-pr-title{font-size:20px;font-weight:800;color:#1B2A4A;line-height:1.2}
+#chk-dev-pr-sub{font-size:12px;color:#666;margin-top:2px}
+#chk-dev-pr-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;width:100%}
+#chk-dev-pr-fotos-sec{margin-bottom:16px}
+.chk-pr-sec-lbl{font-size:10px;font-weight:700;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+#chk-dev-pr-fotos{display:flex;gap:10px;flex-wrap:wrap}
+#chk-dev-pr-fotos img{width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
+#chk-dev-pr-footer{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid #ddd;padding-top:12px;margin-top:24px}
+#chk-dev-pr-assin{text-align:center}
+#chk-dev-pr-assin-linha{width:200px;border-top:1px solid #333;margin:40px auto 4px}
+#chk-dev-pr-resp{font-size:12px;color:#666}
+#chk-dev-pr-rodape{font-size:10px;color:#999;text-align:right}
+.btn-novo:hover{background:#2E6BE6;border-color:#2E6BE6;color:#fff}
+
+/* Print */
+
 </style>
 </head>
 <body>
@@ -1147,26 +1167,6 @@ const imprimirQR = () => {
 @page{size:A4 portrait;margin:12mm 14mm}
 
 /* Print A4 */
-#chk-dev-print-area{display:none;font-family:Arial,Helvetica,sans-serif;background:#fff;width:100%;box-sizing:border-box}
-#chk-dev-pr-header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #1B2A4A;padding-bottom:12px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-#chk-dev-pr-logo{width:44px;height:44px;background:#1B2A4A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-#chk-dev-pr-title{font-size:20px;font-weight:800;color:#1B2A4A;line-height:1.2}
-#chk-dev-pr-sub{font-size:12px;color:#666;margin-top:2px}
-#chk-dev-pr-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;width:100%}
-#chk-dev-pr-fotos-sec{margin-bottom:16px}
-.chk-pr-sec-lbl{font-size:10px;font-weight:700;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
-#chk-dev-pr-fotos{display:flex;gap:10px;flex-wrap:wrap}
-#chk-dev-pr-fotos img{width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
-#chk-dev-pr-footer{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid #ddd;padding-top:12px;margin-top:24px}
-#chk-dev-pr-assin{text-align:center}
-#chk-dev-pr-assin-linha{width:200px;border-top:1px solid #333;margin:40px auto 4px}
-#chk-dev-pr-resp{font-size:12px;color:#666}
-#chk-dev-pr-rodape{font-size:10px;color:#999;text-align:right}
-.btn-novo:hover{background:#2E6BE6;border-color:#2E6BE6;color:#fff}
-
-/* Print */
-
-</style>
     <div class="etq">
       <div class="etq-brand">📡 Axis Inventory</div>
       <div id="pp-qr"></div>
