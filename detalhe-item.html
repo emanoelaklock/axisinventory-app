@@ -703,7 +703,7 @@ const renderHero = (i) => {
   const btnExcluir = document.getElementById('btn-excluir-item')
   if (btnExcluir && PERFIL === 'Administrador') btnExcluir.style.display = ''
   const btnRMA = document.getElementById('btn-rma')
-  if (btnRMA && PERFIL === 'Administrador') btnRMA.style.display = ''
+  if (btnRMA && (PERFIL === 'Administrador' || PERFIL === 'Laboratório')) btnRMA.style.display = ''
 }
 
 // ════════════════════════════════════════════════════════════
