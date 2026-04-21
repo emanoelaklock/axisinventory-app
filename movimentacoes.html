@@ -144,7 +144,8 @@ const POR_PAG=30
 // FIX: helper que nunca passa entidade HTML pelo esc() — usa caractere UTF-8 diretamente
 const fval=v=>v ? esc(v) : '<span style="color:var(--tx3)">—</span>'
 
-const fdt=iso=>{if(!iso)return'—';const d=new Date(iso);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+// fdt → definido em utils.js. Para incluir hora, passar {withTime:true}
+const fdtH = iso => fdt(iso, {withTime:true})
 let QS={busca:'',de:'',ate:'',sortCol:'data_movimentacao',sortAsc:false,pagina:0,total:0}
 const buildQ=()=>{
   const from=QS.pagina*POR_PAG,to=from+POR_PAG-1
@@ -186,8 +187,7 @@ const limparF=()=>{
     carregar()
 }
 const srt=col=>{if(QS.sortCol===col)QS.sortAsc=!QS.sortAsc;else{QS.sortCol=col;QS.sortAsc=false};QS.pagina=0;carregar()}
-const SM={'Estoque Novo':'#059669','Estoque Usado':'#D97706','Reservado':'#7C3AED','Vendido':'#0284C7','Com Técnico':'#6D28D9','Locado':'#0891B2','Em Demonstração':'#0D9488','Em Demonstração':'#0D9488','Aguardando Inspeção':'#2E6BE6','Finalizada Inspeção':'#16A34A','Em RMA / Assistência Técnica':'#DC2626','Sucata':'#71717A'}
-const sbadge=(s)=>{const c=SM[s]||'#71717A';return`<span class="badge" style="background:${c}18;color:${c}">${esc(s||'—')}</span>`}
+// SM e sbadge → definidos em utils.js (classes CSS em theme.css)
 const renderSkel=()=>{document.getElementById('tbody').innerHTML=Array(8).fill(0).map(()=>`<tr>${Array(7).fill(0).map(()=>`<td><span class="sk" style="width:${40+Math.random()*60}px"></span></td>`).join('')}<td></td></tr>`).join('')}
 const renderTabela=rows=>{
   if(!rows.length){document.getElementById('tbody').innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-t">Nenhuma movimentação encontrada</div><div>Ajuste os filtros ou o período</div></div></td></tr>';return}
@@ -197,7 +197,7 @@ const renderTabela=rows=>{
       :sbadge(m.status_novo)
     // FIX: usar fval() em vez de esc(valor||'—') — evita entidade HTML escapada
     return`<tr style="cursor:pointer" onclick="location.href='detalhe-item.html#${m.item_id}'">
-      <td class="dim" style="white-space:nowrap">${fdt(m.data_movimentacao)}</td>
+      <td class="dim" style="white-space:nowrap">${fdtH(m.data_movimentacao)}</td>
       <td class="col-item">
         <div style="font-weight:500;color:var(--tx);font-size:13px">${esc(m.serial_snapshot||m.codigo_interno_snapshot||'—')}</div>
         <div style="font-size:13px;color:var(--tx3)">${esc(m.item_modelo||'')}</div>

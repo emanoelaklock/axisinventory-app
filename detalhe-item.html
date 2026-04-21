@@ -568,12 +568,9 @@ const rpc = async (fn, params) => {
 // ════════════════════════════════════════════════════════════
 // STATUS MAP
 // ════════════════════════════════════════════════════════════
-const SM = {
-  'Estoque Novo':'s-en','Estoque Usado':'s-eu','Reservado':'s-rv','Vendido':'s-vd',
-  'Com Técnico':'s-ct','Locado':'s-lc','Em Demonstração':'s-dm','Aguardando Inspeção':'s-ai',
-  'Finalizada Inspeção':'s-fi','Em RMA / Assistência Técnica':'s-rm','Sucata':'s-sc',
-}
-const sbadge = s => {
+// SM e sbadge → definidos em utils.js
+// Variante local com label curto "Em RMA / Assist. Técnica"
+const sbadgeL = s => {
   const cls = SM[s] || 's-sc'
   const lbl = s === 'Em RMA / Assistência Técnica' ? 'Em RMA / Assist. Técnica' : (s||'—')
   return `<span class="badge ${cls}"><span class="dot"></span>${esc(lbl)}</span>`
@@ -584,11 +581,7 @@ const sbadge = s => {
 // ════════════════════════════════════════════════════════════
 const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent = v||'—' }
 
-const fdt = (iso, opts={}) => {
-  if (!iso) return '—'
-  const d = new Date(iso)
-  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric', ...opts })
-}
+// fdt → definido em utils.js (aceita {withTime:true})
 
 const frel = (iso) => {
   if (!iso) return '—'
@@ -673,7 +666,7 @@ const renderHero = (i) => {
   document.getElementById('h-serial').style.display = i.serial ? '' : 'none'
   set('h-codigo', i.codigo_interno)
   document.getElementById('h-pn').textContent = i.part_number ? `PN: ${i.part_number}` : ''
-  document.getElementById('h-status').innerHTML = sbadge(i.status_atual)
+  document.getElementById('h-status').innerHTML = sbadgeL(i.status_atual)
   set('h-resp', i.responsavel_nome)
   set('h-resp-cargo', i.responsavel_cargo)
   set('h-cliente', i.cliente_nome)
