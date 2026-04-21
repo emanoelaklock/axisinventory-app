@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="theme.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="utils.js"></script>
 <script src="auth.js"></script>
 <script src="sidebar.js"></script>
 </head>
@@ -51,7 +52,7 @@
           <div class="stat-val" id="d-total">—</div>
           <div class="stat-sub">no inventário</div>
         </div>
-        <div class="stat-card" onclick="location.href='lista-itens.html?status=Em+RMA'">
+        <div class="stat-card" onclick="location.href='lista-itens.html?status=' + encodeURIComponent('Em RMA / Assistência Técnica')">
           <div class="stat-label">Em RMA <span class="stat-icon">⚠️</span></div>
           <div class="stat-val" id="d-rma" style="color:var(--re)">—</div>
           <div class="stat-sub">em assistência técnica</div>
@@ -104,7 +105,7 @@ const carregarDashboard=async()=>{
   try{
     const[itens,movs]=await Promise.all([
       fetch(`${SURL}/rest/v1/vw_itens_completo?select=id,status_atual,cliente_nome,codigo_interno,modelo&ativo=eq.true&limit=5000`,{headers:hAuth()}).then(r=>r.json()),
-      fetch(`${SURL}/rest/v1/vw_movimentacoes_completo?select=item_id,tipo_movimentacao,status_novo,codigo_interno_snapshot,item_modelo,data_movimentacao,usuario_nome&order=data_movimentacao.desc&limit=8`,{headers:hAuth()}).then(r=>r.json()),
+      fetch(`${SURL}/rest/v1/vw_movimentacoes_completo?select=item_id,tipo_movimentacao,status_novo,codigo_interno_snapshot,item_modelo,data_movimentacao,usuario_nome,responsavel_novo_snapshot&order=data_movimentacao.desc&limit=10`,{headers:hAuth()}).then(r=>r.json()),
     ])
     const total=itens.length,rma=itens.filter(i=>i.status_atual==='Em RMA / Assistência Técnica').length
     const loc=itens.filter(i=>i.status_atual==='Locado').length,est=itens.filter(i=>['Estoque Novo','Estoque Usado'].includes(i.status_atual)).length
@@ -126,7 +127,11 @@ const carregarDashboard=async()=>{
     // Movimentações recentes
     const TI={'Entrada estoque':'📦','Reserva':'🔒','Envio cliente':'🚚','Retorno cliente':'↩️','Envio técnico':'🔧','Retorno técnico':'↩️','Envio inspeção':'🔬','Resultado inspeção':'📋','Envio RMA':'⚠️','Retorno RMA':'✅','Substituição RMA':'🔄','Baixa':'🗑️','Ajuste administrativo':'⚙️'}
     const frel=iso=>{if(!iso)return'—';const d=new Date(iso),now=new Date(),df=Math.floor((now-d)/86400000);if(df===0)return'Hoje '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});if(df===1)return'Ontem';if(df<7)return`${df}d atrás`;return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}
-    document.getElementById('mov-recentes').innerHTML=!movs.length?'<div style="color:var(--tx3);text-align:center;padding:20px 0;font-size:13px">Nenhuma movimentação</div>':movs.map(m=>`<div class="mov-item"><div class="mov-icon">${TI[m.tipo_movimentacao]||'•'}</div><div style="flex:1;min-width:0"><div class="mov-code">${esc(m.codigo_interno_snapshot||'')}</div><div class="mov-desc">${esc(m.tipo_movimentacao)} · ${esc(m.item_modelo||'')}</div></div><div class="mov-dt">${frel(m.data_movimentacao)}</div></div>`).join('')
+    document.getElementById('mov-recentes').innerHTML=!movs.length?'<div style="color:var(--tx3);text-align:center;padding:20px 0;font-size:13px">Nenhuma movimentação</div>':movs.map(m=>{
+      const resp = m.responsavel_novo_snapshot ? ` · ${esc(m.responsavel_novo_snapshot)}` : ''
+      const clickAttr = m.item_id ? `onclick="location.href='detalhe-item.html#${esc(m.item_id)}'" style="cursor:pointer"` : ''
+      return `<div class="mov-item" ${clickAttr}><div class="mov-icon">${TI[m.tipo_movimentacao]||'•'}</div><div style="flex:1;min-width:0"><div class="mov-code">${esc(m.codigo_interno_snapshot||'')}</div><div class="mov-desc">${esc(m.tipo_movimentacao)} · ${esc(m.item_modelo||'')}${resp}</div></div><div class="mov-dt">${frel(m.data_movimentacao)}</div></div>`
+    }).join('')
   }catch(e){toast('Erro dashboard: '+e.message,'err')}
 }
 

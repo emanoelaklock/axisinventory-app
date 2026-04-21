@@ -285,7 +285,16 @@ async function onPostLogin() {
     const b = document.getElementById('btn-novo')
     if (b) b.style.display = 'none'
   }
+  // Aplicar filtros vindos da querystring (?status=...)
+  const params = new URLSearchParams(location.search)
+  const statusParam = params.get('status')
+  if (statusParam) {
+    QS.status = statusParam
+    const selStatus = document.getElementById('f-status')
+    if (selStatus) selStatus.value = statusParam
+  }
   await Promise.all([carregarDropdowns(), carregarItens()])
+  atualizarChips()
 }
 
 document.addEventListener('keydown', e => {
