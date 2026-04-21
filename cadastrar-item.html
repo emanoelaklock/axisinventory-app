@@ -149,8 +149,10 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
             <label class="flabel">Número de série *</label>
             <input class="finput" id="f-serial" placeholder="Ex: ACCC8E37C247"
               style="font-family:var(--mono);text-transform:uppercase"
-              oninput="this.value=this.value.toUpperCase()"/>
+              oninput="onSerialInput(this)"/>
             <div class="field-error" id="err-serial">Serial é obrigatório para itens com número de série</div>
+            <div class="field-hint" id="hint-serial-dup" style="display:none;color:#D97706;font-weight:600">⚠ Este serial já está cadastrado em outro item.</div>
+            <div class="field-hint" id="hint-serial-check" style="display:none">Verificando…</div>
           </div>
         </div>
       </div>
@@ -189,12 +191,14 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
         <div class="section-label"><span>👥</span> Responsável e cliente</div>
         <div class="fgrid">
           <div class="fg">
-            <label class="flabel">Responsável</label>
-            <select class="fselect" id="f-resp"><option value="">— Nenhum —</option></select>
+            <label class="flabel">Responsável <span id="req-resp" style="display:none;color:var(--re)">*</span></label>
+            <select class="fselect" id="f-resp" onchange="clearFieldError('f-resp','err-resp')"><option value="">— Nenhum —</option></select>
+            <div class="field-error" id="err-resp">Responsável é obrigatório para este status</div>
           </div>
           <div class="fg">
-            <label class="flabel">Cliente</label>
-            <select class="fselect" id="f-cliente"><option value="">— Nenhum —</option></select>
+            <label class="flabel">Cliente <span id="req-cli" style="display:none;color:var(--re)">*</span></label>
+            <select class="fselect" id="f-cliente" onchange="clearFieldError('f-cliente','err-cli')"><option value="">— Nenhum —</option></select>
+            <div class="field-error" id="err-cli">Cliente é obrigatório para este status</div>
           </div>
         </div>
       </div>
@@ -209,7 +213,9 @@ tr:hover td{background:rgba(46,107,230,.03)!important}
           </div>
           <div class="fg">
             <label class="flabel">Data de aquisição</label>
-            <input class="finput" id="f-data-aq" type="date"/>
+            <input class="finput" id="f-data-aq" type="date" onchange="clearFieldError('f-data-aq','err-data-aq')"
+              onfocus="this.max=new Date().toISOString().split('T')[0]"/>
+            <div class="field-error" id="err-data-aq">Data de aquisição não pode ser futura</div>
           </div>
         </div>
         <div class="fg" style="margin-top:14px">
@@ -353,6 +359,9 @@ const STATUS_COLORS = {
   'Sucata':                     {b:'rgba(113,113,122,.1)', c:'#71717A'},
 }
 
+const STATUS_EXIGE_RESP = ['Com Técnico']
+const STATUS_EXIGE_CLI  = ['Locado', 'Vendido', 'Reservado']
+
 const atualizarStatusPreview = () => {
   const status = document.getElementById('f-status').value
   const prev   = document.getElementById('status-preview')
@@ -365,19 +374,63 @@ const atualizarStatusPreview = () => {
   } else {
     prev.classList.remove('show')
   }
+  // Atualiza asteriscos de obrigatório nos campos condicionais
+  document.getElementById('req-resp').style.display = STATUS_EXIGE_RESP.includes(status) ? '' : 'none'
+  document.getElementById('req-cli').style.display  = STATUS_EXIGE_CLI.includes(status)  ? '' : 'none'
+  // Limpa erros prévios se o status mudou
+  clearFieldError('f-resp', 'err-resp')
+  clearFieldError('f-cliente', 'err-cli')
+}
+
+// Helper: limpa um campo de erro e a classe visual
+const clearFieldError = (inputId, errId) => {
+  const err = document.getElementById(errId)
+  const inp = document.getElementById(inputId)
+  if (err) err.style.display = 'none'
+  if (inp) inp.classList.remove('error')
 }
 
 const validar = () => {
   let ok = true
+  const showErr = (inputId, errId) => {
+    const err = document.getElementById(errId)
+    const inp = document.getElementById(inputId)
+    if (err) err.style.display = 'block'
+    if (inp) inp.classList.add('error')
+    ok = false
+  }
+
   if (!modeloSelecionado) { document.getElementById('err-modelo').style.display = 'block'; ok = false }
   if (temSerial && !document.getElementById('f-serial').value.trim()) {
-    document.getElementById('err-serial').style.display = 'block'
-    document.getElementById('f-serial').classList.add('error'); ok = false
+    showErr('f-serial', 'err-serial')
   }
-  if (!document.getElementById('f-status').value) {
-    document.getElementById('err-status').style.display = 'block'
-    document.getElementById('f-status').classList.add('error'); ok = false
+  const status = document.getElementById('f-status').value
+  if (!status) {
+    showErr('f-status', 'err-status')
   }
+
+  // Regra: "Com Técnico" exige responsável
+  if (STATUS_EXIGE_RESP.includes(status) && !document.getElementById('f-resp').value) {
+    showErr('f-resp', 'err-resp')
+  }
+  // Regra: "Locado / Vendido / Reservado" exigem cliente
+  if (STATUS_EXIGE_CLI.includes(status) && !document.getElementById('f-cliente').value) {
+    showErr('f-cliente', 'err-cli')
+  }
+  // Regra: data de aquisição não pode ser futura
+  const dataAq = document.getElementById('f-data-aq').value
+  if (dataAq) {
+    const hoje = new Date().toISOString().split('T')[0]  // YYYY-MM-DD em UTC
+    if (dataAq > hoje) {
+      showErr('f-data-aq', 'err-data-aq')
+    }
+  }
+  // Se já sabemos que o serial está duplicado, bloqueia
+  if (temSerial && document.getElementById('hint-serial-dup').style.display === 'block') {
+    document.getElementById('f-serial').classList.add('error')
+    ok = false
+  }
+
   return ok
 }
 
@@ -454,9 +507,48 @@ const resetForm = () => {
   document.getElementById('status-preview').classList.remove('show')
   document.getElementById('alert-err').style.display = 'none'
   document.getElementById('alert-ok').style.display  = 'none'
+  // limpa avisos/erros das novas validações
+  ;['hint-serial-dup','hint-serial-check','err-resp','err-cli','err-data-aq'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.style.display = 'none'
+  })
+  document.getElementById('req-resp').style.display = 'none'
+  document.getElementById('req-cli').style.display  = 'none'
   if (!temSerial) toggleSerial()
   window.scrollTo({top:0, behavior:'smooth'})
   document.getElementById('modelo-search').focus()
+}
+
+// Checagem de serial duplicado em tempo real (debounced)
+const checarSerialDuplicado = debounce(async (serial) => {
+  const hintDup = document.getElementById('hint-serial-dup')
+  const hintChk = document.getElementById('hint-serial-check')
+  hintDup.style.display = 'none'
+  hintChk.style.display = 'none'
+  if (!serial) return
+  hintChk.style.display = 'block'
+  try {
+    const r = await fetch(
+      `${SURL}/rest/v1/itens?select=id,codigo_interno&serial=eq.${encodeURIComponent(serial)}&ativo=eq.true&limit=1`,
+      { headers: hAuth() }
+    )
+    chk401(r)
+    const d = await r.json()
+    hintChk.style.display = 'none'
+    if (Array.isArray(d) && d.length > 0) {
+      hintDup.textContent = `⚠ Serial já cadastrado em ${d[0].codigo_interno || 'outro item'}.`
+      hintDup.style.display = 'block'
+    }
+  } catch (e) {
+    hintChk.style.display = 'none'
+    console.warn('checarSerialDuplicado:', e)
+  }
+}, 500)
+
+const onSerialInput = (input) => {
+  input.value = input.value.toUpperCase()
+  clearFieldError('f-serial', 'err-serial')
+  document.getElementById('hint-serial-dup').style.display = 'none'
+  checarSerialDuplicado(input.value.trim())
 }
 
 
