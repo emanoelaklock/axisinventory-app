@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════
    Axis Inventory — auth.js
    Autenticação centralizada via Supabase client
+   Dependência: utils.js (esc) deve ser carregado ANTES
 ═══════════════════════════════════════════════ */
 
 var SURL = 'https://adbskoverysjohhwadln.supabase.co'
@@ -20,8 +21,7 @@ function getSupabase() {
   return _supabase
 }
 
-// Utilitários HTTP (fallback para pages que ainda usam fetch direto)
-var esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+// Utilitários HTTP (usados por pages que fazem fetch direto)
 var hAuth = () => ({
   'apikey': AKEY,
   'Authorization': `Bearer ${SESSION?.access_token}`,
@@ -37,7 +37,7 @@ var chk401 = r => {
   return r
 }
 
-// Toast global
+// Toast global (depende de #tc no DOM e de esc() do utils.js)
 let _tid = 0
 var toast = (msg, tipo = 'info', dur = 4000) => {
   const tc = document.getElementById('tc')
