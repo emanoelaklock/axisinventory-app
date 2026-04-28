@@ -555,9 +555,36 @@ function gerarPDF(nomeArquivo) {
   var elId = document.getElementById('chk-print-area') ? 'chk-print-area' : 'print-area'
   var el = document.getElementById(elId)
   if (!el) return
-  el.style.display = 'block'
-  window.print()
-  setTimeout(function(){ el.style.display = 'none' }, 1000)
+
+  // Abre janela nova com APENAS o conteúdo a imprimir.
+  // Evita conflitos de @media print, conteúdo duplicado, e ordem do DOM.
+  var w = window.open('', '_blank', 'width=900,height=1000')
+  if (!w) {
+    alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.')
+    return
+  }
+
+  var titulo = nomeArquivo || 'Checklist'
+  w.document.write(
+    '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + titulo + '</title>' +
+    '<style>' +
+      '@page{size:A4 portrait;margin:12mm 14mm}' +
+      'body{margin:0;font-family:Arial,sans-serif;color:#0f1224;background:#fff}' +
+      '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}' +
+    '</style>' +
+    '</head><body>' +
+    el.innerHTML +
+    '</body></html>'
+  )
+  w.document.close()
+
+  // Aguarda renderização e dispara impressão
+  w.onload = function() {
+    w.focus()
+    w.print()
+    // Após imprimir/cancelar, fecha a janela
+    setTimeout(function(){ try { w.close() } catch(e){} }, 500)
+  }
 }
 
 
