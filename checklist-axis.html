@@ -462,7 +462,7 @@ async function loadHist(){
   const el=document.getElementById('hist-lista');
   el.innerHTML='<p style="color:#8e96b0;text-align:center;padding:2rem">Carregando...</p>';
   try{
-    histData=await api('checklists_axis?select=*&order=criado_em.desc&limit=200');
+    histData=await api('checklists_axis?select=*,itens!item_id(codigo_interno,modelos(modelo))&order=criado_em.desc&limit=200');
     renderHist(histData);
   }catch(e){el.innerHTML='<p style="color:#be123c;padding:1rem">Erro: '+e.message+'</p>';}
 }
@@ -489,6 +489,9 @@ function filtrarHist(q){
 }
 
 function imprimir(chk){
+  // chk.codigo_interno vem opcional (quando o checklist tem item_id, é resolvido pelo join)
+  var codigo = chk.codigo_interno || (chk.itens && chk.itens.codigo_interno) || '—'
+  var modelo = chk.modelo || (chk.itens && chk.itens.modelos && chk.itens.modelos.modelo) || '—'
   var dt = chk.data_checklist ? new Date(chk.data_checklist+'T12:00:00').toLocaleDateString('pt-BR') : '—'
   var mans = chk.manutencoes && chk.manutencoes.length ? chk.manutencoes.join(', ') : '—'
 
@@ -504,26 +507,29 @@ function imprimir(chk){
     return '<span style="background:'+bg+';color:#fff;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+val+'</span>'
   }
 
+  // Layout canônico — 17 campos numerados (Código Interno como #1)
   var fields =
-    field('1. Data',             dt) +
-    field('2. Serial',           chk.serial||'—') +
-    field('3. Modelo',           chk.modelo||'—') +
-    field('4. Origem',           chk.origem||'—') +
-    field('5. Responsável',      chk.responsavel||'—') +
-    field('6. RMA',              chk.rma||'N/A') +
-    field('7. Status Resultado', statusBadge(chk.status_resultado)) +
-    field('8. Weathershield',    chk.weathershield||'—') +
-    field('9. Suporte Montagem', chk.suporte_montagem||'—') +
-    field('10. Base Traseira',   chk.base_traseira||'—') +
-    field('11. Borracha Vedação',chk.borracha_vedacao||'—') +
-    field('12. Gasket Cable',    chk.gasket_cable||'—') +
-    field('13. Demais Acessórios', chk.demais_acessorios||'—', true) +
-    field('14. Manutenções Realizadas', mans, true) +
-    (chk.observacoes ? field('15. Observações', chk.observacoes, true) : '')
+    field('1. Código Interno',       codigo) +
+    field('2. Serial',                chk.serial||'—') +
+    field('3. Modelo',                modelo) +
+    field('4. Data',                  dt) +
+    field('5. Responsável',           chk.responsavel||'—') +
+    field('6. Origem',                chk.origem||'—') +
+    field('7. RMA',                   chk.rma||'N/A') +
+    field('8. Status Resultado',      statusBadge(chk.status_resultado)) +
+    field('9. Weathershield',         chk.weathershield||'—') +
+    field('10. Suporte Montagem',     chk.suporte_montagem||'—') +
+    field('11. Base Traseira',        chk.base_traseira||'—') +
+    field('12. Borracha Vedação',     chk.borracha_vedacao||'—') +
+    field('13. Gasket Cable',         chk.gasket_cable||'—') +
+    (chk.demais_acessorios ? field('14. Demais Acessórios', chk.demais_acessorios, true) : '') +
+    field('15. Manutenções Realizadas', mans, true) +
+    (chk.observacoes ? field('16. Observações', chk.observacoes, true) : '')
 
   var fts = [chk.foto_1, chk.foto_2, chk.foto_3].filter(Boolean)
 
-  document.getElementById('pr-sub').textContent = 'Data: '+dt+'  ·  Serial: '+(chk.serial||'—')+'  ·  Responsável: '+(chk.responsavel||'—')
+  document.getElementById('pr-sub').textContent =
+    'Código: '+codigo+'  ·  Serial: '+(chk.serial||'—')+'  ·  Data: '+dt+'  ·  Responsável: '+(chk.responsavel||'—')
   document.getElementById('pr-fields').innerHTML = fields
   document.getElementById('pr-resp-assin').textContent = chk.responsavel||'—'
   document.getElementById('pr-rodape').innerHTML = 'Axis Inventory · Checklist de Inspeção<br>Impresso em '+new Date().toLocaleString('pt-BR')

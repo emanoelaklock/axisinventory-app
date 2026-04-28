@@ -1447,8 +1447,9 @@ var _chkAtual = null // cache do último checklist aberto
 const imprimirChkAtual = () => {
   const ch = _chkAtual
   if (!ch) return
-  const codigo = ch.itens && ch.itens.codigo_interno ? ch.itens.codigo_interno : (ITEM ? ITEM.codigo_interno : '--')
-  const modelo = ch.modelo || (ch.itens && ch.itens.modelos ? ch.itens.modelos.modelo : (ITEM ? ITEM.modelo : '--'))
+  // Resolve código interno e modelo (via join ou fallback no ITEM atual)
+  const codigo = (ch.itens && ch.itens.codigo_interno) || (ITEM ? ITEM.codigo_interno : '—')
+  const modelo = ch.modelo || (ch.itens && ch.itens.modelos && ch.itens.modelos.modelo) || (ITEM ? ITEM.modelo : '—')
   const dt = ch.data_checklist ? new Date(ch.data_checklist + 'T12:00:00').toLocaleDateString('pt-BR') : '—'
   const mans = ch.manutencoes && ch.manutencoes.length ? ch.manutencoes.join(', ') : '—'
 
@@ -1464,40 +1465,76 @@ const imprimirChkAtual = () => {
     return '<span style="background:'+bg+';color:#fff;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+esc(val)+'</span>'
   }
 
+  // Layout canônico — IDÊNTICO ao do checklist-axis.html
   const fields =
-    field('1. Código Interno', codigo) +
-    field('2. Serial', ch.serial) +
-    field('3. Modelo', modelo) +
-    field('4. Data', dt) +
-    field('5. Responsável', ch.responsavel) +
-    field('6. Origem', ch.origem) +
-    field('7. RMA', ch.rma || 'N/A') +
-    field('8. Status Resultado', statusBadge(ch.status_resultado)) +
-    field('9. Weathershield', ch.weathershield) +
-    field('10. Suporte Montagem', ch.suporte_montagem) +
-    field('11. Base Traseira', ch.base_traseira) +
-    field('12. Borracha Vedação', ch.borracha_vedacao) +
-    field('13. Gasket Cable', ch.gasket_cable) +
+    field('1. Código Interno',         codigo) +
+    field('2. Serial',                  ch.serial || '—') +
+    field('3. Modelo',                  modelo) +
+    field('4. Data',                    dt) +
+    field('5. Responsável',             ch.responsavel || '—') +
+    field('6. Origem',                  ch.origem || '—') +
+    field('7. RMA',                     ch.rma || 'N/A') +
+    field('8. Status Resultado',        statusBadge(ch.status_resultado)) +
+    field('9. Weathershield',           ch.weathershield || '—') +
+    field('10. Suporte Montagem',       ch.suporte_montagem || '—') +
+    field('11. Base Traseira',          ch.base_traseira || '—') +
+    field('12. Borracha Vedação',       ch.borracha_vedacao || '—') +
+    field('13. Gasket Cable',           ch.gasket_cable || '—') +
     (ch.demais_acessorios ? field('14. Demais Acessórios', ch.demais_acessorios, true) : '') +
-    field('15. Manutenções', mans, true) +
+    field('15. Manutenções Realizadas', mans, true) +
     (ch.observacoes ? field('16. Observações', ch.observacoes, true) : '')
 
   const fts = [ch.foto_1, ch.foto_2, ch.foto_3].filter(Boolean)
 
-  document.getElementById('chk-pr-sub').textContent =
-    'Código: ' + codigo + '  ·  Serial: ' + (ch.serial || '—') + '  ·  Data: ' + dt + '  ·  Responsável: ' + (ch.responsavel || '—')
-  document.getElementById('chk-pr-fields').innerHTML = fields
-  document.getElementById('chk-pr-resp').textContent = ch.responsavel || '—'
-  document.getElementById('chk-pr-rodape').innerHTML =
-    'Axis Inventory · Checklist de Inspeção<br>Impresso em ' + new Date().toLocaleString('pt-BR')
-  document.getElementById('chk-pr-fotos').innerHTML =
-    fts.map(f => '<img src="' + f + '" style="width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>').join('')
-  document.getElementById('chk-pr-fotos-sec').style.display = fts.length ? '' : 'none'
+  // Monta HTML da página de impressão isolada
+  const printHtml =
+    '<div style="display:flex;align-items:center;gap:16px;border-bottom:3px solid #1B2A4A;padding-bottom:12px;margin-bottom:20px">' +
+      '<div style="width:44px;height:44px;background:#1B2A4A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;color:#fff">📡</div>' +
+      '<div>' +
+        '<div style="font-size:20px;font-weight:800;color:#1B2A4A">Checklist de Inspeção — Axis Inventory</div>' +
+        '<div style="font-size:12px;color:#666;margin-top:2px">' +
+          'Código: ' + codigo + '  ·  Serial: ' + (ch.serial || '—') + '  ·  Data: ' + dt + '  ·  Responsável: ' + (ch.responsavel || '—') +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">' + fields + '</div>' +
+    (fts.length ?
+      '<div style="margin-bottom:16px">' +
+        '<div style="font-size:10px;font-weight:700;color:#1B2A4A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Fotos</div>' +
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
+          fts.map(f => '<img src="' + f + '" style="width:180px;height:135px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>').join('') +
+        '</div>' +
+      '</div>' : '') +
+    '<div style="display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid #ddd;padding-top:12px;margin-top:24px">' +
+      '<div style="text-align:center">' +
+        '<div style="width:200px;border-top:1px solid #333;margin:40px auto 4px"></div>' +
+        '<div style="font-size:12px;color:#666">' + esc(ch.responsavel || '—') + '</div>' +
+      '</div>' +
+      '<div style="font-size:10px;color:#999;text-align:right">Axis Inventory · Checklist de Inspeção<br>Impresso em ' + new Date().toLocaleString('pt-BR') + '</div>' +
+    '</div>'
 
-  const el = document.getElementById('chk-print-area')
-  el.style.display = 'block'
-  window.print()
-  setTimeout(() => { el.style.display = 'none' }, 1000)
+  // Abre janela nova isolada — evita conflitos de @media print
+  const w = window.open('', '_blank', 'width=900,height=1000')
+  if (!w) {
+    alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site.')
+    return
+  }
+  const titulo = 'checklist-inspecao-' + (ch.serial || 'checklist')
+  w.document.write(
+    '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + titulo + '</title>' +
+    '<style>' +
+      '@page{size:A4 portrait;margin:12mm 14mm}' +
+      'body{margin:0;font-family:Arial,sans-serif;color:#0f1224;background:#fff}' +
+      '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}' +
+    '</style>' +
+    '</head><body>' + printHtml + '</body></html>'
+  )
+  w.document.close()
+  w.onload = function() {
+    w.focus()
+    w.print()
+    setTimeout(function() { try { w.close() } catch(e){} }, 500)
+  }
 }
 
 var _chkTipo = 'inspecao'
